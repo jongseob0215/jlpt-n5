@@ -2078,7 +2078,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
   const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
   const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
-  const sayBtn = (text, label) => (canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(text)}" aria-label="${esc(label)} 발음 듣기">▶ 발음</button>` : '');
+  const sayBtn = (text, label) => (canSpeak && jaReady() ? `<button type="button" class="say" data-act="speak" data-say="${esc(text)}" aria-label="${esc(label)} 발음 듣기">▶ 발음</button>` : '');
   /* 효과음: Web Audio로 짧게 합성한다(파일 없음). 설정에서 끌 수 있고 이 기기에만 저장한다. */
   const SOUND_KEY = 'jlpt-n5-sound';
   let soundOn = true;
@@ -2339,7 +2339,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     const q = dictQuery.trim().toLowerCase();
     const list = A.WORDS.filter((w) => (dictTopic === 'all' || w.topic === dictTopic) && (!q || w.w.toLowerCase().includes(q) || w.r.includes(q) || w.m.toLowerCase().includes(q)));
     if (!list.length) return '<li class="muted">찾는 단어가 없어요.</li>';
-    return list.map((w) => { const p = A.S.words[w.id]; return `<li><div class="li-main">${jp(w.w)}${w.r !== w.w ? ` <span class="muted">${esc(w.r)}</span>` : ''}<br><span class="small">${esc(w.m)}</span> <span class="tag">${A.POS[w.p] || ''}</span></div><span class="small muted num">${p ? `${p.b}단계` : '새 단어'}</span>${canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.r)}" aria-label="${esc(w.w)} 발음 듣기">▶</button>` : ''}</li>`; }).join('');
+    return list.map((w) => { const p = A.S.words[w.id]; return `<li><div class="li-main">${jp(w.w)}${w.r !== w.w ? ` <span class="muted">${esc(w.r)}</span>` : ''}<br><span class="small">${esc(w.m)}</span> <span class="tag">${A.POS[w.p] || ''}</span></div><span class="small muted num">${p ? `${p.b}단계` : '새 단어'}</span>${canSpeak && jaReady() ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.r)}" aria-label="${esc(w.w)} 발음 듣기">▶</button>` : ''}</li>`; }).join('');
   }
   function vDict() {
     const st = topicStats();
@@ -2364,7 +2364,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
           </div>` : '<div class="hint">눌러서 뜻 보기</div>';
     const actions = X.flip
       ? `<div class="row2"><button class="btn primary" data-act="card-yes">○ 알아요</button><button class="btn" data-act="card-no">× 모름</button></div>
-         <div class="say-row">${sayBtn(w.r, '단어')}${canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.ex)}" aria-label="예문 발음 듣기">▶ 예문</button>` : ''}</div>`
+         <div class="say-row">${sayBtn(w.r, '단어')}${canSpeak && jaReady() ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.ex)}" aria-label="예문 발음 듣기">▶ 예문</button>` : ''}</div>`
       : `<button class="btn wide" data-act="flip">뜻 보기</button>`;
     return `${progress(X.i, X.ids.length, X.topic ? `카드 · ${A.TOPIC_NAME[X.topic]}` : '카드 학습')}
       <div class="card-stage${X.i + 1 < X.ids.length ? ' has-next' : ''}">
@@ -3091,6 +3091,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   A.feedback = (ok) => { sfx(ok ? 'ok' : 'bad'); buzz(ok ? 12 : [10, 60, 10]); };
   function speak(text) {
     if (!canSpeak || !text) return;
+    if (!jaReady()) { toast('이 기기에는 일본어 음성이 없어서 소리를 낼 수 없어요.'); return; }
     try {
       window.speechSynthesis.cancel();
       const u = new window.SpeechSynthesisUtterance(text);

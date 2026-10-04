@@ -291,6 +291,26 @@ svg.chart { width: 100%; height: auto; display: block; }
 .kn { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
 .kn .k { flex: none; min-width: 44px; font-size: 1.5rem; text-align: center; }
 .kana-big { display: block; margin: 4px auto 0; min-width: 120px; min-height: 120px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); font-size: 4rem; line-height: 1; cursor: pointer; color: var(--ink); }
+.sr-only { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
+.lv-row { display: flex; align-items: center; gap: 14px; }
+.lv-badge { flex: none; width: 58px; height: 58px; border-radius: 18px; background: var(--ink); color: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; line-height: 1.05; box-shadow: var(--shadow); }
+.lv-badge span { font-size: 11px; font-weight: 700; letter-spacing: 0.04em; }
+.lv-badge b { font-size: 1.5rem; }
+.lv-main { flex: 1; min-width: 0; display: flex; flex-direction: column; gap: 5px; }
+.sess-right { display: inline-flex; align-items: center; gap: 8px; }
+.combo { border: 2px solid var(--ink); border-radius: 999px; padding: 0 9px; font-size: 12px; font-weight: 700; color: var(--ink); background: var(--surface); }
+.xp-pop { display: inline-block; margin-left: 8px; font-size: 13px; font-weight: 700; color: var(--accent); }
+.xp-earned { font-weight: 700; color: var(--accent); }
+.chart .b-x { fill: var(--accent); }
+.badges { list-style: none; margin: 0; padding: 0; display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.badge { border: 1.5px dashed var(--line); border-radius: 14px; padding: 10px 6px; display: flex; flex-direction: column; align-items: center; text-align: center; gap: 2px; min-width: 0; opacity: 0.7; }
+.badge b { font-size: 12.5px; line-height: 1.3; }
+.badge .small { font-size: 11px; line-height: 1.35; }
+.badge .bd-ico { font-size: 22px; line-height: 1.1; color: var(--muted); }
+.badge.got { border: 2px solid var(--ink); background: var(--accent-soft); opacity: 1; }
+.badge.got .bd-ico { color: var(--accent); }
+.banner { position: fixed; left: 50%; top: calc(58px + env(safe-area-inset-top, 0px)); transform: translateX(-50%); z-index: 13; display: flex; align-items: center; gap: 10px; padding: 10px 18px; border-radius: 999px; background: var(--ink); color: var(--bg); font-weight: 700; font-size: 14px; box-shadow: var(--shadow); max-width: calc(100% - 32px); white-space: nowrap; }
+.banner .b-ico { width: 26px; height: 26px; border-radius: 50%; background: var(--accent); color: var(--on-accent); display: grid; place-items: center; font-size: 13px; }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -310,9 +330,14 @@ svg.chart { width: 100%; height: auto; display: block; }
   .dialog { animation: dlgIn 0.34s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
   .done-mark { animation: markIn 0.5s 0.08s cubic-bezier(0.2, 0.9, 0.3, 1.4) backwards; }
   #toast:not([hidden]) { animation: toastIn 0.2s ease-out; }
+  .banner:not([hidden]) { animation: bannerIn 0.4s cubic-bezier(0.2, 0.9, 0.3, 1.3); }
+  .combo.bump { animation: pop 0.34s ease-out; }
+  .xp-pop { animation: xpUp 0.7s ease-out; }
   .confetti .bit { animation-name: fall; animation-timing-function: linear; animation-fill-mode: forwards; }
 }
 @keyframes grow { from { width: 0; } }
+@keyframes bannerIn { from { opacity: 0; transform: translate(-50%, -16px) scale(0.9); } to { opacity: 1; transform: translate(-50%, 0) scale(1); } }
+@keyframes xpUp { 0% { opacity: 0; transform: translateY(8px); } 30% { opacity: 1; } 100% { opacity: 1; transform: none; } }
 @keyframes vFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes vNext { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: none; } }
 @keyframes vPrev { from { opacity: 0; transform: translateX(-32px); } to { opacity: 1; transform: none; } }
@@ -342,6 +367,7 @@ svg.chart { width: 100%; height: auto; display: block; }
 </div>
 <div id="overlay" hidden></div>
 <div id="toast" role="status" hidden></div>
+<div id="banner" class="banner" role="status" hidden></div>
 
 <script>
 /* words.js */
@@ -726,6 +752,7 @@ window.JLPT_DATA.N5.questions = [
   App.MOCK_PLAN = [['kr', 7], ['pk', 5], ['cx', 6], ['pa', 3]];
   App.MOCK_MIN = 20;
   const KEY = 'jlpt-n5-study-v1';
+  const BADGE_IDS = new Set(['first', 'goal1', 's3', 's7', 's30', 'w50', 'w150', 'wall', 'l30', 'l100', 'q100', 'm1', 'm80', 'mAll', 'kh', 'kk', 'x500', 'x2000']);
 
   /* ---------- 공통 도구 ---------- */
   App.esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -746,7 +773,8 @@ window.JLPT_DATA.N5.questions = [
       words: {}, qs: {}, wrong: { w: {}, q: {} }, days: {},
       today: { date: '', wids: [] },
       streak: { cur: 0, best: 0, last: '' },
-      mocks: [], run: null
+      mocks: [], run: null,
+      badges: {}, kanaBest: { h: 0, k: 0 }
     };
   }
   function normalize(raw) {
@@ -768,7 +796,12 @@ window.JLPT_DATA.N5.questions = [
     for (const [id, p] of Object.entries(wr.w || {})) if (App.WMAP.has(id) && p) s.wrong.w[id] = { n: clampInt(p.n, 1, 1e7, 1), at: isDate(p.at) ? p.at : t };
     for (const [id, p] of Object.entries(wr.q || {})) if (App.QMAP.has(id) && p) s.wrong.q[id] = { n: clampInt(p.n, 1, 1e7, 1), at: isDate(p.at) ? p.at : t };
     for (const [d, p] of Object.entries(raw.days || {})) {
-      if (isDate(d) && p && typeof p === 'object') s.days[d] = { w: clampInt(p.w, 0, 1e5, 0), q: clampInt(p.q, 0, 1e5, 0), qc: clampInt(p.qc, 0, 1e5, 0), t: clampInt(p.t, 0, 1e5, 0), tc: clampInt(p.tc, 0, 1e5, 0), g: !!p.g };
+      if (isDate(d) && p && typeof p === 'object') {
+        const r = { w: clampInt(p.w, 0, 1e5, 0), q: clampInt(p.q, 0, 1e5, 0), qc: clampInt(p.qc, 0, 1e5, 0), t: clampInt(p.t, 0, 1e5, 0), tc: clampInt(p.tc, 0, 1e5, 0), g: !!p.g };
+        /* XP가 없던 예전 기록은 같은 규칙으로 채운다: 카드 1, 오답 1, 정답 2, 목표 달성 10 */
+        r.x = p.x === undefined ? r.w + r.q + r.qc + r.t + r.tc + (r.g ? 10 : 0) : clampInt(p.x, 0, 1e6, 0);
+        s.days[d] = r;
+      }
     }
     if (raw.today && isDate(raw.today.date) && Array.isArray(raw.today.wids)) {
       s.today = { date: raw.today.date, wids: [...new Set(raw.today.wids.filter((id) => App.WMAP.has(id)))] };
@@ -792,6 +825,9 @@ window.JLPT_DATA.N5.questions = [
         s.run = { ids: r.ids.slice(), opts, ans, deadline: r.deadline, i: clampInt(r.i, 0, r.ids.length - 1, 0) };
       }
     }
+    for (const [id, at] of Object.entries(raw.badges || {})) if (BADGE_IDS.has(id) && isDate(at)) s.badges[id] = at;
+    const kb = raw.kanaBest || {};
+    s.kanaBest = { h: clampInt(kb.h, 0, 10, 0), k: clampInt(kb.k, 0, 10, 0) };
     return s;
   }
   App.freshState = freshState;
@@ -866,8 +902,24 @@ window.JLPT_DATA.N5.questions = [
 
   /* ---------- 날짜·목표·연속 달성 ---------- */
   App.today = function () { const t = App.ymd(); if (App.S.today.date !== t) App.S.today = { date: t, wids: [] }; return t; };
-  App.dayView = (t) => App.S.days[t] || { w: 0, q: 0, qc: 0, t: 0, tc: 0, g: false };
-  function dayRec(t) { return App.S.days[t] || (App.S.days[t] = { w: 0, q: 0, qc: 0, t: 0, tc: 0, g: false }); }
+  App.dayView = (t) => App.S.days[t] || { w: 0, q: 0, qc: 0, t: 0, tc: 0, g: false, x: 0 };
+  function dayRec(t) { return App.S.days[t] || (App.S.days[t] = { w: 0, q: 0, qc: 0, t: 0, tc: 0, g: false, x: 0 }); }
+
+  /* ---------- XP·레벨 ---------- */
+  App.totalXP = function () { let n = 0; for (const d of Object.values(App.S.days)) n += d.x || 0; return n; };
+  /* 레벨 L은 누적 25·L·(L-1) XP에서 시작한다: 2레벨 50, 3레벨 150, 4레벨 300, 5레벨 500 */
+  App.levelOf = function (xp) { let L = 1; while (L < 999 && 25 * L * (L + 1) <= xp) L++; return L; };
+  App.levelRange = (L) => [25 * L * (L - 1), 25 * L * (L + 1)];
+  App.levelUpTo = 0;
+  App.addXP = function (n) {
+    const add = clampInt(n, 0, 1000, 0);
+    if (!add) return 0;
+    const before = App.levelOf(App.totalXP());
+    dayRec(App.today()).x += add;
+    const after = App.levelOf(App.totalXP());
+    if (after > before) App.levelUpTo = after;
+    return add;
+  };
   function touchWord(id) { const t = App.today(); const w = App.S.today.wids; if (!w.includes(id)) w.push(id); dayRec(t).w = w.length; }
   App.celebrate = false;
   App.checkGoal = function () {
@@ -879,6 +931,7 @@ window.JLPT_DATA.N5.questions = [
       st.cur = st.last === App.addDays(t, -1) ? st.cur + 1 : 1;
       st.last = t;
       st.best = Math.max(st.best, st.cur);
+      App.addXP(10);
       App.celebrate = true;
     }
   };
@@ -896,7 +949,9 @@ window.JLPT_DATA.N5.questions = [
     else { p.b = 0; p.due = t; p.x++; addWrongW(id); }
     App.S.words[id] = p;
     touchWord(id);
+    const xp = App.addXP(1);
     App.checkGoal();
+    return xp;
   };
   App.buildCards = function (n) {
     const S = App.S; const t = App.ymd(); const used = new Set(); const out = [];
@@ -954,7 +1009,9 @@ window.JLPT_DATA.N5.questions = [
     p.n++;
     App.S.words[id] = p;
     touchWord(id);
+    const xp = App.addXP(ok ? 2 : 1);
     App.checkGoal();
+    return xp;
   };
 
   /* ---------- 문제 ---------- */
@@ -966,7 +1023,9 @@ window.JLPT_DATA.N5.questions = [
     App.S.qs[id] = s;
     if (ok) delete App.S.wrong.q[id];
     else { const w = App.S.wrong.q[id] || { n: 0, at: '' }; w.n++; w.at = t; App.S.wrong.q[id] = w; }
+    const xp = App.addXP(ok ? 2 : 1);
     App.checkGoal();
+    return xp;
   };
   App.buildQuiz = function (type, n, onlyIds) {
     const S = App.S;
@@ -994,7 +1053,7 @@ window.JLPT_DATA.N5.questions = [
   App.finishMock = function (auto) {
     const run = App.S.run;
     if (!run) return null;
-    const items = []; const by = {}; let c = 0;
+    const items = []; const by = {}; let c = 0; let xp = 0;
     for (const id of run.ids) {
       const q = App.QMAP.get(id);
       const my = Object.prototype.hasOwnProperty.call(run.ans, id) ? run.ans[id] : null;
@@ -1002,15 +1061,55 @@ window.JLPT_DATA.N5.questions = [
       if (ok) c++;
       by[q.t] = by[q.t] || [0, 0];
       by[q.t][1]++; if (ok) by[q.t][0]++;
-      App.answerQ(id, ok);
+      xp += App.answerQ(id, ok);
       items.push([id, my, ok ? 1 : 0]);
     }
-    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto };
+    xp += App.addXP(10);
+    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto, xp };
     App.S.mocks.unshift(res);
     App.S.mocks = App.S.mocks.slice(0, 20);
     App.S.run = null;
     App.save();
     return res;
+  };
+
+  /* ---------- 배지: 기록에서 조건을 계산하고, 처음 채운 날을 저장한다 ---------- */
+  const seenN = () => Object.keys(App.S.words).length;
+  const qTries = () => { let n = 0; for (const v of Object.values(App.S.qs)) n += v.n; return n; };
+  App.BADGES = [
+    ['first', '첫걸음', '카드를 처음 넘겼어요', () => seenN() >= 1],
+    ['goal1', '목표 달성', '하루 목표를 처음 채웠어요', () => Object.values(App.S.days).some((d) => d.g)],
+    ['s3', '3일 연속', '목표를 3일 연속 채웠어요', () => App.S.streak.best >= 3],
+    ['s7', '7일 연속', '목표를 7일 연속 채웠어요', () => App.S.streak.best >= 7],
+    ['s30', '30일 연속', '목표를 30일 연속 채웠어요', () => App.S.streak.best >= 30],
+    ['w50', '단어 50', '단어 50개를 봤어요', () => seenN() >= 50],
+    ['w150', '단어 150', '단어 150개를 봤어요', () => seenN() >= 150],
+    ['wall', '단어 일주', '모든 단어를 한 번 이상 봤어요', () => seenN() >= App.WORDS.length],
+    ['l30', '익힌 단어 30', '3단계 이상 단어가 30개예요', () => App.learnedCount() >= 30],
+    ['l100', '익힌 단어 100', '3단계 이상 단어가 100개예요', () => App.learnedCount() >= 100],
+    ['q100', '문제 100', '문제를 100번 풀었어요', () => qTries() >= 100],
+    ['m1', '첫 모의고사', '모의고사를 처음 제출했어요', () => App.S.mocks.length >= 1],
+    ['m80', '모의고사 80%', '모의고사에서 80% 이상 맞혔어요', () => App.S.mocks.some((m) => m.c >= m.n * 0.8)],
+    ['mAll', '모의고사 만점', '모의고사를 모두 맞혔어요', () => App.S.mocks.some((m) => m.c === m.n)],
+    ['kh', 'ひらがな 만점', '히라가나 퀴즈를 모두 맞혔어요', () => App.S.kanaBest.h >= 10],
+    ['kk', 'カタカナ 만점', '가타카나 퀴즈를 모두 맞혔어요', () => App.S.kanaBest.k >= 10],
+    ['x500', 'XP 500', '누적 500 XP를 모았어요', () => App.totalXP() >= 500],
+    ['x2000', 'XP 2000', '누적 2000 XP를 모았어요', () => App.totalXP() >= 2000]
+  ].map(([id, name, desc, test]) => ({ id, name, desc, test }));
+  /* 새로 얻은 배지 목록을 돌려준다(저장은 부르는 쪽에서) */
+  App.checkBadges = function () {
+    const got = [];
+    for (const b of App.BADGES) {
+      if (App.S.badges[b.id]) continue;
+      let ok = false; try { ok = !!b.test(); } catch (e) { ok = false; }
+      if (ok) { App.S.badges[b.id] = App.ymd(); got.push(b); }
+    }
+    return got;
+  };
+  App.recordKana = function (sc, c, n) {
+    const key = sc === 'k' ? 'k' : 'h';
+    if (n === 10) App.S.kanaBest[key] = Math.max(App.S.kanaBest[key], clampInt(c, 0, 10, 0));
+    return App.addXP(clampInt(c, 0, 10, 0));
   };
 
   /* ---------- 설정·초기화 ---------- */
@@ -1063,6 +1162,40 @@ window.JLPT_DATA.N5.questions = [
   const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
   const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
   const sayBtn = (text, label) => (canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(text)}" aria-label="${esc(label)} 발음 듣기">▶ 발음</button>` : '');
+  /* 효과음: Web Audio로 짧게 합성한다(파일 없음). 설정에서 끌 수 있고 이 기기에만 저장한다. */
+  const SOUND_KEY = 'jlpt-n5-sound';
+  let soundOn = true;
+  try { soundOn = localStorage.getItem(SOUND_KEY) !== 'off'; } catch (e) { /* 저장소를 못 쓰는 환경 */ }
+  let actx = null;
+  const SFX = {
+    ok: [[880, 0, 0.09, 'sine', 0.13], [1318.5, 0.08, 0.16, 'sine', 0.13]],
+    bad: [[233, 0, 0.14, 'triangle', 0.16], [174.6, 0.12, 0.22, 'triangle', 0.16]],
+    card: [[660, 0, 0.05, 'triangle', 0.06]],
+    combo: [[987.8, 0, 0.07, 'sine', 0.11], [1318.5, 0.06, 0.07, 'sine', 0.11], [1760, 0.12, 0.14, 'sine', 0.11]],
+    done: [[523.3, 0, 0.11, 'sine', 0.12], [659.3, 0.1, 0.11, 'sine', 0.12], [784, 0.2, 0.11, 'sine', 0.12], [1046.5, 0.3, 0.3, 'sine', 0.12]],
+    level: [[392, 0, 0.1, 'square', 0.05], [523.3, 0.1, 0.1, 'square', 0.05], [659.3, 0.2, 0.1, 'square', 0.05], [784, 0.3, 0.32, 'square', 0.05]],
+    badge: [[1046.5, 0, 0.08, 'sine', 0.1], [1568, 0.08, 0.2, 'sine', 0.1]]
+  };
+  function sfx(kind) {
+    if (!soundOn || !SFX[kind]) return;
+    try {
+      const AC = window.AudioContext || window.webkitAudioContext;
+      if (!AC) return;
+      if (!actx) actx = new AC();
+      if (actx.state === 'suspended') actx.resume();
+      const t0 = actx.currentTime + 0.01;
+      for (const [freq, at, dur, type, vol] of SFX[kind]) {
+        const o = actx.createOscillator(); const g = actx.createGain();
+        o.type = type; o.frequency.value = freq;
+        g.gain.setValueAtTime(0.0001, t0 + at);
+        g.gain.exponentialRampToValueAtTime(vol, t0 + at + 0.015);
+        g.gain.exponentialRampToValueAtTime(0.0001, t0 + at + dur);
+        o.connect(g); g.connect(actx.destination);
+        o.start(t0 + at); o.stop(t0 + at + dur + 0.03);
+      }
+    } catch (e) { /* 소리를 못 내는 환경 */ }
+  }
+  function setSound(on) { soundOn = !!on; try { localStorage.setItem(SOUND_KEY, soundOn ? 'on' : 'off'); } catch (e) { /* 이번 접속에서만 적용 */ } }
   const buzz = (p) => { try { if (typeof navigator.vibrate !== 'function' || (navigator.userActivation && !navigator.userActivation.hasBeenActive)) return; navigator.vibrate(p); } catch (e) { /* 진동을 못 쓰는 기기 */ } };
   function meter(label, cur, goal, unit) {
     const done = cur >= goal;
@@ -1072,8 +1205,8 @@ window.JLPT_DATA.N5.questions = [
       <div class="meter-note">${done ? '<b>✓ 달성</b>' : `${goal - cur}${unit} 남았어요`}</div>
     </div>`;
   }
-  function progress(i, n, label) {
-    return `<div class="sess-top"><span>${label}</span><span class="num">${i + 1} / ${n}</span></div><div class="track thin"><i style="width:${pct(i + 1, n)}%"></i></div>`;
+  function progress(i, n, label, extra) {
+    return `<div class="sess-top"><span>${label}</span><span class="sess-right">${extra || ''}<span class="num">${i + 1} / ${n}</span></span></div><div class="track thin"><i style="width:${pct(i + 1, n)}%"></i></div>`;
   }
   function ddayText() {
     const d = A.diffDays(A.ymd(), A.S.settings.examDate);
@@ -1125,6 +1258,23 @@ window.JLPT_DATA.N5.questions = [
   }
   if (darkQ && typeof darkQ.addEventListener === 'function') darkQ.addEventListener('change', () => { if (themePref === 'system') applyTheme(); });
 
+  /* ---------- XP·레벨 ---------- */
+  function levelPanel() {
+    const xp = A.totalXP(); const L = A.levelOf(xp); const [lo, hi] = A.levelRange(L); const today = A.dayView(A.ymd()).x || 0;
+    return `<section class="panel lv">
+        <div class="lv-row">
+          <div class="lv-badge" role="img" aria-label="레벨 ${L}"><span>Lv</span><b class="num">${L}</b></div>
+          <div class="lv-main">
+            <div class="meter-top"><span>오늘 <b class="num">${today} XP</b></span><span class="muted small num">다음 레벨까지 ${hi - xp} XP</span></div>
+            <div class="track"><i style="width:${pct(xp - lo, hi - lo)}%"></i></div>
+            <div class="meter-note num">누적 ${xp} XP · 배지 ${Object.keys(A.S.badges).length}/${A.BADGES.length}</div>
+          </div>
+        </div>
+      </section>`;
+  }
+  const xpPop = (n) => (n > 0 ? `<span class="xp-pop num" aria-hidden="true">+${n} XP</span>` : '');
+  const comboChip = (n, fx) => (n >= 2 ? `<span class="combo${fx ? ' bump' : ''} num">콤보 ${n}</span>` : '');
+
   /* ---------- 홈 ---------- */
   function vHome() {
     const S = A.S; const t = A.ymd(); const d = A.dayView(t); const g = S.settings;
@@ -1145,6 +1295,7 @@ window.JLPT_DATA.N5.questions = [
         <button type="button" class="hero-link" data-act="go-guide">시험 안내 보기 ›</button>
       </section>
       ${run}
+      ${levelPanel()}
       <section class="panel">
         <div class="panel-head"><h2>오늘 목표</h2><span class="chip">연속 ${streak}일</span></div>
         <p class="muted small">${streakLine}</p>
@@ -1283,6 +1434,7 @@ window.JLPT_DATA.N5.questions = [
         <div class="done-mark sm" aria-hidden="true">✓</div>
         <h2>카드 ${X.ids.length}장 끝!</h2>
         <p class="num">○ 알아요 ${X.k} · × 모름 ${X.u}</p>
+        <p class="xp-earned num">+${X.xp || 0} XP</p>
         <p class="muted small">${X.u ? '모름으로 넘긴 단어는 오답노트에 모아 뒀어요.' : '모두 알고 있었네요. 대단해요!'}</p>
         <div class="stack">
           <button class="btn primary wide" data-act="start-test">이 단어들로 테스트</button>
@@ -1307,16 +1459,17 @@ window.JLPT_DATA.N5.questions = [
       }
       return `<button class="${cls}" data-act="test-pick" data-k="${k}" ${answered ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="${it.dir === 'kj' ? 'jp' : ''}">${esc(o)}</span>${mark}</button>`;
     }).join('');
-    const fb = answered ? `<div class="feedback">${jp(w.w)}${w.r !== w.w ? ` (${jp(w.r)})` : ''} · ${esc(w.m)} ${sayBtn(w.r, '단어')}</div>
+    const fb = answered ? `<div class="feedback">${jp(w.w)}${w.r !== w.w ? ` (${jp(w.r)})` : ''} · ${esc(w.m)} ${sayBtn(w.r, '단어')}${fx ? xpPop(it.xp) : ''}</div>
       <button class="btn primary wide" data-act="test-next">${X.i + 1 < X.items.length ? '다음' : '결과 보기'}</button>
       ${X.i === 0 ? '<p class="swipe-tip">화면을 왼쪽으로 밀어도 넘어가요</p>' : ''}` : '';
-    return `${progress(X.i, X.items.length, X.retry ? '단어 오답 다시 풀기' : '단어 테스트')}${prompt}<div class="opts">${opts}</div>${fb}`;
+    return `${progress(X.i, X.items.length, X.retry ? '단어 오답 다시 풀기' : '단어 테스트', comboChip(X.combo, fx && ok))}${prompt}<div class="opts">${opts}</div>${fb}`;
   }
   function vTestDone() {
     const rows = X.items.map((it) => { const w = A.WMAP.get(it.id); const ok = it.opts[it.picked] === it.ans; return `<li><span class="okmark">${ok ? '○' : '×'}</span>${jp(w.w)} <span class="muted">${w.r !== w.w ? esc(w.r) + ' · ' : ''}${esc(w.m)}</span></li>`; }).join('');
     return `<section class="panel">
         <h2>${X.retry ? '오답 다시 풀기' : '단어 테스트'} 결과</h2>
         <p class="score num">${X.c} / ${X.items.length}</p>
+        <p class="xp-earned num">+${X.xp || 0} XP${X.best >= 3 ? ` · 최고 콤보 ${X.best}` : ''}</p>
         <ul class="result-list">${rows}</ul>
         <p class="muted small">${X.retry ? '맞힌 단어는 오답노트에서 지웠어요.' : '틀린 단어는 오답노트에 모아 뒀어요.'}</p>
         <div class="stack">
@@ -1379,17 +1532,18 @@ window.JLPT_DATA.N5.questions = [
       return `<button class="${cls}" data-act="q-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="jp">${esc(o)}</span>${mark}</button>`;
     }).join('');
     const foot = it.done
-      ? `<div class="explain"><b>${ok ? '○ 맞았어요' : '× 틀렸어요'}</b><p>${esc(q.e)}</p></div>
+      ? `<div class="explain"><b>${ok ? '○ 맞았어요' : '× 틀렸어요'}${fx ? xpPop(it.xp) : ''}</b><p>${esc(q.e)}</p></div>
          <button class="btn primary wide" data-act="q-next">${X.i + 1 < X.items.length ? '다음' : '결과 보기'}</button>
          ${X.i === 0 ? '<p class="swipe-tip">화면을 왼쪽으로 밀어도 넘어가요</p>' : ''}`
       : `<button class="btn primary wide" data-act="q-check" ${it.picked === null ? 'disabled' : ''}>정답 확인</button>`;
-    return `${progress(X.i, X.items.length, `${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} · ${A.QT[q.t]}`)}${questionBlock(q)}<div class="opts">${opts}</div>${foot}`;
+    return `${progress(X.i, X.items.length, `${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} · ${A.QT[q.t]}`, comboChip(X.combo, fx && ok))}${questionBlock(q)}<div class="opts">${opts}</div>${foot}`;
   }
   function vQdone() {
     const rows = X.items.map((it) => { const q = A.QMAP.get(it.id); const ok = it.opts[it.picked] === q.o[0]; return `<li><span class="okmark">${ok ? '○' : '×'}</span><span class="jp">${esc(plain(q.q))}</span> <span class="muted">→ ${esc(q.o[0])}</span></li>`; }).join('');
     return `<section class="panel">
         <h2>${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} 결과</h2>
         <p class="score num">${X.c} / ${X.items.length}</p>
+        <p class="xp-earned num">+${X.xp || 0} XP${X.best >= 3 ? ` · 최고 콤보 ${X.best}` : ''}</p>
         <ul class="result-list">${rows}</ul>
         <div class="stack">
           <button class="btn primary wide" data-act="${X.retry ? 'retry-qs' : 'start-quiz'}">${X.retry ? '남은 오답 다시 풀기' : '10문제 더'}</button>
@@ -1438,6 +1592,7 @@ window.JLPT_DATA.N5.questions = [
         <h2>미니 모의고사 결과</h2>
         <p class="muted small">${when.getMonth() + 1}월 ${when.getDate()}일 ${String(when.getHours()).padStart(2, '0')}:${String(when.getMinutes()).padStart(2, '0')}${r.auto ? ' · 시간이 끝나 자동 제출' : ''}</p>
         <p class="score num">${r.c} / ${r.n} <span class="muted small">(${pct(r.c, r.n)}%)</span></p>
+        ${r.xp ? `<p class="xp-earned num">+${r.xp} XP</p>` : ''}
         <ul class="acc">${by}</ul>
         <p class="muted small">틀린 문항과 답하지 않은 문항은 오답노트에 모아 뒀어요. 문항을 누르면 해설이 열려요.</p>
       </section>
@@ -1493,12 +1648,31 @@ window.JLPT_DATA.N5.questions = [
         <defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><rect class="hatch-bg" width="5" height="5"></rect><rect class="hatch-ln" width="2.2" height="5"></rect></pattern></defs>
         <line class="axis" x1="0" x2="${W}" y1="${base}" y2="${base}"></line>${bars}</svg>`;
   }
+  function weekXP() { const t = A.ymd(); let n = 0; for (let k = 0; k < 7; k++) n += A.dayView(A.addDays(t, -k)).x || 0; return n; }
+  function xpChart() {
+    const t = A.ymd(); const days = []; for (let k = 6; k >= 0; k--) days.push(A.addDays(t, -k));
+    const vals = days.map((d) => A.dayView(d).x || 0);
+    const max = Math.max(20, ...vals);
+    const W = 336, H = 120, top = 18, base = 92, gw = W / 7, bw = 22;
+    const y = (v) => base - ((base - top) * v) / max;
+    const bars = vals.map((v, k) => {
+      const cx = gw * k + gw / 2; const d = days[k]; const [yy, mm, dd] = d.split('-').map(Number);
+      const lab = d === t ? '오늘' : DOW[new Date(yy, mm - 1, dd).getDay()];
+      return `<g><title>${mm}/${dd} ${v} XP</title>${v ? `<rect class="b-x" x="${cx - bw / 2}" y="${y(v)}" width="${bw}" height="${base - y(v)}" rx="5"></rect><text x="${cx}" y="${y(v) - 4}">${v}</text>` : ''}<text class="lab${d === t ? ' today' : ''}" x="${cx}" y="${base + 16}">${lab}</text></g>`;
+    }).join('');
+    return `<svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="최근 7일 XP"><line class="axis" x1="0" x2="${W}" y1="${base}" y2="${base}"></line>${bars}</svg>`;
+  }
+  function badgeGrid() {
+    return `<ul class="badges">${A.BADGES.map((b) => { const at = A.S.badges[b.id]; return `<li class="badge${at ? ' got' : ''}"><span class="bd-ico" aria-hidden="true">${at ? '★' : '☆'}</span><b>${esc(b.name)}</b><span class="muted small">${at ? `${Number(at.slice(5, 7))}/${Number(at.slice(8))} 획득` : esc(b.desc)}</span><span class="sr-only">${at ? '획득함' : '아직 못 얻음'}</span></li>`; }).join('')}</ul>`;
+  }
   function vStats() {
     const S = A.S; const t = A.ymd(); const d = A.dayView(t); const g = S.settings;
     const studyDays = Object.values(S.days).filter((v) => v.w || v.q || v.t).length;
     const wrongN = Object.keys(S.wrong.w).length + Object.keys(S.wrong.q).length;
     const answered = d.q + d.t; const correct = d.qc + d.tc;
+    const xpAll = A.totalXP();
     const tiles = [
+      ['레벨', `Lv ${A.levelOf(xpAll)}`], ['누적 XP', `${xpAll} XP`],
       ['오늘 학습한 단어', `${d.w}개`], ['오늘 푼 문제', `${d.q}문제`],
       ['오늘 정답률', answered ? `${pct(correct, answered)}%` : '-'], ['연속 달성', `${A.streakNow()}일 (최장 ${S.streak.best}일)`],
       ['학습한 날', `${studyDays}일`], ['익힌 단어', `${A.learnedCount()} / ${A.WORDS.length}`], ['오답', `${wrongN}개`]
@@ -1512,10 +1686,13 @@ window.JLPT_DATA.N5.questions = [
       <h1 class="title">기록</h1>
       <section class="tiles">${tiles}</section>
       <section class="panel"><h2>최근 7일</h2>${chart()}</section>
+      <section class="panel"><div class="panel-head"><h2>최근 7일 XP</h2><span class="chip num">${weekXP()} XP</span></div>${xpChart()}</section>
+      <section class="panel"><div class="panel-head"><h2>배지</h2><span class="chip num">${Object.keys(S.badges).length} / ${A.BADGES.length}</span></div>${badgeGrid()}</section>
       ${S.mocks.length ? `<section class="panel"><h2>모의고사 기록</h2><ul class="acc mocks">${mocks}</ul></section>` : ''}
       <section class="panel">
         <h2>화면</h2>
         <div class="seg" role="group" aria-label="화면 밝기">${THEMES.map(([k, l]) => `<button type="button" class="chip-btn${themePref === k ? ' on' : ''}" data-act="theme" data-t="${k}" aria-pressed="${themePref === k}">${themePref === k ? '● ' : ''}${l}</button>`).join('')}</div>
+        <div class="seg two" role="group" aria-label="효과음">${[['on', '효과음 켜기'], ['off', '효과음 끄기']].map(([k, l]) => { const on = (k === 'on') === soundOn; return `<button type="button" class="chip-btn${on ? ' on' : ''}" data-act="sound" data-v="${k}" aria-pressed="${on}">${on ? '● ' : ''}${l}</button>`; }).join('')}</div>
         <p class="muted small">"기기 설정"은 휴대폰의 다크 모드 설정을 따라가요. 위쪽 달·해 버튼으로도 바로 바꿀 수 있고, 이 설정은 이 기기에만 저장돼요.</p>
       </section>
       <section class="panel">
@@ -1565,8 +1742,30 @@ window.JLPT_DATA.N5.questions = [
   function go(v) { view = v; submitAsk = false; resetAsk = false; render(false, 'fade'); }
   function commit() {
     A.save();
-    if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+    announce();
   }
+  /* 목표 달성 축하, 레벨 업, 새 배지를 차례로 알린다 */
+  function announce() {
+    if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+    const got = A.checkBadges();
+    if (got.length) A.save();
+    if (A.levelUpTo) { const L = A.levelUpTo; A.levelUpTo = 0; banner(`레벨 업! 이제 Lv ${L}이에요`, 'level'); }
+    got.forEach((b) => banner(`배지 획득 · ${b.name}`, 'badge'));
+  }
+  const bannerQ = []; let bannerOn = false;
+  function banner(text, kind) { bannerQ.push([text, kind]); if (!bannerOn) nextBanner(); }
+  function nextBanner() {
+    const el = document.getElementById('banner');
+    const item = bannerQ.shift();
+    if (!el || !item) { bannerOn = false; if (el) el.hidden = true; return; }
+    bannerOn = true;
+    el.className = 'banner ' + item[1];
+    el.innerHTML = `<span class="b-ico" aria-hidden="true">${item[1] === 'level' ? '▲' : '★'}</span><span>${esc(item[0])}</span>`;
+    el.hidden = false;
+    sfx(item[1]);
+    setTimeout(nextBanner, 2400);
+  }
+  A.announce = announce;
 
   let toastTimer = 0;
   function toast(msg) {
@@ -1585,34 +1784,49 @@ window.JLPT_DATA.N5.questions = [
         <h2 id="cel-t">오늘 목표를 채웠어요</h2>
         <p class="jp muted">お疲れさまでした</p>
         <p class="streak-big num">연속 ${A.streakNow()}일</p>
-        <p class="muted">단어 ${d.w}개 · 문제 ${d.q}문제</p>
+        <p class="muted">단어 ${d.w}개 · 문제 ${d.q}문제 · 보너스 +10 XP</p>
         <button class="btn primary wide" data-act="close-overlay">계속하기</button>
       </div>`;
     $overlay.hidden = false;
+    sfx('done');
     buzz([15, 50, 15]);
     const b = $overlay.querySelector('button'); if (b) b.focus();
   }
 
   /* ---------- 세션 시작 ---------- */
-  function startCards() { X = { kind: 'cards', ids: A.buildCards(10), i: 0, flip: false, k: 0, u: 0, from: 'words', anim: 'card-in' }; go('cards'); }
+  function startCards() { X = { kind: 'cards', ids: A.buildCards(10), i: 0, flip: false, k: 0, u: 0, xp: 0, from: 'words', anim: 'card-in' }; go('cards'); }
   function startTest(ids, retry) {
     const list = ids && ids.length ? ids : A.buildTestIds(10);
-    X = { kind: 'test', items: A.makeTest(list), i: 0, c: 0, retry: !!retry, from: retry ? 'notes' : 'words' };
+    X = { kind: 'test', items: A.makeTest(list), i: 0, c: 0, xp: 0, combo: 0, best: 0, retry: !!retry, from: retry ? 'notes' : 'words' };
     go('test');
   }
   function startQuiz(retry) {
     const items = retry ? A.buildQuiz('all', 10, Object.keys(A.S.wrong.q)) : A.buildQuiz(quizType, 10);
     if (!items.length) { toast('풀 문제가 없어요.'); return; }
-    X = { kind: 'quiz', items, i: 0, c: 0, retry: !!retry, from: retry ? 'notes' : 'quiz' };
+    X = { kind: 'quiz', items, i: 0, c: 0, xp: 0, combo: 0, best: 0, retry: !!retry, from: retry ? 'notes' : 'quiz' };
     go('qsess');
+  }
+
+  /* 정답 처리 공통: 콤보를 세고 5콤보마다 보너스 +5 XP */
+  function scoreAnswer(it, ok, xp) {
+    it.fx = true;
+    it.xp = xp;
+    if (ok) {
+      X.combo = (X.combo || 0) + 1;
+      X.best = Math.max(X.best || 0, X.combo);
+      if (X.combo % 5 === 0) { const b = A.addXP(5); it.xp += b; toast(`${X.combo}콤보! 보너스 +${b} XP`); sfx('combo'); } else sfx('ok');
+    } else { X.combo = 0; sfx('bad'); }
+    X.xp += it.xp;
+    buzz(ok ? 12 : [10, 60, 10]);
   }
 
   /* ---------- 카드 넘기기: 왼쪽 = 알아요, 오른쪽 = 모름 ---------- */
   function flyCard(known) {
     if (busy || !X || X.kind !== 'cards') return;
     const sess = X;
-    A.gradeCard(sess.ids[sess.i], known);
+    sess.xp += A.gradeCard(sess.ids[sess.i], known);
     if (known) sess.k++; else sess.u++;
+    sfx('card');
     buzz(8);
     commit();
     const next = () => {
@@ -1734,8 +1948,7 @@ window.JLPT_DATA.N5.questions = [
       const it = X.items[X.i]; if (it.picked !== null) return;
       it.picked = Number(el.dataset.k);
       const ok = it.opts[it.picked] === it.ans; if (ok) X.c++;
-      it.fx = true; buzz(ok ? 12 : [10, 60, 10]);
-      A.answerTest(it.id, ok); commit(); render(true);
+      scoreAnswer(it, ok, A.answerTest(it.id, ok)); commit(); render(true);
     },
     'test-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(false, 'next'); } else go('testDone'); },
     qtype: (el) => { quizType = el.dataset.t; render(true); },
@@ -1743,8 +1956,7 @@ window.JLPT_DATA.N5.questions = [
     'q-check': () => {
       const it = X.items[X.i]; if (it.done || it.picked === null) return;
       it.done = true; const ok = it.opts[it.picked] === A.QMAP.get(it.id).o[0]; if (ok) X.c++;
-      it.fx = true; buzz(ok ? 12 : [10, 60, 10]);
-      A.answerQ(it.id, ok); commit(); render(true);
+      scoreAnswer(it, ok, A.answerQ(it.id, ok)); commit(); render(true);
     },
     'q-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(false, 'next'); } else go('qdone'); },
     'start-mock': () => { A.startMock(); X = null; go('mock'); },
@@ -1761,7 +1973,7 @@ window.JLPT_DATA.N5.questions = [
     },
     'm-submit': () => { submitAsk = true; render(true); },
     'm-submit-no': () => { submitAsk = false; render(true); },
-    'm-submit-yes': () => { lastMock = A.finishMock(false); if (A.celebrate) { A.celebrate = false; showCelebrate(); } go('mockres'); },
+    'm-submit-yes': () => { lastMock = A.finishMock(false); sfx('done'); announce(); go('mockres'); },
     'show-last-mock': () => { lastMock = A.S.mocks[0] || null; X = null; go('mockres'); },
     'retry-words': () => { const ids = Object.entries(A.S.wrong.w).sort((a, b) => b[1].n - a[1].n).slice(0, 10).map(([id]) => id); if (!ids.length) { toast('틀린 단어가 없어요.'); go('notes'); return; } startTest(ids, true); },
     'retry-qs': () => { if (!Object.keys(A.S.wrong.q).length) { toast('틀린 문제가 없어요.'); go('notes'); return; } startQuiz(true); },
@@ -1772,11 +1984,12 @@ window.JLPT_DATA.N5.questions = [
     'reset-yes': () => { A.resetAll(); resetAsk = false; X = null; lastMock = null; toast('기록을 모두 지웠어요.'); render(true); },
     'theme-toggle': () => { setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'); if (view === 'stats') render(true); },
     theme: (el) => { setTheme(el.dataset.t); render(true); },
+    sound: (el) => { setSound(el.dataset.v === 'on'); if (soundOn) sfx('ok'); render(true); },
     speak: (el) => speak(el.dataset.say || ''),
     'close-overlay': closeOverlay
   };
   A.speak = (text) => speak(text);
-  A.feedback = (ok) => buzz(ok ? 12 : [10, 60, 10]);
+  A.feedback = (ok) => { sfx(ok ? 'ok' : 'bad'); buzz(ok ? 12 : [10, 60, 10]); };
   function speak(text) {
     if (!canSpeak || !text) return;
     try {
@@ -1807,7 +2020,7 @@ window.JLPT_DATA.N5.questions = [
     if (!Number.isInteger(gq) || gq < 5 || gq > 50) { settingsMsg = '하루 문제 목표는 5에서 50 사이로 정해 주세요.'; render(true); return; }
     A.applySettings(exam, gw, gq);
     settingsMsg = '설정을 저장했어요.';
-    if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+    announce();
     render(true);
   });
   document.addEventListener('keydown', (e) => {
@@ -1822,7 +2035,7 @@ window.JLPT_DATA.N5.questions = [
     const left = run.deadline - Date.now();
     if (left <= 0) {
       lastMock = A.finishMock(true);
-      if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+      announce();
       if (view === 'mock') go('mockres');
       else { toast('모의고사 시간이 끝나 자동으로 제출했어요.'); if (!X) render(true); }
       return;
@@ -1834,6 +2047,8 @@ window.JLPT_DATA.N5.questions = [
   A.onSyncMode = () => renderChrome();
   A.onRemote = () => { if (!X && view !== 'mock') render(true); else renderChrome(); };
   applyTheme();
+  if (A.checkBadges().length) A.save();
+  A.levelUpTo = 0;
   render();
   A.initSync();
 })();
@@ -1943,7 +2158,7 @@ window.JLPT_DATA.N5.questions = [
   function vQuiz() {
     const it = quiz.items[quiz.i];
     if (!it) {
-      return `<div class="panel center"><h3 class="kana-sub">${quiz.sc === 'h' ? '히라가나' : '가타카나'} 퀴즈 결과</h3><p class="score num">${quiz.c} / ${quiz.items.length}</p>
+      return `<div class="panel center"><h3 class="kana-sub">${quiz.sc === 'h' ? '히라가나' : '가타카나'} 퀴즈 결과</h3><p class="score num">${quiz.c} / ${quiz.items.length}</p>${quiz.xp ? `<p class="xp-earned num">+${quiz.xp} XP</p>` : ''}
         <p class="muted small">${quiz.c === quiz.items.length ? '모두 맞혔어요!' : '틀린 글자는 표에서 한 번 더 눌러 들어 보세요.'}</p></div>
         <div class="stack"><button type="button" class="btn primary wide" data-kana="quiz">한 번 더</button><button type="button" class="btn ghost wide" data-kana="table">표로 돌아가기</button></div>`;
     }
@@ -2007,7 +2222,16 @@ window.JLPT_DATA.N5.questions = [
       if (A.feedback) A.feedback(ok);
       if (A.speak) A.speak(it.k);
       render();
-    } else if (act === 'next' && quiz) { quiz.i++; quiz.picked = null; render(); }
+    } else if (act === 'next' && quiz) {
+      quiz.i++; quiz.picked = null;
+      if (quiz.i >= quiz.items.length && !quiz.saved) {
+        quiz.saved = true;
+        quiz.xp = A.recordKana ? A.recordKana(quiz.sc, quiz.c, quiz.items.length) : 0;
+        if (A.save) A.save();
+        if (A.announce) A.announce();
+      }
+      render();
+    }
   });
   document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && root.classList.contains('open')) { e.stopImmediatePropagation(); close(); } }, true);
 })();

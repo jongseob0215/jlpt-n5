@@ -354,6 +354,7 @@ details.tr summary { cursor: pointer; font-size: 13px; font-weight: 700; color: 
 .script { list-style: none; margin: 6px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
 .script li { display: flex; gap: 8px; align-items: baseline; }
 .script li b { flex: none; width: 20px; font-family: var(--f-jp); }
+.exam-sum { border: 2px solid var(--ink); border-radius: 14px; padding: 10px 12px; display: flex; flex-direction: column; gap: 4px; }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1446,6 +1447,17 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
    e:"교실이 아니라 도서관이고, 9시에 도서관 앞으로 오라고 했어요.",
    tr:"선생님: 여러분, 내일은 도서관에서 공부해요. 교실이 아니에요. 9시에 도서관 앞으로 오세요."},
 
+  {id:"lt07",t:"lt",set:"電話で 女の 人と 男の 人が 話して います。",ask:"男の 人は 何を 買って 帰りますか。",
+   s:[["F","もしもし、今 どこですか。"],["M","駅の 前の スーパーです。何か 要りますか。"],["F","牛乳と パンを お願いします。あ、パンは まだ ありました。牛乳だけで いいです。"],["M","卵は？"],["F","卵は きのう 買いましたから、大丈夫です。"]],
+   o:["牛乳","牛乳と パン","パンと 卵","牛乳と 卵"],
+   e:"빵은 아직 있고 달걀은 어제 샀으니 우유만 사요. 「~だけで いい」는 '~만 있으면 된다'예요.",
+   tr:"여자: 여보세요, 지금 어디예요? / 남자: 역 앞 슈퍼예요. 뭐 필요해요? / 여자: 우유랑 빵 부탁해요. 아, 빵은 아직 있었어요. 우유만 있으면 돼요. / 남자: 달걀은? / 여자: 달걀은 어제 샀으니까 괜찮아요."},
+
+  {id:"lp06",t:"lp",set:"女の 人と 男の 人が 話して います。",ask:"男の 人は 毎朝 何時に 起きますか。",
+   s:[["F","毎朝 何時に 起きますか。"],["M","六時半です。七時半に 家を 出ます。"],["F","早いですね。わたしは 七時に 起きます。"]],
+   o:["六時半","七時","七時半","六時"],
+   e:"남자는 6시 반에 일어나고 7시 반에 집을 나서요. 7시에 일어나는 사람은 여자예요.",
+   tr:"여자: 매일 아침 몇 시에 일어나요? / 남자: 6시 반이요. 7시 반에 집을 나서요. / 여자: 이르네요. 저는 7시에 일어나요."},
   {id:"lp01",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は どうして きのう 学校を 休みましたか。",
    s:[["M","きのう 学校に 来ませんでしたね。風邪ですか。"],["F","いいえ、風邪じゃ ありません。母が 病院へ 行きましたから、弟と 家に いました。"],["M","そうですか。お母さんは 大丈夫ですか。"],["F","はい、もう 元気です。"]],
    o:["お母さんが 病院へ 行ったから","風邪を ひいたから","弟が 病気だったから","自分が 病院へ 行ったから"],
@@ -1542,6 +1554,12 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   /* JLPT N5 언어지식(문자·어휘) 공식 구성: 한자 읽기 7, 표기 5, 문맥 규정 6, 유의 표현 3, 20분 */
   App.MOCK_PLAN = [['kr', 7], ['pk', 5], ['cx', 6], ['pa', 3]];
   App.MOCK_MIN = 20;
+  /* 실전 모의고사: JLPT N5 공식 구성(교시별 시간, 대문항별 문항 수) */
+  App.FULL_PLAN = [
+    { name: '1교시 · 언어지식(문자·어휘)', min: 20, plan: [['kr', 7], ['pk', 5], ['cx', 6], ['pa', 3]] },
+    { name: '2교시 · 언어지식(문법)·독해', min: 40, plan: [['gr', 9], ['so', 4], ['bp', 4], ['rs', 2], ['rm', 2], ['ri', 1]] },
+    { name: '3교시 · 청해', min: 30, plan: [['lt', 7], ['lp', 6], ['le', 5], ['lr', 6]] }
+  ];
   const KEY = 'jlpt-n5-study-v1';
   const BADGE_IDS = new Set(['first', 'goal1', 's3', 's7', 's30', 'w50', 'w150', 'wall', 'l30', 'l100', 'q100', 'm1', 'm80', 'mAll', 'kh', 'kk', 'x500', 'x2000']);
 
@@ -1623,6 +1641,8 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
       s.mocks = raw.mocks.filter((m) => m && Array.isArray(m.items)).slice(0, 20).map((m) => ({
         at: Number(m.at) || 0, c: clampInt(m.c, 0, 100, 0), n: clampInt(m.n, 1, 100, 1), auto: !!m.auto,
         by: m.by && typeof m.by === 'object' ? m.by : {},
+        kind: m.kind === 'full' ? 'full' : 'mini',
+        secs: Array.isArray(m.secs) ? m.secs.filter((x) => Array.isArray(x) && x.length === 2).map(([c, n]) => [clampInt(c, 0, 100, 0), clampInt(n, 1, 100, 1)]) : [],
         items: m.items.filter((it) => Array.isArray(it) && App.QMAP.has(it[0])).map((it) => [it[0], typeof it[1] === 'string' ? it[1] : null, it[2] ? 1 : 0])
       }));
     }
@@ -1633,7 +1653,12 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
       if (ok) {
         const ans = {};
         for (const [id, v] of Object.entries(r.ans || {})) if (r.ids.includes(id) && typeof v === 'string') ans[id] = v;
-        s.run = { ids: r.ids.slice(), opts, ans, deadline: r.deadline, i: clampInt(r.i, 0, r.ids.length - 1, 0) };
+        const n = r.ids.length;
+        let secs = Array.isArray(r.secs) ? r.secs.filter((x) => Array.isArray(x) && x.length === 3).map(([a, b, m]) => [clampInt(a, 0, n, 0), clampInt(b, 0, n, n), clampInt(m, 1, 120, 20)]) : [];
+        const valid = secs.length > 0 && secs[0][0] === 0 && secs[secs.length - 1][1] === n && secs.every((x, k) => x[0] < x[1] && (k === 0 || x[0] === secs[k - 1][1]));
+        if (!valid) secs = [[0, n, App.MOCK_MIN]];
+        const si = clampInt(r.si, 0, secs.length - 1, 0);
+        s.run = { kind: r.kind === 'full' && secs.length === App.FULL_PLAN.length ? 'full' : 'mini', ids: r.ids.slice(), opts, ans, secs, si, brk: !!r.brk, deadline: r.deadline, i: clampInt(r.i, secs[si][0], secs[si][1] - 1, secs[si][0]) };
       }
     }
     for (const [id, at] of Object.entries(raw.badges || {})) if (BADGE_IDS.has(id) && isDate(at)) s.badges[id] = at;
@@ -1855,12 +1880,37 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   };
 
   /* ---------- 미니 모의고사 ---------- */
-  App.startMock = function () {
-    const ids = [];
-    for (const [t, k] of App.MOCK_PLAN) App.shuffle(App.QS.filter((q) => q.t === t)).slice(0, k).forEach((q) => ids.push(q.id));
+  /* 글이 있는 유형(글의 문법·중문)은 글 하나를 골라 그 글의 문항을 순서대로 낸다 */
+  function pickType(t, k) {
+    const pool = App.QS.filter((q) => q.t === t);
+    if (t === 'bp' || t === 'rm') {
+      const groups = [...new Set(pool.map((q) => q.g))];
+      const g = App.shuffle(groups).find((x) => pool.filter((q) => q.g === x).length >= k) || groups[0];
+      return pool.filter((q) => q.g === g).sort((a, b) => (a.n || 0) - (b.n || 0) || a.id.localeCompare(b.id)).slice(0, k);
+    }
+    return App.shuffle(pool).slice(0, k);
+  }
+  App.startMock = function (kind) {
+    const plan = kind === 'full' ? App.FULL_PLAN : [{ name: '문자·어휘', min: App.MOCK_MIN, plan: App.MOCK_PLAN }];
+    const ids = []; const secs = [];
+    for (const sec of plan) { const from = ids.length; for (const [t, k] of sec.plan) pickType(t, k).forEach((q) => ids.push(q.id)); secs.push([from, ids.length, sec.min]); }
     const opts = {};
     ids.forEach((id) => { opts[id] = App.shuffle(App.QMAP.get(id).o); });
-    App.S.run = { ids, opts, ans: {}, deadline: Date.now() + App.MOCK_MIN * 60000, i: 0 };
+    App.S.run = { kind: kind === 'full' ? 'full' : 'mini', ids, opts, ans: {}, secs, si: 0, brk: false, deadline: Date.now() + secs[0][2] * 60000, i: 0 };
+    App.save();
+  };
+  App.secName = (run, si) => (run.kind === 'full' && App.FULL_PLAN[si] ? App.FULL_PLAN[si].name : '문자·어휘');
+  /* 지금 교시를 제출한다. 다음 교시가 있으면 쉬는 시간으로 넘기고 null, 마지막이면 채점 결과를 돌려준다 */
+  App.submitSection = function (auto) {
+    const run = App.S.run;
+    if (!run) return null;
+    if (run.si < run.secs.length - 1) { run.si++; run.brk = true; run.i = run.secs[run.si][0]; App.save(); return null; }
+    return App.finishMock(auto);
+  };
+  App.startSection = function () {
+    const run = App.S.run;
+    if (!run || !run.brk) return;
+    run.brk = false; run.i = run.secs[run.si][0]; run.deadline = Date.now() + run.secs[run.si][2] * 60000;
     App.save();
   };
   App.finishMock = function (auto) {
@@ -1878,7 +1928,8 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
       items.push([id, my, ok ? 1 : 0]);
     }
     xp += App.addXP(10);
-    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto, xp };
+    const secs = (run.secs || [[0, run.ids.length, App.MOCK_MIN]]).map(([a, b]) => { let k = 0; for (let x = a; x < b; x++) if (items[x][2]) k++; return [k, b - a]; });
+    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto, xp, kind: run.kind === 'full' ? 'full' : 'mini', secs };
     App.S.mocks.unshift(res);
     App.S.mocks = App.S.mocks.slice(0, 20);
     App.S.run = null;
@@ -2099,7 +2150,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     else if (d.w > 0) label = '단어 카드 이어서 하기';
     const streakLine = d.g ? '오늘 목표 완료! お疲れさま' : streak > 0 ? `오늘도 다 채우면 연속 ${streak + 1}일이 돼요` : '다 채우면 연속 1일이 시작돼요';
     const [hiJ, hiK] = greeting();
-    const run = S.run ? `<div class="notice"><div><b>풀던 모의고사가 있어요</b><br><span class="muted">남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span></span></div><button class="btn sm" data-act="resume-mock">이어서 풀기</button></div>` : '';
+    const run = S.run ? `<div class="notice"><div><b>풀던 ${S.run.kind === 'full' ? '실전' : '미니'} 모의고사가 있어요</b><br><span class="muted">${S.run.brk ? '쉬는 시간이에요' : `남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span>`}</span></div><button class="btn sm" data-act="resume-mock">이어서 풀기</button></div>` : '';
     return `
       <section class="hero">
         <p class="hello"><span class="jp">${hiJ}</span>${hiK}</p>
@@ -2338,14 +2389,14 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
       return `<li><span>${A.QT[t]}</span><span class="num">${n ? pct(c, n) + '%' : '-'}</span><span class="muted num">${n}회</span></li>`;
     }).join('');
     const mock = S.run
-      ? `<p><b>푸는 중</b> · 남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span></p><button class="btn primary wide" data-act="resume-mock">이어서 풀기</button>`
-      : `<button class="btn primary wide" data-act="start-mock">모의고사 시작 (21문항 · 20분)</button>`;
+      ? `<p><b>${S.run.kind === 'full' ? '실전' : '미니'} 모의고사 푸는 중</b> · ${S.run.brk ? '쉬는 시간' : `남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span>`}</p><button class="btn primary wide" data-act="resume-mock">이어서 풀기</button>`
+      : `<button class="btn primary wide" data-act="start-mock" data-kind="full">실전 모의고사 (3교시 · 67문항 · 90분)</button><button class="btn wide" data-act="start-mock" data-kind="mini">미니 모의고사 (문자·어휘 · 21문항 · 20분)</button>`;
     const last = S.mocks.length ? `<button class="btn ghost wide" data-act="show-last-mock">지난 결과 보기 · <span class="num">${S.mocks[0].c} / ${S.mocks[0].n}</span></button>` : '';
     return `
       <h1 class="title">문제</h1>
       <section class="panel">
-        <h2>문자·어휘 미니 모의고사</h2>
-        <p class="muted small">JLPT N5 언어지식(문자·어휘)과 같은 구성으로 한자 읽기 7, 표기 5, 문맥 규정 6, 유의 표현 3문항을 20분 안에 풀어요. 결과는 정답 수라서 실제 시험의 척도 점수와는 달라요.</p>
+        <h2>모의고사</h2>
+        <p class="muted small">실전 모의고사는 JLPT N5와 같은 구성이에요. 1교시 문자·어휘 20분, 2교시 문법·독해 40분, 3교시 청해 30분이고, 교시를 제출하면 쉬는 시간 뒤에 다음 교시를 시작해요. 미니 모의고사는 1교시만 풀어요. 결과는 정답 수라서 실제 시험의 척도 점수와는 달라요.</p>
         ${mock}${last}
       </section>
       <section class="panel">
@@ -2366,6 +2417,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   }
   /* ---------- 청해: 기기 음성으로 대화를 읽는다 ---------- */
   let lsToken = 0; let lsPlaying = false; let lsSlow = false;
+  const mockPlayed = new Set();
   const jaVoices = () => { try { return window.speechSynthesis.getVoices().filter((v) => /^ja/i.test(v.lang)); } catch (e) { return []; } };
   /* 음성 목록을 아직 못 받았으면 쓸 수 있다고 보고, 받았는데 일본어 음성이 없으면 대본을 보여 준다 */
   const jaReady = () => { if (!canSpeak) return false; try { const all = window.speechSynthesis.getVoices(); return !all.length || all.some((v) => /^ja/i.test(v.lang)); } catch (e) { return false; } };
@@ -2405,7 +2457,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   }
   function currentListen() {
     if (view === 'qsess' && X && X.kind === 'quiz') { const it = X.items[X.i]; const q = it && A.QMAP.get(it.id); if (q && A.LISTEN.has(q.t)) return { q, opts: it.opts, it }; }
-    if (view === 'mock' && A.S.run) { const run = A.S.run; const id = run.ids[run.i]; const q = A.QMAP.get(id); if (q && A.LISTEN.has(q.t)) return { q, opts: run.opts[id], it: null }; }
+    if (view === 'mock' && A.S.run && !A.S.run.brk) { const run = A.S.run; const id = run.ids[run.i]; const q = A.QMAP.get(id); if (q && A.LISTEN.has(q.t)) return { q, opts: run.opts[id], it: null }; }
     return null;
   }
   function playCurrent() { const c = currentListen(); if (c) playLines(scriptLines(c.q, c.opts)); }
@@ -2500,21 +2552,35 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   function vMock() {
     const run = A.S.run;
     if (!run) return vQuiz();
+    const [from, to, min] = run.secs[run.si];
+    const title = run.kind === 'full' ? '실전 모의고사' : '미니 모의고사';
+    const lastSec = run.si === run.secs.length - 1;
+    if (run.brk) {
+      const done = run.secs.slice(0, run.si).map((x, k) => `<li><span>${esc(A.secName(run, k))}</span><span>✓ 제출함</span><span></span></li>`).join('');
+      return `<section class="panel center">
+          <div class="done-mark sm" aria-hidden="true">✓</div>
+          <h2>${esc(A.secName(run, run.si - 1))} 끝!</h2>
+          <p class="muted small">잠깐 쉬어도 괜찮아요. 다음은 ${esc(A.secName(run, run.si))}, ${to - from}문항 ${min}분이에요. 시작 버튼을 누르면 시간이 흘러요.</p>
+          <ul class="acc">${done}</ul>
+          <button class="btn primary wide" data-act="m-start-sec">${run.si + 1}교시 시작</button>
+        </section>`;
+    }
     const id = run.ids[run.i]; const q = A.QMAP.get(id); const opts = run.opts[id];
     const picked = Object.prototype.hasOwnProperty.call(run.ans, id) ? run.ans[id] : null;
-    const answered = run.ids.filter((x) => Object.prototype.hasOwnProperty.call(run.ans, x)).length;
-    const optHtml = opts.map((o, k) => `<button class="opt${o === picked ? ' picked' : ''}" data-act="m-pick" data-k="${k}"><span class="no">${NUM[k]}</span><span class="jp">${esc(o)}</span>${o === picked ? '<span class="mark">선택</span>' : ''}</button>`).join('');
-    const grid = run.ids.map((x, k) => { const has = Object.prototype.hasOwnProperty.call(run.ans, x); return `<button class="gnum${has ? ' has' : ''}${k === run.i ? ' cur' : ''}" data-act="m-go" data-i="${k}" aria-label="${k + 1}번${has ? ' 답함' : ' 안 답함'}">${k + 1}</button>`; }).join('');
-    const left = run.ids.length - answered;
+    const secIds = run.ids.slice(from, to);
+    const answered = secIds.filter((x) => Object.prototype.hasOwnProperty.call(run.ans, x)).length;
+    const optHtml = opts.map((o, k) => `<button class="opt${o === picked ? ' picked' : ''}" data-act="m-pick" data-k="${k}"><span class="no">${NUM[k]}</span><span class="jp">${hideOpt(q, false) ? '<span class="muted">소리로 듣는 보기</span>' : esc(o)}</span>${o === picked ? '<span class="mark">선택</span>' : ''}</button>`).join('');
+    const grid = secIds.map((x, k) => { const has = Object.prototype.hasOwnProperty.call(run.ans, x); const gi = from + k; return `<button class="gnum${has ? ' has' : ''}${gi === run.i ? ' cur' : ''}" data-act="m-go" data-i="${gi}" aria-label="${k + 1}번${has ? ' 답함' : ' 안 답함'}">${k + 1}</button>`; }).join('');
+    const left = secIds.length - answered;
     const submit = submitAsk
-      ? `<div class="confirm"><p>${left ? `답하지 않은 문항이 ${left}개 있어요. 답하지 않은 문항은 틀린 것으로 처리돼요.` : '모든 문항에 답했어요.'} 제출할까요?</p><div class="row2"><button class="btn" data-act="m-submit-no">계속 풀기</button><button class="btn primary" data-act="m-submit-yes">제출</button></div></div>`
-      : `<button class="btn wide" data-act="m-submit">제출하기 · <span class="num">${answered}/${run.ids.length}</span> 답함</button>`;
+      ? `<div class="confirm"><p>${left ? `답하지 않은 문항이 ${left}개 있어요. 답하지 않은 문항은 틀린 것으로 처리돼요.` : '모든 문항에 답했어요.'} ${lastSec ? '제출할까요?' : '이 교시를 제출하면 다시 돌아올 수 없어요. 제출할까요?'}</p><div class="row2"><button class="btn" data-act="m-submit-no">계속 풀기</button><button class="btn primary" data-act="m-submit-yes">제출</button></div></div>`
+      : `<button class="btn wide" data-act="m-submit">${run.kind === 'full' ? (lastSec ? '마지막 교시 제출' : '이 교시 제출') : '제출하기'} · <span class="num">${answered}/${secIds.length}</span> 답함</button>`;
     return `
-      <div class="mock-bar"><span>미니 모의고사</span><span class="timer num" id="mock-timer">${mmss(run.deadline - Date.now())}</span></div>
-      <div class="sess-top"><span>${A.QT[q.t]}</span><span class="num">${run.i + 1} / ${run.ids.length}</span></div>
-      ${questionBlock(q)}
+      <div class="mock-bar"><span>${title}${run.kind === 'full' ? ` · ${run.si + 1}교시` : ''}</span><span class="timer num" id="mock-timer">${mmss(run.deadline - Date.now())}</span></div>
+      <div class="sess-top"><span>${A.QT[q.t]}</span><span class="num">${run.i - from + 1} / ${secIds.length}</span></div>
+      ${questionBlock(q, false)}
       <div class="opts">${optHtml}</div>
-      <div class="row2"><button class="btn" data-act="m-prev" ${run.i === 0 ? 'disabled' : ''}>‹ 이전</button><button class="btn" data-act="m-next" ${run.i === run.ids.length - 1 ? 'disabled' : ''}>다음 ›</button></div>
+      <div class="row2"><button class="btn" data-act="m-prev" ${run.i === from ? 'disabled' : ''}>‹ 이전</button><button class="btn" data-act="m-next" ${run.i === to - 1 ? 'disabled' : ''}>다음 ›</button></div>
       <div class="grid" aria-label="문항 목록">${grid}</div>
       <p class="muted small">진하게 칠한 번호는 답한 문항이에요. 화면을 좌우로 밀어도 문항을 옮길 수 있고, 시간이 끝나면 자동으로 제출돼요.</p>
       ${submit}`;
@@ -2522,22 +2588,31 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   function vMockres() {
     const r = lastMock || A.S.mocks[0];
     if (!r) return vQuiz();
-    const by = A.MOCK_PLAN.map(([t]) => { const v = r.by[t] || [0, 0]; return `<li><span>${A.QT[t]}</span><span class="num">${v[0]} / ${v[1]}</span></li>`; }).join('');
+    const types = [...new Set(r.items.map(([id]) => A.QMAP.get(id).t))];
+    const by = types.map((t) => { const v = r.by[t] || [0, 0]; return `<li><span>${A.QT[t]}</span><span class="num">${v[0]} / ${v[1]}</span><span></span></li>`; }).join('');
+    const full = r.kind === 'full' && Array.isArray(r.secs) && r.secs.length === A.FULL_PLAN.length;
+    const secHtml = full ? (() => {
+      const [s1, s2, s3] = r.secs; const lc = s1[0] + s2[0], ln = s1[1] + s2[1];
+      return `<ul class="acc">${r.secs.map(([c, n], k) => `<li><span>${esc(A.FULL_PLAN[k].name)}</span><span class="num">${c} / ${n}</span><span class="muted num">${pct(c, n)}%</span></li>`).join('')}</ul>
+        <div class="exam-sum"><p><b>득점 구분으로 묶으면</b></p><p class="num">언어지식·독해 ${lc} / ${ln} (${pct(lc, ln)}%) · 청해 ${s3[0]} / ${s3[1]} (${pct(s3[0], s3[1])}%)</p>
+        <p class="muted small">실제 시험은 언어지식·독해 0~120점, 청해 0~60점의 척도 점수라서 정답 비율로 바로 바꿀 수 없어요. 합격하려면 총점 80점 이상, 그리고 기준점(38점·19점)을 넘어야 해요. 두 구분 모두 고르게 맞히는 연습이 중요해요.</p></div>`;
+    })() : '';
     const items = r.items.map(([id, my, ok], k) => {
       const q = A.QMAP.get(id);
       return `<details class="ritem"><summary><span class="okmark">${ok ? '○' : '×'}</span><span class="num">${k + 1}.</span> ${A.QT[q.t]} <span class="jp muted">${esc(plain(q.q).slice(0, 40))}</span></summary>
-        ${questionBlock(q)}
+        ${questionBlock(q, true)}
         <p>내 답: ${my === null ? '<b>답하지 않음</b>' : `<span class="jp">${esc(my)}</span>`}</p>
         <p>정답: <b class="jp">${esc(q.o[0])}</b></p>
         <p class="muted">${esc(q.e)}</p></details>`;
     }).join('');
     const when = new Date(r.at);
     return `<section class="panel">
-        <h2>미니 모의고사 결과</h2>
+        <h2>${full ? '실전' : '미니'} 모의고사 결과</h2>
         <p class="muted small">${when.getMonth() + 1}월 ${when.getDate()}일 ${String(when.getHours()).padStart(2, '0')}:${String(when.getMinutes()).padStart(2, '0')}${r.auto ? ' · 시간이 끝나 자동 제출' : ''}</p>
         <p class="score num">${r.c} / ${r.n} <span class="muted small">(${pct(r.c, r.n)}%)</span></p>
         ${r.xp ? `<p class="xp-earned num">+${r.xp} XP</p>` : ''}
-        <ul class="acc">${by}</ul>
+        ${secHtml}
+        <details class="tr"${full ? '' : ' open'}><summary>유형별 정답 수</summary><ul class="acc">${by}</ul></details>
         <p class="muted small">틀린 문항과 답하지 않은 문항은 오답노트에 모아 뒀어요. 문항을 누르면 해설이 열려요.</p>
       </section>
       <section class="panel">${items}</section>
@@ -2621,7 +2696,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
       ['오늘 정답률', answered ? `${pct(correct, answered)}%` : '-'], ['연속 달성', `${A.streakNow()}일 (최장 ${S.streak.best}일)`],
       ['학습한 날', `${studyDays}일`], ['익힌 단어', `${A.learnedCount()} / ${A.WORDS.length}`], ['오답', `${wrongN}개`]
     ].map(([k, v]) => `<div class="tile"><span class="muted small">${k}</span><b class="num">${v}</b></div>`).join('');
-    const mocks = S.mocks.slice(0, 5).map((m, k) => { const dt = new Date(m.at); return `<li><span>${dt.getMonth() + 1}/${dt.getDate()}</span><span class="num">${m.c} / ${m.n}</span><span class="num muted">${pct(m.c, m.n)}%</span>${k === 0 ? '<button class="del" data-act="show-last-mock">보기</button>' : '<span></span>'}</li>`; }).join('');
+    const mocks = S.mocks.slice(0, 5).map((m, k) => { const dt = new Date(m.at); return `<li><span>${dt.getMonth() + 1}/${dt.getDate()} ${m.kind === 'full' ? '실전' : '미니'}</span><span class="num">${m.c} / ${m.n}</span><span class="num muted">${pct(m.c, m.n)}%</span>${k === 0 ? '<button class="del" data-act="show-last-mock">보기</button>' : '<span></span>'}</li>`; }).join('');
     const reset = resetAsk
       ? `<div class="confirm"><p>단어 진도, 문제 기록, 오답노트, 연속 달성, 모의고사 기록이 모두 지워져요. 시험일과 목표 설정은 남아요.</p><div class="row2"><button class="btn" data-act="reset-no">취소</button><button class="btn danger" data-act="reset-yes">모두 지우기</button></div></div>`
       : `<button class="btn ghost wide" data-act="reset-ask">기록 초기화</button>`;
@@ -2679,6 +2754,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     if (!keepScroll) $main.scrollTop = 0;
     const lc = currentListen();
     if (lc && lc.it && !lc.it.played && jaReady()) { lc.it.played = true; playCurrent(); }
+    else if (lc && !lc.it && A.S.run && !A.S.run.brk) { const mid = A.S.run.ids[A.S.run.i]; if (!mockPlayed.has(mid) && jaReady()) { mockPlayed.add(mid); playCurrent(); } }
     if (anim && !reduced()) {
       $view.classList.remove('a-fade', 'a-next', 'a-prev');
       void $view.offsetWidth;
@@ -2810,7 +2886,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   function pageAllow() {
     if (view === 'test' && X && X.kind === 'test') { const it = X.items[X.i]; return { left: !!it && it.picked !== null, right: false }; }
     if (view === 'qsess' && X && X.kind === 'quiz') { const it = X.items[X.i]; return { left: !!it && it.done, right: false }; }
-    if (view === 'mock' && A.S.run) { const run = A.S.run; return { left: run.i < run.ids.length - 1, right: run.i > 0 }; }
+    if (view === 'mock' && A.S.run && !A.S.run.brk) { const run = A.S.run; const [from, to] = run.secs[run.si]; return { left: run.i < to - 1, right: run.i > from }; }
     return { left: false, right: false };
   }
   function pageSwipe(dir) {
@@ -2921,21 +2997,28 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     'l-slow': () => { lsSlow = !lsSlow; render(true); },
     'so-clear': () => { const it = X && X.items[X.i]; if (!it || !it.tiles || it.done) return; it.order = []; render(true); },
     'q-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(false, 'next'); } else go('qdone'); },
-    'start-mock': () => { A.startMock(); X = null; go('mock'); },
+    'start-mock': (el) => { A.startMock(el.dataset.kind === 'full' ? 'full' : 'mini'); mockPlayed.clear(); X = null; go('mock'); },
+    'm-start-sec': () => { A.startSection(); submitAsk = false; render(false, 'fade'); },
     'resume-mock': () => { X = null; go(A.S.run ? 'mock' : 'quiz'); },
-    'm-pick': (el) => { const run = A.S.run; if (!run) return; const id = run.ids[run.i]; run.ans[id] = run.opts[id][Number(el.dataset.k)]; A.save(); render(true); },
-    'm-prev': () => { const run = A.S.run; if (run && run.i > 0) { run.i--; A.save(); render(false, 'prev'); } },
-    'm-next': () => { const run = A.S.run; if (run && run.i < run.ids.length - 1) { run.i++; A.save(); render(false, 'next'); } },
+    'm-pick': (el) => { const run = A.S.run; if (!run || run.brk) return; const id = run.ids[run.i]; run.ans[id] = run.opts[id][Number(el.dataset.k)]; A.save(); render(true); },
+    'm-prev': () => { const run = A.S.run; if (run && !run.brk && run.i > run.secs[run.si][0]) { run.i--; A.save(); render(false, 'prev'); } },
+    'm-next': () => { const run = A.S.run; if (run && !run.brk && run.i < run.secs[run.si][1] - 1) { run.i++; A.save(); render(false, 'next'); } },
     'm-go': (el) => {
       const run = A.S.run; if (!run) return;
-      const to = A.clampInt(el.dataset.i, 0, run.ids.length - 1, 0);
+      if (run.brk) return;
+      const to = A.clampInt(el.dataset.i, run.secs[run.si][0], run.secs[run.si][1] - 1, run.secs[run.si][0]);
       if (to === run.i) return;
       const anim = to > run.i ? 'next' : 'prev';
       run.i = to; A.save(); render(false, anim);
     },
     'm-submit': () => { submitAsk = true; render(true); },
     'm-submit-no': () => { submitAsk = false; render(true); },
-    'm-submit-yes': () => { lastMock = A.finishMock(false); sfx('done'); announce(); go('mockres'); },
+    'm-submit-yes': () => {
+      submitAsk = false;
+      const res = A.submitSection(false);
+      if (res) { lastMock = res; sfx('done'); announce(); go('mockres'); }
+      else { if (lsPlaying) stopListening(); sfx('ok'); render(false, 'fade'); }
+    },
     'show-last-mock': () => { lastMock = A.S.mocks[0] || null; X = null; go('mockres'); },
     'retry-words': () => { const ids = Object.entries(A.S.wrong.w).sort((a, b) => b[1].n - a[1].n).slice(0, 10).map(([id]) => id); if (!ids.length) { toast('틀린 단어가 없어요.'); go('notes'); return; } startTest(ids, true); },
     'retry-qs': () => { if (!Object.keys(A.S.wrong.q).length) { toast('틀린 문제가 없어요.'); go('notes'); return; } startQuiz(true); },
@@ -2998,13 +3081,12 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   /* ---------- 모의고사 타이머 ---------- */
   setInterval(() => {
     const run = A.S.run;
-    if (!run) return;
+    if (!run || run.brk) return;
     const left = run.deadline - Date.now();
     if (left <= 0) {
-      lastMock = A.finishMock(true);
-      announce();
-      if (view === 'mock') go('mockres');
-      else { toast('모의고사 시간이 끝나 자동으로 제출했어요.'); if (!X) render(true); }
+      const res = A.submitSection(true);
+      if (res) { lastMock = res; announce(); if (view === 'mock') go('mockres'); else { toast('모의고사 시간이 끝나 자동으로 제출했어요.'); if (!X) render(true); } }
+      else { if (lsPlaying) stopListening(); submitAsk = false; toast('시간이 끝나 이 교시를 제출했어요.'); if (view === 'mock') render(); else if (!X) render(true); }
       return;
     }
     const t = document.getElementById('mock-timer'); if (t) t.textContent = mmss(left);

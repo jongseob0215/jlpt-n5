@@ -348,6 +348,12 @@ svg.chart { width: 100%; height: auto; display: block; }
 .rq { font-size: 1.0625rem; border-left: 4px solid var(--ink); padding-left: 10px; }
 details.tr { border-top: 1px dashed var(--line); padding-top: 6px; }
 details.tr summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink-2); }
+.listen { display: flex; gap: 8px; align-items: center; }
+.listen #l-play { flex: 1; }
+.sit { border: 1.5px solid var(--ink-2); border-radius: 14px; padding: 10px 12px; background: var(--surface); font-weight: 500; }
+.script { list-style: none; margin: 6px 0; padding: 0; display: flex; flex-direction: column; gap: 4px; }
+.script li { display: flex; gap: 8px; align-items: baseline; }
+.script li b { flex: none; width: 20px; font-family: var(--f-jp); }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1400,6 +1406,99 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
 
 </script>
 <script>
+/* questions-listening.js */
+/* JLPT N5 청해(자체 제작). 기기의 일본어 음성 합성으로 읽는다.
+   lt 과제 이해 · lp 포인트 이해: set(상황), ask(질문), s(대화: [화자, 말]), o 4개(o[0] 정답)
+   le 발화 표현: sit(한국어 상황 설명), say(음성으로 읽는 상황), v(보기를 읽는 화자), o 3개
+   lr 즉시 응답: sp(화자), line(들려주는 말), o 3개
+   화자: M 남자 · F 여자 · N 해설 */
+window.JLPT_DATA = window.JLPT_DATA || {};
+window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
+window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
+  {id:"lt01",t:"lt",set:"教室で 先生と 男の 学生が 話して います。",ask:"男の 学生は あした 何を 持って 来ますか。",
+   s:[["F","あしたは 外で 絵を かきます。"],["M","先生、何を 持って 来ますか。"],["F","えんぴつと 消しゴムを 持って 来て ください。紙は 学校に あります。"],["M","お弁当も 要りますか。"],["F","いいえ、お昼は 学校で 食べますから、要りません。"]],
+   o:["えんぴつと 消しゴム","えんぴつと 紙","紙と お弁当","えんぴつと お弁当"],
+   e:"종이는 학교에 있고, 점심은 학교에서 먹으니 도시락도 필요 없어요. 가져올 것은 연필과 지우개예요.",
+   tr:"선생님: 내일은 밖에서 그림을 그려요. / 학생: 선생님, 뭘 가져와요? / 선생님: 연필과 지우개를 가져오세요. 종이는 학교에 있어요. / 학생: 도시락도 필요해요? / 선생님: 아니요, 점심은 학교에서 먹으니까 필요 없어요."},
+  {id:"lt02",t:"lt",set:"会社で 女の 人と 男の 人が 話して います。",ask:"男の 人は この あと まず 何を しますか。",
+   s:[["F","田中さん、この 手紙を 出して ください。"],["M","はい、わかりました。今 すぐ 行きますか。"],["F","あ、その 前に、この 紙を 山田さんに 渡して ください。"],["M","わかりました。山田さんに 渡して から、郵便局へ 行きます。"]],
+   o:["紙を 山田さんに 渡します","郵便局へ 行きます","手紙を 書きます","山田さんに 電話を かけます"],
+   e:"「その 前に」 종이를 야마다 씨에게 건네고, 그다음에 우체국에 가요. '먼저(まず)' 하는 일을 묻고 있어요.",
+   tr:"여자: 다나카 씨, 이 편지를 부쳐 주세요. / 남자: 네, 알겠습니다. 지금 바로 갈까요? / 여자: 아, 그 전에 이 종이를 야마다 씨에게 건네주세요. / 남자: 알겠습니다. 야마다 씨에게 건네고 나서 우체국에 갈게요."},
+  {id:"lt03",t:"lt",set:"店で 男の 人と 店の 人が 話して います。",ask:"男の 人は 何を 買いますか。",
+   s:[["M","すみません、りんごは いくらですか。"],["F","一つ 百円です。三つで 二百五十円ですよ。"],["M","じゃあ、三つ ください。それから、みかんも ありますか。"],["F","すみません、みかんは 今日は ありません。"],["M","そうですか。じゃあ、りんごだけ お願いします。"]],
+   o:["りんごを 三つ","りんごを 一つ","りんごを 三つと みかん","みかんを 三つ"],
+   e:"사과를 세 개 달라고 했고, 귤은 오늘 없어서 사과만 사요.",
+   tr:"남자: 저기요, 사과는 얼마예요? / 점원: 하나에 100엔이에요. 세 개에 250엔이에요. / 남자: 그럼 세 개 주세요. 그리고 귤도 있어요? / 점원: 죄송해요, 귤은 오늘 없어요. / 남자: 그래요? 그럼 사과만 주세요."},
+  {id:"lt04",t:"lt",set:"家で お母さんと 男の 子が 話して います。",ask:"男の 子は はじめに 何を しますか。",
+   s:[["F","ひろし、晩ご飯の 前に 宿題を して ください。"],["M","えー、先に テレビを 見たいよ。"],["F","だめです。宿題が 終わって から、テレビを 見て ください。あ、でも その 前に 手を 洗って ね。"],["M","はーい。"]],
+   o:["手を 洗います","宿題を します","テレビを 見ます","晩ご飯を 食べます"],
+   e:"숙제 → 텔레비전 순서인데, 「その 前に 手を 洗って」라고 했으니 맨 처음은 손 씻기예요.",
+   tr:"엄마: 히로시, 저녁 먹기 전에 숙제해. / 아이: 에이, 먼저 텔레비전 보고 싶어. / 엄마: 안 돼. 숙제 끝나고 나서 텔레비전 봐. 아, 그런데 그 전에 손 씻어. / 아이: 네."},
+  {id:"lt05",t:"lt",set:"駅で 女の 人と 男の 人が 話して います。",ask:"二人は 何で さくら公園へ 行きますか。",
+   s:[["F","さくら公園まで バスで 行きましょうか。"],["M","バスは 三十分 かかりますよ。タクシーは 十分ですが、高いです。"],["F","そうですね。電車は どうですか。"],["M","電車は 十五分ぐらいです。安いですよ。"],["F","じゃあ、電車で 行きましょう。"]],
+   o:["電車","バス","タクシー","歩いて"],
+   e:"마지막에 「電車で 行きましょう」라고 정했어요.",
+   tr:"여자: 사쿠라 공원까지 버스로 갈까요? / 남자: 버스는 30분 걸려요. 택시는 10분이지만 비싸요. / 여자: 그렇네요. 전철은 어때요? / 남자: 전철은 15분쯤이에요. 싸요. / 여자: 그럼 전철로 가요."},
+  {id:"lt06",t:"lt",set:"教室で 先生が 話して います。",ask:"学生は あした 何時に どこへ 行きますか。",
+   s:[["F","みなさん、あしたは 図書館で 勉強します。教室では ありません。九時に 図書館の 前に 来て ください。"]],
+   o:["九時に 図書館の 前","九時に 教室","十時に 図書館の 前","十時に 教室"],
+   e:"교실이 아니라 도서관이고, 9시에 도서관 앞으로 오라고 했어요.",
+   tr:"선생님: 여러분, 내일은 도서관에서 공부해요. 교실이 아니에요. 9시에 도서관 앞으로 오세요."},
+
+  {id:"lp01",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は どうして きのう 学校を 休みましたか。",
+   s:[["M","きのう 学校に 来ませんでしたね。風邪ですか。"],["F","いいえ、風邪じゃ ありません。母が 病院へ 行きましたから、弟と 家に いました。"],["M","そうですか。お母さんは 大丈夫ですか。"],["F","はい、もう 元気です。"]],
+   o:["お母さんが 病院へ 行ったから","風邪を ひいたから","弟が 病気だったから","自分が 病院へ 行ったから"],
+   e:"감기가 아니고, 어머니가 병원에 가서 남동생과 집에 있었어요.",
+   tr:"남자: 어제 학교에 안 왔네요. 감기예요? / 여자: 아니요, 감기 아니에요. 어머니가 병원에 가셔서 남동생이랑 집에 있었어요. / 남자: 그래요? 어머니는 괜찮으세요? / 여자: 네, 이제 괜찮으세요."},
+  {id:"lp02",t:"lp",set:"女の 人と 男の 人が 話して います。",ask:"男の 人の 誕生日は いつですか。",
+   s:[["F","山田さんの 誕生日は いつですか。"],["M","九月 八日です。"],["F","九月 四日ですか。"],["M","いいえ、よっかじゃ ありません。ようかです。"]],
+   o:["九月 八日","九月 四日","八月 八日","八月 四日"],
+   e:"四日(よっか)가 아니라 八日(ようか)예요. 날짜 읽기는 소리가 비슷해서 자주 나와요.",
+   tr:"여자: 야마다 씨 생일은 언제예요? / 남자: 9월 8일이에요. / 여자: 9월 4일이요? / 남자: 아니요, 4일(욧카)이 아니라 8일(요카)이에요."},
+  {id:"lp03",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は どんな スポーツを よく 見ますか。",
+   s:[["M","田中さんは スポーツが 好きですか。"],["F","見るのは 好きですが、するのは あまり 好きじゃ ありません。"],["M","そうですか。どんな スポーツを よく 見ますか。"],["F","テニスです。サッカーは あまり 見ません。"]],
+   o:["テニス","サッカー","野球","水泳"],
+   e:"「テニスです。サッカーは あまり 見ません」이라고 했어요.",
+   tr:"남자: 다나카 씨는 스포츠를 좋아해요? / 여자: 보는 건 좋아하는데 하는 건 별로 안 좋아해요. / 남자: 그래요? 어떤 스포츠를 자주 봐요? / 여자: 테니스요. 축구는 별로 안 봐요."},
+  {id:"lp04",t:"lp",set:"店で 女の 人と 店の 人が 話して います。",ask:"女の 人は 全部で いくら 出しますか。",
+   s:[["F","この ノートと ボールペンを ください。"],["M","ノートは 一冊 百五十円、ボールペンは 一本 百円です。"],["F","じゃあ、ノートを 二冊と ボールペンを 一本 お願いします。"],["M","はい、ありがとう ございます。"]],
+   o:["四百円","二百五十円","三百円","五百円"],
+   e:"노트 150엔 × 2권 = 300엔, 볼펜 100엔 × 1자루 = 100엔, 모두 400엔이에요.",
+   tr:"여자: 이 노트랑 볼펜 주세요. / 점원: 노트는 한 권에 150엔, 볼펜은 한 자루에 100엔이에요. / 여자: 그럼 노트 두 권이랑 볼펜 한 자루 주세요. / 점원: 네, 감사합니다."},
+  {id:"lp05",t:"lp",set:"男の 学生と 女の 学生が 話して います。",ask:"男の 学生は 日曜日 何を しましたか。",
+   s:[["F","日曜日は 何を しましたか。"],["M","友だちと 山へ 行きたかったですが、雨でしたから、家で 本を 読みました。"],["F","そうですか。わたしは 映画を 見に 行きましたよ。"]],
+   o:["家で 本を 読みました","山へ 行きました","映画を 見に 行きました","友だちと 出かけました"],
+   e:"산에 가고 싶었지만 비가 와서 집에서 책을 읽었어요. 영화를 본 사람은 여학생이에요.",
+   tr:"여학생: 일요일에 뭐 했어요? / 남학생: 친구랑 산에 가고 싶었는데 비가 와서 집에서 책을 읽었어요. / 여학생: 그래요? 저는 영화 보러 갔어요."},
+
+  {id:"le01",t:"le",sit:"친구의 책을 빌리고 싶습니다. 뭐라고 말합니까?",say:"友だちの 本を 借りたいです。何と 言いますか。",v:"F",
+   o:["その 本、貸して ください","その 本、借りて ください","その 本、貸しましょうか"],
+   e:"빌리고 싶을 때는 상대에게 '빌려 달라(貸して ください)'고 해요. 借りて ください는 '당신이 빌리세요'가 돼요."},
+  {id:"le02",t:"le",sit:"밥을 다 먹었습니다. 뭐라고 말합니까?",say:"ご飯を 食べました。何と 言いますか。",v:"M",
+   o:["ごちそうさまでした","いただきます","いってきます"],
+   e:"다 먹은 뒤에는 ごちそうさまでした, 먹기 전에는 いただきます예요."},
+  {id:"le03",t:"le",sit:"회사에서 다른 사람보다 먼저 집에 갑니다. 뭐라고 말합니까?",say:"会社から 先に 帰ります。何と 言いますか。",v:"F",
+   o:["お先に 失礼します","いってらっしゃい","おかえりなさい"],
+   e:"먼저 퇴근할 때는 お先に 失礼します라고 해요."},
+  {id:"le04",t:"le",sit:"선생님 방에 들어갑니다. 뭐라고 말합니까?",say:"先生の 部屋に 入ります。何と 言いますか。",v:"M",
+   o:["失礼します","おじゃましました","どういたしまして"],
+   e:"방에 들어갈 때는 失礼します예요. おじゃましました는 남의 집에서 나올 때 써요."},
+  {id:"le05",t:"le",sit:"가게에서 이 셔츠를 입어 봐도 되는지 묻습니다. 뭐라고 말합니까?",say:"店の 人に 聞きます。何と 言いますか。",v:"F",
+   o:["これ、着ても いいですか","これ、着て ください","これ、着ましょうか"],
+   e:"허락을 구할 때는 「~ても いいですか」예요."},
+
+  {id:"lr01",t:"lr",sp:"M",line:"お名前は？",o:["キムです","元気です","二十歳です"],e:"이름을 물었으니 이름으로 답해요."},
+  {id:"lr02",t:"lr",sp:"F",line:"いっしょに お茶を 飲みませんか。",o:["ええ、飲みましょう","はい、飲みませんでした","いいえ、飲みたいです"],e:"권유(~ませんか)에 응할 때는 「~ましょう」예요."},
+  {id:"lr03",t:"lr",sp:"M",line:"この かさ、だれのですか。",o:["わたしのです","かさです","あそこです"],e:"'누구 것'을 물었으니 わたしのです(제 것입니다)예요."},
+  {id:"lr04",t:"lr",sp:"F",line:"おやすみなさい。",o:["おやすみなさい","おはようございます","いただきます"],e:"잘 자라는 인사에는 같은 말로 답해요."},
+  {id:"lr05",t:"lr",sp:"M",line:"駅まで どのぐらい かかりますか。",o:["十分ぐらいです","三時ごろです","駅の 前です"],e:"걸리는 시간을 물었으니 十分ぐらいです예요. ごろ는 시각에 써요."},
+  {id:"lr06",t:"lr",sp:"F",line:"きのうは どうも ありがとう ございました。",o:["いいえ、どういたしまして","はい、ありがとう ございました","いいえ、すみません"],e:"고맙다는 말에는 どういたしまして로 답해요."},
+  {id:"lr07",t:"lr",sp:"M",line:"いつ 日本へ 来ましたか。",o:["去年 来ました","友だちと 来ました","飛行機で 来ました"],e:"'언제' 왔는지 물었으니 때(去年)로 답해요."}
+]);
+
+</script>
+<script>
 /* core.js */
 /* 상태·저장·동기화·학습 규칙. 화면 코드는 ui.js */
 (function () {
@@ -1411,9 +1510,10 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   /* 단어 주제(학습 경로와 주제별 카드에 쓴다) */
   App.TOPICS = [['greet', '인사·표현'], ['num', '숫자·조수사'], ['time', '날짜·시간'], ['q', '지시어·의문사'], ['people', '사람·가족'], ['body', '몸·건강'], ['food', '음식'], ['home', '집·물건'], ['place', '장소'], ['town', '교통·길'], ['pos', '위치·방향'], ['school', '학교·일'], ['nature', '자연·날씨'], ['shop', '쇼핑·옷'], ['hobby', '취미'], ['kata', '외래어'], ['verb', '동사'], ['adj', '형용사'], ['adv', '부사·접속사']];
   App.TOPIC_NAME = Object.fromEntries(App.TOPICS);
-  App.QT = { kr: '한자 읽기', pk: '표기', cx: '문맥 규정', pa: '유의 표현', gr: '문법', so: '문장 만들기', bp: '글의 문법', rs: '독해(단문)', rm: '독해(중문)', ri: '정보 검색', rd: '독해' };
+  App.QT = { kr: '한자 읽기', pk: '표기', cx: '문맥 규정', pa: '유의 표현', gr: '문법', so: '문장 만들기', bp: '글의 문법', rs: '독해(단문)', rm: '독해(중문)', ri: '정보 검색', rd: '독해', lt: '과제 이해', lp: '포인트 이해', le: '발화 표현', lr: '즉시 응답', ls: '청해' };
   /* 여러 유형을 한 번에 연습하는 묶음 */
-  App.QGROUP = { rd: ['rs', 'rm', 'ri'] };
+  App.QGROUP = { rd: ['rs', 'rm', 'ri'], ls: ['lt', 'lp', 'le', 'lr'] };
+  App.LISTEN = new Set(['lt', 'lp', 'le', 'lr']);
   App.inType = (q, type) => type === 'all' || q.t === type || (App.QGROUP[type] || []).includes(q.t);
   App.QP = {
     kr: '밑줄 친 말은 히라가나로 어떻게 씁니까?',
@@ -1425,7 +1525,11 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     bp: '글을 읽고 （　）에 들어갈 가장 알맞은 것을 고르세요.',
     rs: '글을 읽고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
     rm: '글을 읽고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
-    ri: '안내문을 보고 질문에 답하세요. 가장 알맞은 것을 고르세요.'
+    ri: '안내문을 보고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
+    lt: '대화를 듣고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
+    lp: '대화를 듣고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
+    le: '상황에 맞는 말을 고르세요. 보기는 소리로 나와요.',
+    lr: '말을 듣고 알맞은 대답을 고르세요. 보기는 소리로 나와요.'
   };
   const OLD_TOPIC = {};
   for (const [t, ids] of Object.entries(LV.wordTopics || {})) for (const id of ids) OLD_TOPIC[id] = t;
@@ -1464,7 +1568,9 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
       const mark = `（${q.n}）`;
       const sent = p ? (p.text.match(/[^。]*。?/g) || []).find((x) => x.includes(mark)) : '';
       q.q = (sent || mark).trim().replace(mark, '（　）');
-    }
+    } else if (q.t === 'lt' || q.t === 'lp') q.q = q.ask;
+    else if (q.t === 'le') q.q = q.sit;
+    else if (q.t === 'lr') q.q = q.line;
   }
   App.ymd = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   App.addDays = (s, n) => { const [y, m, d] = s.split('-').map(Number); return App.ymd(new Date(y, m - 1, d + n)); };
@@ -1523,7 +1629,7 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     const r = raw.run;
     if (r && Array.isArray(r.ids) && r.ids.length && r.ids.every((id) => App.QMAP.has(id)) && Number.isFinite(r.deadline) && r.opts && typeof r.opts === 'object') {
       const opts = {}; let ok = true;
-      for (const id of r.ids) { const o = r.opts[id]; if (Array.isArray(o) && o.length === 4) opts[id] = o.map(String); else ok = false; }
+      for (const id of r.ids) { const o = r.opts[id]; if (Array.isArray(o) && o.length >= 3 && o.length <= 4) opts[id] = o.map(String); else ok = false; }
       if (ok) {
         const ans = {};
         for (const [id, v] of Object.entries(r.ans || {})) if (r.ids.includes(id) && typeof v === 'string') ans[id] = v;
@@ -2221,12 +2327,12 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
   /* ---------- 문제 ---------- */
   function vQuiz() {
     const S = A.S;
-    const types = ['all', 'kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd'];
+    const types = ['all', 'kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd', 'ls'];
     const chips = types.map((t) => {
       const n = A.QS.filter((q) => A.inType(q, t)).length;
       return `<button class="chip-btn${quizType === t ? ' on' : ''}" data-act="qtype" data-t="${t}" aria-pressed="${quizType === t}">${quizType === t ? '● ' : ''}${t === 'all' ? '전체' : A.QT[t]} <span class="num">${n}</span></button>`;
     }).join('');
-    const acc = ['kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd'].map((t) => {
+    const acc = ['kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd', 'ls'].map((t) => {
       let n = 0, c = 0;
       for (const q of A.QS) if (A.inType(q, t) && S.qs[q.id]) { n += S.qs[q.id].n; c += S.qs[q.id].c; }
       return `<li><span>${A.QT[t]}</span><span class="num">${n ? pct(c, n) + '%' : '-'}</span><span class="muted num">${n}회</span></li>`;
@@ -2258,6 +2364,66 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     const body = esc(p.text).replace(/（(\d)）/g, (m, d) => (Number(d) === q.n ? `<b class="pblank on">（ ${d} ）</b>` : `<span class="pblank">（${d}）</span>`));
     return `<div class="passage"><div class="p-head"><b class="jp">${esc(p.title)}</b><span class="muted small jp">${esc(p.by || '')}</span></div><p class="jp">${body}</p></div>`;
   }
+  /* ---------- 청해: 기기 음성으로 대화를 읽는다 ---------- */
+  let lsToken = 0; let lsPlaying = false; let lsSlow = false;
+  const jaVoices = () => { try { return window.speechSynthesis.getVoices().filter((v) => /^ja/i.test(v.lang)); } catch (e) { return []; } };
+  /* 음성 목록을 아직 못 받았으면 쓸 수 있다고 보고, 받았는데 일본어 음성이 없으면 대본을 보여 준다 */
+  const jaReady = () => { if (!canSpeak) return false; try { const all = window.speechSynthesis.getVoices(); return !all.length || all.some((v) => /^ja/i.test(v.lang)); } catch (e) { return false; } };
+  if (canSpeak && typeof window.speechSynthesis.addEventListener === 'function') window.speechSynthesis.addEventListener('voiceschanged', () => { if (currentListen() && !lsPlaying) render(true); });
+  function voiceFor(role) {
+    const vs = jaVoices(); if (!vs.length) return null;
+    const male = vs.find((v) => /otoya|ichiro|keita|hattori|daichi|naoki|male|男性/i.test(v.name) && !/female|女性/i.test(v.name));
+    const female = vs.find((v) => /kyoko|haruka|ayumi|nanami|mizuki|sayaka|o-ren|female|女性/i.test(v.name)) || vs.find((v) => v !== male) || vs[0];
+    return role === 'M' ? (male || female) : female;
+  }
+  function scriptLines(q, opts) {
+    if (q.t === 'lt' || q.t === 'lp') return [['N', q.set + q.ask]].concat(q.s, [['N', q.ask]]);
+    const o = opts || q.o;
+    if (q.t === 'le') return [['N', q.say]].concat(o.map((x, k) => [q.v || 'F', `${k + 1}、${x}`]));
+    if (q.t === 'lr') { const other = q.sp === 'M' ? 'F' : 'M'; return [[q.sp, q.line]].concat(o.map((x, k) => [other, `${k + 1}、${x}`])); }
+    return [];
+  }
+  function setPlayBtn() { const b = document.getElementById('l-play'); if (b) b.textContent = lsPlaying ? '■ 멈추기' : '▶ 듣기'; }
+  function stopListening() { lsToken++; lsPlaying = false; try { if (canSpeak) window.speechSynthesis.cancel(); } catch (e) { /* 음성 없음 */ } setPlayBtn(); }
+  function playLines(lines) {
+    if (!jaReady() || !lines.length) return;
+    const token = ++lsToken;
+    try {
+      window.speechSynthesis.cancel();
+      const vm = voiceFor('M'); const vf = voiceFor('F'); const sameVoice = !vm || vm === vf;
+      lines.forEach(([role, text], i) => {
+        const u = new window.SpeechSynthesisUtterance(text);
+        u.lang = 'ja-JP'; u.rate = lsSlow ? 0.7 : 0.95;
+        const v = role === 'M' ? vm : vf; if (v) u.voice = v;
+        /* 남녀 목소리가 하나뿐이면 높낮이로 구분한다 */
+        u.pitch = role === 'M' ? (sameVoice ? 0.7 : 1) : role === 'F' ? (sameVoice ? 1.25 : 1.05) : 1;
+        if (i === lines.length - 1) u.onend = u.onerror = () => { if (token === lsToken) { lsPlaying = false; setPlayBtn(); } };
+        window.speechSynthesis.speak(u);
+      });
+      lsPlaying = true; setPlayBtn();
+    } catch (e) { lsPlaying = false; setPlayBtn(); toast('이 기기에서는 음성을 재생할 수 없어요.'); }
+  }
+  function currentListen() {
+    if (view === 'qsess' && X && X.kind === 'quiz') { const it = X.items[X.i]; const q = it && A.QMAP.get(it.id); if (q && A.LISTEN.has(q.t)) return { q, opts: it.opts, it }; }
+    if (view === 'mock' && A.S.run) { const run = A.S.run; const id = run.ids[run.i]; const q = A.QMAP.get(id); if (q && A.LISTEN.has(q.t)) return { q, opts: run.opts[id], it: null }; }
+    return null;
+  }
+  function playCurrent() { const c = currentListen(); if (c) playLines(scriptLines(c.q, c.opts)); }
+  function scriptHtml(q, open) {
+    const lines = q.t === 'lt' || q.t === 'lp' ? q.s : q.t === 'lr' ? [[q.sp, q.line]] : [['N', q.say]];
+    return `<details class="tr"${open ? ' open' : ''}><summary>대본 보기</summary><ul class="script">${lines.map(([r, t]) => `<li><b>${r === 'M' ? '男' : r === 'F' ? '女' : '·'}</b><span class="jp">${esc(t)}</span></li>`).join('')}</ul>${q.tr ? `<p class="small muted">${esc(q.tr)}</p>` : ''}</details>`;
+  }
+  function listenBlock(q, done) {
+    const sit = q.t === 'le' ? `<p class="sit">${esc(q.sit)}</p>` : '';
+    const ask = q.t === 'lt' || q.t === 'lp' ? `<p class="rq jp"><b>${esc(q.ask)}</b></p>` : '';
+    const can = jaReady();
+    const ctrl = can
+      ? `<div class="listen"><button type="button" class="btn primary" id="l-play" data-act="l-play">${lsPlaying ? '■ 멈추기' : '▶ 듣기'}</button><button type="button" class="btn sm" data-act="l-slow" aria-pressed="${lsSlow}">${lsSlow ? '● 천천히' : '천천히'}</button></div>`
+      : '<p class="muted small">이 기기에는 일본어 음성이 없어서 대본을 글로 보여 드려요.</p>';
+    return `<p class="prompt">${A.QP[q.t]}</p>${sit}${ctrl}${ask}${!can || done ? scriptHtml(q, !can) : ''}`;
+  }
+  /* 발화 표현·즉시 응답은 답하기 전까지 보기 글자를 숨긴다(음성이 없으면 보인다) */
+  const hideOpt = (q, done) => (q.t === 'le' || q.t === 'lr') && !done && jaReady();
   function readingHtml(q) {
     const r = A.READINGS[q.g]; if (!r) return '';
     return `<div class="passage reading${q.t === 'ri' ? ' info' : ''}">${r.title ? `<div class="p-head"><b class="jp">${esc(r.title)}</b></div>` : ''}<p class="jp">${esc(r.text)}</p></div>`;
@@ -2267,7 +2433,8 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     const src = q.t === 'bp' ? A.PASSAGES[q.g] : A.READINGS[q.g];
     return src && src.tr ? `<details class="tr"><summary>글 해석 보기</summary><p class="small">${esc(src.tr)}</p></details>` : '';
   }
-  function questionBlock(q) {
+  function questionBlock(q, done) {
+    if (A.LISTEN.has(q.t)) return listenBlock(q, done);
     if (q.t === 'rs' || q.t === 'rm' || q.t === 'ri') return `<p class="prompt">${A.QP[q.t]}</p>${readingHtml(q)}<p class="rq jp"><b>${esc(q.q)}</b></p>`;
     if (q.t === 'bp') return `<p class="prompt">${A.QP.bp}</p>${passageHtml(q)}<p class="prompt"><b>（ ${q.n} ）</b>에 들어갈 것은?</p>`;
     const stem = q.t === 'pa' ? `<div class="stem jp">${qText(q.q)}</div>` : `<div class="qtext jp">${qText(q.q)}</div>`;
@@ -2306,14 +2473,14 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
         else if (k === it.picked) { cls += ' wrong' + (fx ? ' shake' : ''); mark = '<span class="mark">× 내 답</span>'; }
         else cls += ' dim';
       } else if (k === it.picked) { cls += ' picked'; mark = '<span class="mark">선택</span>'; }
-      return `<button class="${cls}" data-act="q-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="jp">${esc(o)}</span>${mark}</button>`;
+      return `<button class="${cls}" data-act="q-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="jp">${hideOpt(q, it.done) ? '<span class="muted">소리로 듣는 보기</span>' : esc(o)}</span>${mark}</button>`;
     }).join('');
     const foot = it.done
       ? `<div class="explain"><b>${ok ? '○ 맞았어요' : '× 틀렸어요'}${fx ? xpPop(it.xp) : ''}</b><p>${esc(q.e)}</p>${trHtml(q)}</div>
          <button class="btn primary wide" data-act="q-next">${X.i + 1 < X.items.length ? '다음' : '결과 보기'}</button>
          ${X.i === 0 ? '<p class="swipe-tip">화면을 왼쪽으로 밀어도 넘어가요</p>' : ''}`
       : `<button class="btn primary wide" data-act="q-check" ${it.picked === null ? 'disabled' : ''}>정답 확인</button>`;
-    return `${progress(X.i, X.items.length, `${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} · ${A.QT[q.t]}`, comboChip(X.combo, fx && ok))}${questionBlock(q)}<div class="opts">${opts}</div>${foot}`;
+    return `${progress(X.i, X.items.length, `${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} · ${A.QT[q.t]}`, comboChip(X.combo, fx && ok))}${questionBlock(q, it.done)}<div class="opts">${opts}</div>${foot}`;
   }
   function vQdone() {
     const rows = X.items.map((it) => { const q = A.QMAP.get(it.id); const ok = !!it.ok; return `<li><span class="okmark">${ok ? '○' : '×'}</span><span class="jp">${esc(plain(q.q))}</span> <span class="muted">→ ${esc(q.o[0])}</span></li>`; }).join('');
@@ -2510,13 +2677,15 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     $view.style.transform = '';
     $view.innerHTML = (VIEWS[view] || vHome)();
     if (!keepScroll) $main.scrollTop = 0;
+    const lc = currentListen();
+    if (lc && lc.it && !lc.it.played && jaReady()) { lc.it.played = true; playCurrent(); }
     if (anim && !reduced()) {
       $view.classList.remove('a-fade', 'a-next', 'a-prev');
       void $view.offsetWidth;
       $view.classList.add('a-' + anim);
     }
   }
-  function go(v) { view = v; submitAsk = false; resetAsk = false; render(false, 'fade'); }
+  function go(v) { if (lsPlaying) stopListening(); view = v; submitAsk = false; resetAsk = false; render(false, 'fade'); }
   function commit() {
     A.save();
     announce();
@@ -2748,6 +2917,8 @@ window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
     },
     'so-tile': (el) => { const it = X && X.items[X.i]; if (!it || !it.tiles || it.done || it.order.length >= 4) return; const k = Number(el.dataset.k); if (!it.order.includes(k)) { it.order.push(k); sfx('card'); render(true); } },
     'so-slot': (el) => { const it = X && X.items[X.i]; if (!it || !it.tiles || it.done) return; const k = Number(el.dataset.k); if (k < it.order.length) { it.order.splice(k, 1); render(true); } },
+    'l-play': () => { if (lsPlaying) stopListening(); else playCurrent(); },
+    'l-slow': () => { lsSlow = !lsSlow; render(true); },
     'so-clear': () => { const it = X && X.items[X.i]; if (!it || !it.tiles || it.done) return; it.order = []; render(true); },
     'q-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(false, 'next'); } else go('qdone'); },
     'start-mock': () => { A.startMock(); X = null; go('mock'); },

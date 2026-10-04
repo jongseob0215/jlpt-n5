@@ -1,0 +1,1447 @@
+<!doctype html>
+<html lang="ko">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<style>[hidden]{display:none!important}img{max-width:100%}</style>
+</head>
+<body>
+<title>JLPT N5 학습장</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=IBM+Plex+Sans+KR:wght@400;500;700&family=Klee+One:wght@400;600&display=swap">
+<style>
+/* 한 화면 앱: 위 머리말, 가운데 스크롤 영역, 아래 탭. 단어 카드는 원고지 칸 무늬. 정오는 ○/× 기호와 테두리 굵기로 구분한다. */
+:root {
+  --bg: #eef1f5;
+  --surface: #ffffff;
+  --ink: #151c2b;
+  --ink-2: #465166;
+  --muted: #6c7588;
+  --line: #d5dbe4;
+  --grid: #e9edf3;
+  --accent: #2a3f8f;
+  --on-accent: #ffffff;
+  --soft: #e3e8f4;
+  --tone-3: #4a5468;
+  --f-ui: "IBM Plex Sans KR", "Apple SD Gothic Neo", "Malgun Gothic", sans-serif;
+  --f-jp: "Klee One", "Hiragino Sans", "Yu Gothic", "Noto Sans JP", sans-serif;
+}
+@media (prefers-color-scheme: dark) {
+  :root:not([data-theme="light"]) {
+    --bg: #0f131a; --surface: #171d27; --ink: #e7eaf0; --ink-2: #b3bbca; --muted: #8a93a5;
+    --line: #2c3442; --grid: #1e2531; --accent: #a9b8f0; --on-accent: #0f131a; --soft: #222c3f; --tone-3: #c3cad6;
+    color-scheme: dark;
+  }
+}
+:root[data-theme="dark"] {
+  --bg: #0f131a; --surface: #171d27; --ink: #e7eaf0; --ink-2: #b3bbca; --muted: #8a93a5;
+  --line: #2c3442; --grid: #1e2531; --accent: #a9b8f0; --on-accent: #0f131a; --soft: #222c3f; --tone-3: #c3cad6;
+  color-scheme: dark;
+}
+* { box-sizing: border-box; }
+html, body { height: 100%; }
+body { margin: 0; background: var(--bg); color: var(--ink); font-family: var(--f-ui); font-size: 15px; line-height: 1.6; -webkit-tap-highlight-color: transparent; }
+button, input { font: inherit; color: inherit; }
+.app { height: 100%; max-width: 560px; margin: 0 auto; display: flex; flex-direction: column; padding-inline: 16px; }
+header.top { display: flex; align-items: center; justify-content: space-between; gap: 8px; padding-block: 12px 10px; border-bottom: 1px solid var(--line); }
+.brand { font-weight: 700; letter-spacing: 0.01em; }
+.brand .jp { font-family: var(--f-jp); font-weight: 600; margin-right: 6px; }
+.hdr-right { display: flex; align-items: center; gap: 8px; font-size: 12px; }
+.hdr-right .dd { font-weight: 700; font-variant-numeric: tabular-nums; border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 9px; }
+.hdr-right .sync { color: var(--muted); }
+main { flex: 1; overflow-y: auto; overscroll-behavior: contain; padding-block: 14px 24px; }
+#view { display: flex; flex-direction: column; gap: 14px; }
+nav.tabs { display: grid; grid-template-columns: repeat(5, 1fr); border-top: 1px solid var(--line); padding-block: 4px env(safe-area-inset-bottom, 0px); background: var(--bg); }
+nav.tabs button { background: none; border: 0; border-top: 3px solid transparent; padding: 9px 2px 8px; font-size: 13px; color: var(--muted); cursor: pointer; }
+nav.tabs button.on { color: var(--ink); font-weight: 700; border-top-color: var(--ink); }
+
+h1.title { font-size: 1.375rem; margin: 2px 0 0; }
+h2 { font-size: 1.0625rem; margin: 0; }
+p { margin: 0; }
+.muted { color: var(--muted); }
+.small { font-size: 13px; }
+.num { font-variant-numeric: tabular-nums; }
+.jp { font-family: var(--f-jp); font-weight: 600; }
+.center { text-align: center; }
+
+.hero { padding-block: 6px 2px; }
+.dday { font-size: 2.75rem; line-height: 1.1; font-weight: 700; letter-spacing: -0.02em; }
+.panel { background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 16px; display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
+.chip { border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 10px; font-size: 13px; font-weight: 700; white-space: nowrap; }
+.notice { display: flex; align-items: center; justify-content: space-between; gap: 12px; border: 2px solid var(--ink); border-radius: 14px; padding: 12px 14px; background: var(--surface); }
+
+.meter { display: flex; flex-direction: column; gap: 4px; }
+.meter-top { display: flex; justify-content: space-between; font-weight: 500; }
+.meter-note { font-size: 13px; color: var(--muted); }
+.meter-note b { color: var(--ink); }
+.track { height: 10px; border-radius: 999px; background: var(--soft); overflow: hidden; }
+.track.thin { height: 6px; }
+.track i { display: block; height: 100%; background: var(--accent); border-radius: 999px; }
+
+.btn { border: 1.5px solid var(--ink-2); background: var(--surface); border-radius: 12px; padding: 11px 14px; font-weight: 700; cursor: pointer; text-align: center; }
+.btn.primary { background: var(--accent); border-color: var(--accent); color: var(--on-accent); }
+.btn.ghost { border-color: var(--line); color: var(--ink-2); font-weight: 500; }
+.btn.danger { border-color: var(--ink); background: var(--ink); color: var(--bg); }
+.btn.sm { padding: 6px 12px; font-size: 13px; border-radius: 10px; }
+.btn.wide { width: 100%; }
+.btn:disabled { opacity: 0.45; cursor: default; }
+.btn:focus-visible, .opt:focus-visible, .card:focus-visible, nav.tabs button:focus-visible, .chip-btn:focus-visible, .fact:focus-visible, .gnum:focus-visible, .del:focus-visible, .say:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
+.stack { display: flex; flex-direction: column; gap: 8px; }
+
+.facts { display: grid; grid-template-columns: repeat(3, 1fr); gap: 8px; }
+.fact { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 8px; display: flex; flex-direction: column; align-items: flex-start; gap: 2px; font-size: 12px; color: var(--ink-2); cursor: pointer; text-align: left; min-width: 0; }
+.fact .big { font-size: 1.25rem; font-weight: 700; color: var(--ink); }
+
+.sess-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.card {
+  position: relative; min-height: 300px; border: 1.5px solid var(--ink-2); border-radius: 16px; padding: 16px; cursor: pointer;
+  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center;
+  background-color: var(--surface);
+  background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
+  background-size: 28px 28px; background-position: center;
+}
+.card-meta { position: absolute; top: 10px; left: 14px; right: 14px; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
+.word { font-family: var(--f-jp); font-weight: 600; font-size: 2.75rem; line-height: 1.25; word-break: keep-all; overflow-wrap: anywhere; }
+.word.ko { font-family: var(--f-ui); font-size: 1.75rem; font-weight: 700; text-align: center; }
+.card-back { display: flex; flex-direction: column; gap: 8px; align-items: center; }
+.reading { font-size: 1.375rem; }
+.meaning { font-size: 1.25rem; font-weight: 700; }
+.example { background: var(--surface); border-top: 1px dashed var(--line); padding-top: 8px; display: flex; flex-direction: column; gap: 2px; }
+.example .jp { font-size: 1.0625rem; }
+.note { font-size: 13px; border: 1px solid var(--line); border-radius: 8px; padding: 3px 8px; background: var(--surface); }
+.hint { font-size: 13px; color: var(--muted); }
+.say-row { display: flex; gap: 8px; justify-content: center; }
+.say { border: 1px solid var(--line); background: var(--surface); border-radius: 999px; padding: 4px 12px; font-size: 13px; cursor: pointer; }
+
+.prompt { font-size: 13px; color: var(--ink-2); font-weight: 500; }
+.qtext { font-size: 1.375rem; line-height: 1.7; }
+.qtext u, .stem u { text-decoration-thickness: 2px; text-underline-offset: 5px; }
+.stem { font-size: 1.25rem; line-height: 1.7; border: 1.5px solid var(--ink-2); border-radius: 10px; padding: 10px 12px; background: var(--surface); }
+.blank { letter-spacing: 0.1em; }
+.opts { display: flex; flex-direction: column; gap: 8px; }
+.opt { display: flex; align-items: center; gap: 10px; width: 100%; text-align: left; background: var(--surface); border: 1.5px solid var(--line); border-radius: 12px; padding: 11px 12px; cursor: pointer; font-size: 1.0625rem; min-width: 0; }
+.opt .jp { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.opt > span:nth-child(2) { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.opt .no { flex: none; width: 24px; height: 24px; border-radius: 50%; border: 1.5px solid var(--ink-2); display: grid; place-items: center; font-size: 13px; font-weight: 700; font-family: var(--f-ui); }
+.opt .mark { flex: none; font-size: 12px; font-weight: 700; white-space: nowrap; }
+.opt.picked { border: 3px solid var(--ink); }
+.opt.picked .no { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.opt.right { border: 3px solid var(--ink); background: var(--soft); }
+.opt.right .no { background: var(--ink); color: var(--bg); border-color: var(--ink); }
+.opt.wrong { border: 2px dashed var(--ink); }
+.opt.dim { opacity: 0.55; }
+.opt:disabled { cursor: default; color: var(--ink); }
+.feedback { font-size: 15px; display: flex; flex-wrap: wrap; align-items: center; gap: 6px; }
+.explain { border-left: 4px solid var(--ink); padding: 6px 0 6px 12px; display: flex; flex-direction: column; gap: 4px; }
+
+.chips { display: flex; flex-wrap: wrap; gap: 6px; }
+.chip-btn { border: 1.5px solid var(--line); background: var(--surface); border-radius: 999px; padding: 5px 11px; font-size: 13px; cursor: pointer; }
+.chip-btn.on { border: 2px solid var(--ink); font-weight: 700; }
+.acc { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.acc li { display: grid; grid-template-columns: 1fr auto auto; gap: 14px; padding: 7px 0; border-bottom: 1px solid var(--line); align-items: center; }
+.acc.mocks li { grid-template-columns: 1fr auto auto auto; }
+.acc li:last-child { border-bottom: 0; }
+.score { font-size: 2rem; font-weight: 700; }
+.result-list { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; gap: 6px; }
+.result-list li { display: flex; gap: 8px; align-items: baseline; min-width: 0; overflow-wrap: anywhere; }
+.okmark { flex: none; width: 18px; font-weight: 700; }
+
+.mock-bar { display: flex; justify-content: space-between; align-items: center; background: var(--ink); color: var(--bg); border-radius: 12px; padding: 8px 14px; font-weight: 700; position: sticky; top: 0; z-index: 2; }
+.timer { font-size: 1.25rem; }
+.grid { display: grid; grid-template-columns: repeat(7, 1fr); gap: 6px; }
+.gnum { border: 1.5px solid var(--line); background: var(--surface); border-radius: 8px; padding: 6px 0; font-size: 13px; cursor: pointer; font-variant-numeric: tabular-nums; }
+.gnum.has { background: var(--tone-3); color: var(--bg); border-color: var(--tone-3); font-weight: 700; }
+.gnum.cur { outline: 3px solid var(--ink); outline-offset: 1px; }
+.confirm { border: 2px solid var(--ink); border-radius: 12px; padding: 12px; display: flex; flex-direction: column; gap: 10px; background: var(--surface); }
+details.ritem { border-bottom: 1px solid var(--line); padding: 8px 0; }
+details.ritem:last-child { border-bottom: 0; }
+details.ritem summary { cursor: pointer; display: flex; gap: 6px; align-items: baseline; min-width: 0; overflow: hidden; white-space: nowrap; text-overflow: ellipsis; }
+details.ritem[open] { display: flex; flex-direction: column; gap: 6px; }
+details.ritem[open] > :not(summary) { margin-left: 24px; }
+
+.notes { list-style: none; margin: 0; padding: 0; display: flex; flex-direction: column; }
+.notes li { display: flex; align-items: center; gap: 10px; padding: 8px 0; border-bottom: 1px solid var(--line); }
+.notes li:last-child { border-bottom: 0; }
+.li-main { flex: 1; min-width: 0; overflow-wrap: anywhere; }
+.cnt { font-weight: 700; }
+.tag { font-size: 11px; border: 1px solid var(--ink-2); border-radius: 4px; padding: 0 5px; white-space: nowrap; }
+.del { border: 1px solid var(--line); background: var(--surface); border-radius: 8px; font-size: 12px; padding: 4px 8px; cursor: pointer; flex: none; }
+
+.tiles { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+.tile { background: var(--surface); border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; display: flex; flex-direction: column; gap: 2px; min-width: 0; }
+.tile b { font-size: 1.0625rem; }
+.legend { display: flex; flex-wrap: wrap; gap: 14px; font-size: 12px; color: var(--ink-2); }
+.legend span { display: inline-flex; align-items: center; gap: 5px; }
+.legend i { width: 14px; height: 10px; border-radius: 2px; display: inline-block; }
+.lg-w { background: var(--tone-3); }
+.lg-q { border: 1.5px solid var(--ink-2); background: repeating-linear-gradient(45deg, var(--ink-2) 0 2px, var(--surface) 2px 4px); }
+svg.chart { width: 100%; height: auto; display: block; }
+.chart .axis { stroke: var(--line); stroke-width: 1; }
+.chart .b-w { fill: var(--tone-3); }
+.chart .b-q { fill: url(#hatch); stroke: var(--ink-2); stroke-width: 1.2; }
+.chart .hatch-bg { fill: var(--surface); }
+.chart .hatch-ln { fill: var(--ink-2); }
+.chart .hit { fill: transparent; }
+.chart text { fill: var(--ink-2); font-size: 10px; text-anchor: middle; font-family: var(--f-ui); font-variant-numeric: tabular-nums; }
+.chart text.lab { font-size: 11px; fill: var(--muted); }
+.chart text.lab.today { fill: var(--ink); font-weight: 700; }
+.form { display: flex; flex-direction: column; gap: 6px; }
+.form label { font-size: 13px; font-weight: 500; margin-top: 4px; }
+.form input { border: 1.5px solid var(--line); border-radius: 10px; padding: 9px 10px; background: var(--surface); width: 100%; }
+.form input:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.form-msg { font-size: 13px; min-height: 1.2em; }
+
+#overlay { position: fixed; inset: 0; background: rgba(10, 14, 22, 0.55); display: grid; place-items: center; padding: 16px; z-index: 10; }
+.dialog { background: var(--surface); color: var(--ink); border-radius: 18px; padding: 24px 20px; width: min(360px, 100%); display: flex; flex-direction: column; gap: 10px; text-align: center; border: 2px solid var(--ink); }
+.done-mark { width: 64px; height: 64px; border-radius: 50%; background: var(--ink); color: var(--bg); display: grid; place-items: center; font-size: 30px; font-weight: 700; margin: 0 auto 4px; }
+.streak-big { font-size: 1.5rem; font-weight: 700; }
+#toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(76px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 9px 14px; border-radius: 10px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); }
+@media (prefers-reduced-motion: no-preference) { .track i { transition: width 0.3s ease; } }
+</style>
+
+<div class="app">
+  <header class="top">
+    <div class="brand"><span class="jp">日本語</span>N5 학습장</div>
+    <div class="hdr-right"><span class="sync" id="hdr-sync">이 기기에 저장</span><span class="dd" id="hdr-dday">D-</span></div>
+  </header>
+  <main id="main"><div id="view" aria-live="polite"></div></main>
+  <nav class="tabs" aria-label="메뉴">
+    <button type="button" data-tab="home">홈</button>
+    <button type="button" data-tab="words">단어</button>
+    <button type="button" data-tab="quiz">문제</button>
+    <button type="button" data-tab="notes">오답</button>
+    <button type="button" data-tab="stats">기록</button>
+  </nav>
+</div>
+<div id="overlay" hidden></div>
+<div id="toast" role="status" hidden></div>
+
+<script>
+/* words.js */
+/* JLPT N5 단어. [id, 표기, 읽기, 뜻, 품사, 예문, 예문 해석, 메모]
+   품사: n 명사 · v 동사 · i い형용사 · na な형용사 · adv 부사 */
+window.JLPT_DATA = window.JLPT_DATA || {};
+window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
+window.JLPT_DATA.N5.words = [
+  ["n001","学校","がっこう","학교","n","毎日 学校へ 行きます。","매일 학교에 갑니다."],
+  ["n002","先生","せんせい","선생님","n","山田先生は 日本語の 先生です。","야마다 선생님은 일본어 선생님입니다."],
+  ["n003","学生","がくせい","학생","n","わたしは 大学の 学生です。","저는 대학생입니다."],
+  ["n004","友だち","ともだち","친구","n","友だちと 映画を 見ました。","친구와 영화를 봤습니다."],
+  ["n005","家族","かぞく","가족","n","わたしの 家族は 四人です。","우리 가족은 네 명입니다."],
+  ["n006","父","ちち","(나의) 아버지","n","父は 会社員です。","아버지는 회사원입니다.","남의 아버지는 お父さん(おとうさん)"],
+  ["n007","母","はは","(나의) 어머니","n","母は 料理が 上手です。","어머니는 요리를 잘합니다.","남의 어머니는 お母さん(おかあさん)"],
+  ["n008","兄","あに","(나의) 형·오빠","n","兄は 東京に 住んで います。","형(오빠)은 도쿄에 살고 있습니다."],
+  ["n009","姉","あね","(나의) 누나·언니","n","姉は 銀行で 働いて います。","누나(언니)는 은행에서 일하고 있습니다."],
+  ["n010","弟","おとうと","남동생","n","弟は 高校生です。","남동생은 고등학생입니다."],
+  ["n011","妹","いもうと","여동생","n","妹と 公園へ 行きました。","여동생과 공원에 갔습니다."],
+  ["n012","子ども","こども","아이","n","子どもが 外で 遊んで います。","아이가 밖에서 놀고 있습니다."],
+  ["n013","時計","とけい","시계","n","この 時計は 高いです。","이 시계는 비쌉니다."],
+  ["n014","電車","でんしゃ","전철","n","電車で 会社へ 行きます。","전철로 회사에 갑니다."],
+  ["n015","駅","えき","역","n","駅は どこですか。","역은 어디입니까?"],
+  ["n016","部屋","へや","방","n","わたしの 部屋は せまいです。","제 방은 좁습니다."],
+  ["n017","窓","まど","창문","n","窓を 開けて ください。","창문을 열어 주세요."],
+  ["n018","机","つくえ","책상","n","机の 上に 本が あります。","책상 위에 책이 있습니다."],
+  ["n019","本","ほん","책","n","図書館で 本を 借りました。","도서관에서 책을 빌렸습니다."],
+  ["n020","新聞","しんぶん","신문","n","父は 毎朝 新聞を 読みます。","아버지는 매일 아침 신문을 읽습니다."],
+  ["n021","天気","てんき","날씨","n","今日は いい 天気ですね。","오늘은 날씨가 좋네요."],
+  ["n022","雨","あめ","비","n","雨が 降って います。","비가 내리고 있습니다."],
+  ["n023","水","みず","물","n","水を 一杯 ください。","물을 한 잔 주세요."],
+  ["n024","肉","にく","고기","n","わたしは 肉より 魚が 好きです。","저는 고기보다 생선을 좋아합니다."],
+  ["n025","魚","さかな","생선·물고기","n","この 魚は おいしいです。","이 생선은 맛있습니다."],
+  ["n026","野菜","やさい","채소","n","毎日 野菜を 食べます。","매일 채소를 먹습니다."],
+  ["n027","果物","くだもの","과일","n","どんな 果物が 好きですか。","어떤 과일을 좋아합니까?"],
+  ["n028","朝ご飯","あさごはん","아침밥","n","朝ご飯を 食べましたか。","아침밥을 먹었습니까?"],
+  ["n029","晩ご飯","ばんごはん","저녁밥","n","晩ご飯は カレーでした。","저녁밥은 카레였습니다."],
+  ["n030","お茶","おちゃ","차(녹차)","n","お茶を 飲みませんか。","차를 마시지 않겠습니까?"],
+  ["n031","店","みせ","가게","n","あの 店は 安いです。","저 가게는 쌉니다."],
+  ["n032","病院","びょういん","병원","n","病院は 駅の 近くに あります。","병원은 역 근처에 있습니다.","びよういん(美容院, 미용실)과 구별"],
+  ["n033","銀行","ぎんこう","은행","n","銀行は 九時に 開きます。","은행은 9시에 엽니다."],
+  ["n034","図書館","としょかん","도서관","n","図書館で 勉強します。","도서관에서 공부합니다."],
+  ["n035","会社","かいしゃ","회사","n","会社は 九時からです。","회사는 9시부터입니다."],
+  ["n036","仕事","しごと","일·업무","n","仕事は 何時に 終わりますか。","일은 몇 시에 끝납니까?"],
+  ["n037","旅行","りょこう","여행","n","夏休みに 旅行を します。","여름방학에 여행을 합니다."],
+  ["n038","写真","しゃしん","사진","n","ここで 写真を 撮っても いいですか。","여기서 사진을 찍어도 됩니까?"],
+  ["n039","映画","えいが","영화","n","週末に 映画を 見ます。","주말에 영화를 봅니다."],
+  ["n040","音楽","おんがく","음악","n","音楽を 聞くのが 好きです。","음악 듣는 것을 좋아합니다."],
+  ["n041","手紙","てがみ","편지","n","母に 手紙を 書きました。","어머니에게 편지를 썼습니다."],
+  ["n042","切手","きって","우표","n","郵便局で 切手を 買います。","우체국에서 우표를 삽니다."],
+  ["n043","傘","かさ","우산","n","傘を 持って いますか。","우산을 가지고 있습니까?"],
+  ["n044","靴","くつ","신발·구두","n","新しい 靴を 買いました。","새 신발을 샀습니다."],
+  ["n045","服","ふく","옷","n","この 服は 少し 大きいです。","이 옷은 조금 큽니다."],
+  ["n046","帽子","ぼうし","모자","n","帽子を かぶって います。","모자를 쓰고 있습니다."],
+  ["n047","かばん","かばん","가방","n","かばんの 中に 何が ありますか。","가방 안에 무엇이 있습니까?"],
+  ["n048","いす","いす","의자","n","いすに 座って ください。","의자에 앉아 주세요."],
+  ["n049","道","みち","길","n","この 道を まっすぐ 行って ください。","이 길을 똑바로 가 주세요."],
+  ["n050","車","くるま","자동차","n","車で 来ました。","차로 왔습니다."],
+  ["n051","自転車","じてんしゃ","자전거","n","自転車で 学校へ 行きます。","자전거로 학교에 갑니다."],
+  ["n052","飛行機","ひこうき","비행기","n","飛行機で 大阪へ 行きます。","비행기로 오사카에 갑니다."],
+  ["n053","山","やま","산","n","日曜日に 山に 登りました。","일요일에 산에 올랐습니다."],
+  ["n054","川","かわ","강","n","子どもたちが 川で 泳いで います。","아이들이 강에서 헤엄치고 있습니다."],
+  ["n055","海","うみ","바다","n","夏は 海へ 行きたいです。","여름에는 바다에 가고 싶습니다."],
+  ["n056","花","はな","꽃","n","庭に 花が 咲いて います。","마당에 꽃이 피어 있습니다."],
+  ["n057","犬","いぬ","개","n","毎朝 犬と 散歩します。","매일 아침 개와 산책합니다."],
+  ["n058","猫","ねこ","고양이","n","猫が いすの 下に います。","고양이가 의자 밑에 있습니다."],
+  ["n059","名前","なまえ","이름","n","お名前は 何ですか。","이름이 무엇입니까?"],
+  ["n060","言葉","ことば","말·단어","n","この 言葉の 意味が わかりません。","이 단어의 뜻을 모르겠습니다."],
+  ["n061","宿題","しゅくだい","숙제","n","宿題を 忘れました。","숙제를 잊어버렸습니다."],
+  ["n062","休み","やすみ","휴일·쉬는 시간","n","明日は 休みです。","내일은 쉬는 날입니다."],
+  ["n063","午前","ごぜん","오전","n","午前 十時に 会いましょう。","오전 10시에 만납시다."],
+  ["n064","午後","ごご","오후","n","午後は 雨が 降るでしょう。","오후에는 비가 오겠지요."],
+  ["n065","今朝","けさ","오늘 아침","n","今朝 七時に 起きました。","오늘 아침 7시에 일어났습니다."],
+  ["n066","今晩","こんばん","오늘 밤","n","今晩 電話します。","오늘 밤 전화하겠습니다."],
+  ["n067","毎日","まいにち","매일","n","毎日 日本語を 勉強します。","매일 일본어를 공부합니다."],
+  ["n068","来週","らいしゅう","다음 주","n","来週 テストが あります。","다음 주에 시험이 있습니다."],
+  ["n069","先月","せんげつ","지난달","n","先月 京都へ 行きました。","지난달 교토에 갔습니다."],
+  ["n070","去年","きょねん","작년","n","去年 日本に 来ました。","작년에 일본에 왔습니다."],
+  ["n071","外国","がいこく","외국","n","外国へ 行った ことが ありますか。","외국에 가 본 적이 있습니까?"],
+  ["n072","病気","びょうき","병","n","病気で 学校を 休みました。","병 때문에 학교를 쉬었습니다."],
+  ["n073","薬","くすり","약","n","ご飯の あとで この 薬を 飲んで ください。","식사 후에 이 약을 드세요.","약은 '마시다(飲む)'를 씁니다"],
+  ["n074","頭","あたま","머리","n","頭が 痛いです。","머리가 아픕니다."],
+  ["n075","目","め","눈","n","目が 疲れました。","눈이 피곤합니다."],
+  ["n076","口","くち","입","n","口を 大きく 開けて ください。","입을 크게 벌려 주세요."],
+  ["n077","手","て","손","n","ご飯の 前に 手を 洗います。","밥 먹기 전에 손을 씻습니다."],
+  ["n078","足","あし","다리·발","n","足が 痛いです。","다리(발)가 아픕니다."],
+  ["n079","お金","おかね","돈","n","今 お金が ありません。","지금 돈이 없습니다."],
+  ["n080","電話","でんわ","전화","n","夜 友だちに 電話を かけました。","밤에 친구에게 전화를 걸었습니다."],
+  ["n081","家","いえ","집","n","六時に 家に 帰ります。","6시에 집에 돌아갑니다."],
+  ["n082","台所","だいどころ","부엌","n","母は 台所に います。","어머니는 부엌에 있습니다."],
+  ["n083","お風呂","おふろ","목욕·욕조","n","毎晩 お風呂に 入ります。","매일 밤 목욕을 합니다."],
+  ["n084","庭","にわ","마당·정원","n","庭に 木が あります。","마당에 나무가 있습니다."],
+  ["n085","隣","となり","옆·이웃","n","銀行の 隣に 本屋が あります。","은행 옆에 서점이 있습니다."],
+  ["n086","前","まえ","앞·전","n","駅の 前で 待って います。","역 앞에서 기다리고 있습니다."],
+  ["n087","後ろ","うしろ","뒤","n","わたしの 後ろに 犬が います。","제 뒤에 개가 있습니다."],
+  ["n088","外","そと","밖","n","外は 寒いです。","밖은 춥습니다."],
+  ["n089","中","なか","안","n","箱の 中に 何が ありますか。","상자 안에 무엇이 있습니까?"],
+  ["n090","右","みぎ","오른쪽","n","次の 角を 右に 曲がって ください。","다음 모퉁이에서 오른쪽으로 도세요."],
+  ["n091","左","ひだり","왼쪽","n","左に 郵便局が あります。","왼쪽에 우체국이 있습니다."],
+  ["n092","春","はる","봄","n","春は 暖かいです。","봄은 따뜻합니다."],
+  ["n093","夏","なつ","여름","n","夏は 暑いです。","여름은 덥습니다."],
+  ["n094","秋","あき","가을","n","秋は 涼しいです。","가을은 선선합니다."],
+  ["n095","冬","ふゆ","겨울","n","冬は 寒いです。","겨울은 춥습니다."],
+  ["n096","朝","あさ","아침","n","朝 六時に 起きます。","아침 6시에 일어납니다."],
+  ["n097","夜","よる","밤","n","夜は 静かです。","밤은 조용합니다."],
+  ["n098","時間","じかん","시간","n","今日は 時間が ありません。","오늘은 시간이 없습니다."],
+  ["n099","料理","りょうり","요리","n","母の 料理は おいしいです。","어머니의 요리는 맛있습니다."],
+  ["n100","動物","どうぶつ","동물","n","どんな 動物が 好きですか。","어떤 동물을 좋아합니까?"],
+  ["n101","大学","だいがく","대학(교)","n","兄は 大学で 英語を 勉強して います。","형은 대학에서 영어를 공부하고 있습니다."],
+  ["n102","教室","きょうしつ","교실","n","教室に 学生が 二十人 います。","교실에 학생이 20명 있습니다."],
+  ["n103","漢字","かんじ","한자","n","漢字を 覚えるのは 難しいです。","한자를 외우는 것은 어렵습니다."],
+  ["n104","問題","もんだい","문제","n","この 問題は やさしいです。","이 문제는 쉽습니다."],
+  ["n105","意味","いみ","의미·뜻","n","この 漢字の 意味を 教えて ください。","이 한자의 뜻을 가르쳐 주세요."],
+  ["n106","公園","こうえん","공원","n","公園を 散歩しました。","공원을 산책했습니다."],
+  ["n107","郵便局","ゆうびんきょく","우체국","n","郵便局は 何時までですか。","우체국은 몇 시까지입니까?"],
+  ["n108","食堂","しょくどう","식당","n","大学の 食堂で 昼ご飯を 食べます。","대학 식당에서 점심을 먹습니다."],
+  ["n109","昼ご飯","ひるごはん","점심밥","n","昼ご飯は もう 食べましたか。","점심은 벌써 먹었습니까?"],
+  ["n110","卵","たまご","달걀","n","卵を 二つ 買いました。","달걀을 두 개 샀습니다."],
+  ["n111","牛乳","ぎゅうにゅう","우유","n","毎朝 牛乳を 飲みます。","매일 아침 우유를 마십니다."],
+  ["n112","お弁当","おべんとう","도시락","n","今日は お弁当を 作りました。","오늘은 도시락을 만들었습니다."],
+  ["n113","テレビ","テレビ","텔레비전","n","夜 テレビを 見ます。","밤에 텔레비전을 봅니다."],
+  ["n114","パン","パン","빵","n","朝は パンを 食べます。","아침에는 빵을 먹습니다."],
+  ["n115","コーヒー","コーヒー","커피","n","コーヒーを 一杯 飲みました。","커피를 한 잔 마셨습니다."],
+  ["n116","ノート","ノート","노트·공책","n","ノートに 名前を 書いて ください。","노트에 이름을 써 주세요."],
+  ["n117","テスト","テスト","시험·테스트","n","明日 テストが あります。","내일 시험이 있습니다."],
+  ["n118","ドア","ドア","문","n","ドアを 閉めて ください。","문을 닫아 주세요."],
+  ["n119","エレベーター","エレベーター","엘리베이터","n","エレベーターで 五階へ 行きます。","엘리베이터로 5층에 갑니다."],
+  ["n120","シャツ","シャツ","셔츠","n","白い シャツを 着て います。","흰 셔츠를 입고 있습니다."],
+
+  ["v001","行く","いく","가다","v","明日 図書館へ 行きます。","내일 도서관에 갑니다.","1그룹 · て형은 行って(예외)"],
+  ["v002","来る","くる","오다","v","友だちが 家に 来ます。","친구가 집에 옵니다.","3그룹(불규칙) · 来ます(きます)·来て(きて)"],
+  ["v003","する","する","하다","v","毎晩 宿題を します。","매일 밤 숙제를 합니다.","3그룹(불규칙) · します·して"],
+  ["v004","帰る","かえる","돌아가다·돌아오다","v","六時に 家へ 帰ります。","6시에 집에 돌아갑니다.","る로 끝나지만 1그룹 · 帰って"],
+  ["v005","食べる","たべる","먹다","v","朝ご飯を 食べます。","아침밥을 먹습니다.","2그룹 · 食べて"],
+  ["v006","飲む","のむ","마시다","v","コーヒーを 飲みます。","커피를 마십니다.","1그룹 · 飲んで"],
+  ["v007","見る","みる","보다","v","毎晩 テレビを 見ます。","매일 밤 텔레비전을 봅니다.","2그룹 · 見て"],
+  ["v008","聞く","きく","듣다·묻다","v","先生に 道を 聞きました。","선생님께 길을 물었습니다.","1그룹 · 聞いて"],
+  ["v009","読む","よむ","읽다","v","電車で 本を 読みます。","전철에서 책을 읽습니다.","1그룹 · 読んで"],
+  ["v010","書く","かく","쓰다","v","名前を 書いて ください。","이름을 써 주세요.","1그룹 · 書いて"],
+  ["v011","話す","はなす","이야기하다","v","日本語で 話しましょう。","일본어로 이야기합시다.","1그룹 · 話して"],
+  ["v012","買う","かう","사다","v","スーパーで 野菜を 買います。","슈퍼에서 채소를 삽니다.","1그룹 · 買って"],
+  ["v013","待つ","まつ","기다리다","v","駅で 友だちを 待ちます。","역에서 친구를 기다립니다.","1그룹 · 待って"],
+  ["v014","会う","あう","만나다","v","明日 先生に 会います。","내일 선생님을 만납니다.","1그룹 · '~를 만나다'는 「~に 会う」"],
+  ["v015","起きる","おきる","일어나다","v","毎朝 六時に 起きます。","매일 아침 6시에 일어납니다.","2그룹 · 起きて"],
+  ["v016","寝る","ねる","자다","v","十一時に 寝ます。","11시에 잡니다.","2그룹 · 寝て"],
+  ["v017","入る","はいる","들어가다","v","部屋に 入って ください。","방에 들어오세요.","る로 끝나지만 1그룹 · 入って"],
+  ["v018","出る","でる","나가다·나오다","v","八時に 家を 出ます。","8시에 집을 나섭니다.","2그룹 · 出て"],
+  ["v019","使う","つかう","사용하다","v","この ペンを 使っても いいですか。","이 펜을 써도 됩니까?","1그룹 · 使って"],
+  ["v020","休む","やすむ","쉬다","v","少し 休みましょう。","조금 쉽시다.","1그룹 · 休んで"],
+  ["v021","働く","はたらく","일하다","v","兄は 銀行で 働いて います。","형은 은행에서 일하고 있습니다.","1그룹 · 働いて"],
+  ["v022","勉強する","べんきょうする","공부하다","v","図書館で 勉強します。","도서관에서 공부합니다.","3그룹"],
+  ["v023","作る","つくる","만들다","v","母と ケーキを 作りました。","어머니와 케이크를 만들었습니다.","1그룹 · 作って"],
+  ["v024","歩く","あるく","걷다","v","駅まで 歩いて 行きます。","역까지 걸어서 갑니다.","1그룹 · 歩いて"],
+  ["v025","走る","はしる","달리다","v","毎朝 公園を 走ります。","매일 아침 공원을 달립니다.","る로 끝나지만 1그룹 · 走って"],
+  ["v026","泳ぐ","およぐ","헤엄치다","v","海で 泳ぎました。","바다에서 헤엄쳤습니다.","1그룹 · 泳いで"],
+  ["v027","わかる","わかる","알다·이해하다","v","日本語が 少し わかります。","일본어를 조금 압니다.","1그룹 · 「~が わかる」"],
+  ["v028","知る","しる","(정보를) 알다","v","先生の 電話番号を 知って いますか。","선생님 전화번호를 알고 있습니까?","1그룹 · 주로 知って いる, 부정은 知りません"],
+  ["v029","住む","すむ","살다","v","ソウルに 住んで います。","서울에 살고 있습니다.","1그룹 · 「~に 住んで いる」"],
+  ["v030","開ける","あける","열다","v","窓を 開けます。","창문을 엽니다.","2그룹 · 「~が 開く(あく)」는 '열리다'"],
+  ["v031","閉める","しめる","닫다","v","ドアを 閉めて ください。","문을 닫아 주세요.","2그룹"],
+  ["v032","教える","おしえる","가르치다","v","姉は 子どもに ピアノを 教えて います。","누나는 아이들에게 피아노를 가르치고 있습니다.","2그룹"],
+  ["v033","覚える","おぼえる","외우다","v","漢字を 五つ 覚えました。","한자를 다섯 개 외웠습니다.","2그룹"],
+  ["v034","忘れる","わすれる","잊다","v","傘を 電車に 忘れました。","우산을 전철에 두고 왔습니다.","2그룹"],
+  ["v035","立つ","たつ","서다","v","ドアの 前に 立って ください。","문 앞에 서 주세요.","1그룹 · 立って"],
+  ["v036","座る","すわる","앉다","v","ここに 座っても いいですか。","여기 앉아도 됩니까?","1그룹 · 座って"],
+  ["v037","降る","ふる","(비·눈이) 내리다","v","雪が 降って います。","눈이 내리고 있습니다.","1그룹 · 降って"],
+  ["v038","乗る","のる","타다","v","バスに 乗ります。","버스를 탑니다.","1그룹 · 「~に 乗る」"],
+  ["v039","降りる","おりる","(탈것에서) 내리다","v","次の 駅で 電車を 降ります。","다음 역에서 전철을 내립니다.","2그룹 · 「~を 降りる」"],
+  ["v040","貸す","かす","빌려주다","v","友だちに 本を 貸しました。","친구에게 책을 빌려주었습니다.","1그룹 · 貸して"],
+  ["v041","借りる","かりる","빌리다","v","図書館で 本を 借りました。","도서관에서 책을 빌렸습니다.","2그룹 · 借りて"],
+  ["v042","始まる","はじまる","시작되다","v","映画は 七時に 始まります。","영화는 7시에 시작합니다.","1그룹"],
+  ["v043","終わる","おわる","끝나다","v","仕事は 五時に 終わります。","일은 5시에 끝납니다.","1그룹"],
+  ["v044","洗う","あらう","씻다","v","手を 洗いましょう。","손을 씻읍시다.","1그룹 · 洗って"],
+  ["v045","遊ぶ","あそぶ","놀다","v","公園で 子どもと 遊びました。","공원에서 아이와 놀았습니다.","1그룹 · 遊んで"],
+  ["v046","歌う","うたう","노래하다","v","みんなで 歌を 歌いましょう。","다 같이 노래를 부릅시다.","1그룹 · 歌って"],
+  ["v047","撮る","とる","(사진을) 찍다","v","写真を 撮りましょう。","사진을 찍읍시다.","1그룹 · 撮って"],
+  ["v048","着る","きる","(상의를) 입다","v","白い シャツを 着ます。","흰 셔츠를 입습니다.","2그룹 · 바지·신발은 はく"],
+  ["v049","呼ぶ","よぶ","부르다","v","タクシーを 呼んで ください。","택시를 불러 주세요.","1그룹 · 呼んで"],
+
+  ["i001","大きい","おおきい","크다","i","大きい 犬ですね。","큰 개네요."],
+  ["i002","小さい","ちいさい","작다","i","この かばんは 小さいです。","이 가방은 작습니다."],
+  ["i003","高い","たかい","비싸다·높다","i","この 時計は 高いです。","이 시계는 비쌉니다."],
+  ["i004","安い","やすい","싸다","i","あの 店は 安くて おいしいです。","저 가게는 싸고 맛있습니다."],
+  ["i005","新しい","あたらしい","새롭다","i","新しい 靴を 買いました。","새 신발을 샀습니다."],
+  ["i006","古い","ふるい","낡다·오래되다","i","この 家は 古いです。","이 집은 오래되었습니다."],
+  ["i007","暑い","あつい","덥다","i","今日は とても 暑いです。","오늘은 매우 덥습니다.","날씨가 덥다는 暑い, 물건이 뜨겁다는 熱い"],
+  ["i008","寒い","さむい","춥다","i","冬は 寒いです。","겨울은 춥습니다."],
+  ["i009","暖かい","あたたかい","따뜻하다","i","今日は 暖かいですね。","오늘은 따뜻하네요."],
+  ["i010","涼しい","すずしい","시원하다·선선하다","i","秋は 涼しいです。","가을은 선선합니다."],
+  ["i011","難しい","むずかしい","어렵다","i","漢字は 難しいです。","한자는 어렵습니다."],
+  ["i012","やさしい","やさしい","쉽다·상냥하다","i","この 問題は やさしいです。","이 문제는 쉽습니다."],
+  ["i013","おいしい","おいしい","맛있다","i","この ケーキは おいしいです。","이 케이크는 맛있습니다."],
+  ["i014","忙しい","いそがしい","바쁘다","i","今週は 忙しいです。","이번 주는 바쁩니다."],
+  ["i015","楽しい","たのしい","즐겁다","i","旅行は 楽しかったです。","여행은 즐거웠습니다."],
+  ["i016","長い","ながい","길다","i","この 映画は 長いです。","이 영화는 깁니다."],
+  ["i017","短い","みじかい","짧다","i","夏休みは 短いです。","여름방학은 짧습니다."],
+  ["i018","近い","ちかい","가깝다","i","駅は ここから 近いです。","역은 여기서 가깝습니다."],
+  ["i019","遠い","とおい","멀다","i","学校は 家から 遠いです。","학교는 집에서 멉니다."],
+  ["i020","多い","おおい","많다","i","この 町は 人が 多いです。","이 동네는 사람이 많습니다."],
+  ["i021","少ない","すくない","적다","i","今日は 宿題が 少ないです。","오늘은 숙제가 적습니다."],
+  ["i022","広い","ひろい","넓다","i","新しい 部屋は 広いです。","새 방은 넓습니다."],
+  ["i023","狭い","せまい","좁다","i","わたしの 部屋は 狭いです。","제 방은 좁습니다."],
+  ["i024","重い","おもい","무겁다","i","この かばんは 重いです。","이 가방은 무겁습니다."],
+  ["i025","軽い","かるい","가볍다","i","この 本は 軽いです。","이 책은 가볍습니다."],
+  ["i026","痛い","いたい","아프다","i","歯が 痛いです。","이가 아픕니다."],
+  ["i027","白い","しろい","하얗다","i","白い 花が 好きです。","흰 꽃을 좋아합니다."],
+  ["i028","黒い","くろい","검다","i","黒い 猫が います。","검은 고양이가 있습니다."],
+  ["i029","赤い","あかい","빨갛다","i","赤い りんごを 買いました。","빨간 사과를 샀습니다."],
+  ["i030","青い","あおい","파랗다","i","空が 青いです。","하늘이 파랗습니다."],
+  ["i031","いい","いい","좋다","i","今日は 天気が いいです。","오늘은 날씨가 좋습니다.","과거형은 よかった, 부정은 よくない"],
+  ["i032","明るい","あかるい","밝다","i","この 部屋は 明るいです。","이 방은 밝습니다."],
+  ["i033","暗い","くらい","어둡다","i","外は もう 暗いです。","밖은 벌써 어둡습니다."],
+  ["i034","早い","はやい","(시간이) 이르다","i","今日は 早く 起きました。","오늘은 일찍 일어났습니다.","속도가 빠르다는 速い"],
+  ["i035","つまらない","つまらない","재미없다","i","この 映画は つまらなかったです。","이 영화는 재미없었습니다."],
+  ["i036","おもしろい","おもしろい","재미있다","i","この 本は おもしろいです。","이 책은 재미있습니다."],
+
+  ["a001","好き","すき","좋아함","na","わたしは 音楽が 好きです。","저는 음악을 좋아합니다.","「~が 好きだ」"],
+  ["a002","嫌い","きらい","싫어함","na","弟は 野菜が 嫌いです。","남동생은 채소를 싫어합니다.","い로 끝나지만 な형용사"],
+  ["a003","上手","じょうず","잘함·능숙함","na","姉は 歌が 上手です。","누나는 노래를 잘합니다."],
+  ["a004","下手","へた","서투름","na","わたしは 料理が 下手です。","저는 요리를 못합니다."],
+  ["a005","静か","しずか","조용함","na","図書館は 静かです。","도서관은 조용합니다."],
+  ["a006","にぎやか","にぎやか","번화함·활기참","na","この 町は にぎやかです。","이 동네는 번화합니다."],
+  ["a007","きれい","きれい","예쁨·깨끗함","na","この 部屋は きれいですね。","이 방은 깨끗하네요.","い로 끝나지만 な형용사 · きれいな 花"],
+  ["a008","元気","げんき","건강함·활기참","na","お元気ですか。","잘 지내십니까?"],
+  ["a009","有名","ゆうめい","유명함","na","ここは 有名な 店です。","여기는 유명한 가게입니다."],
+  ["a010","便利","べんり","편리함","na","駅の 近くは 便利です。","역 근처는 편리합니다."],
+  ["a011","大切","たいせつ","소중함","na","これは 大切な 写真です。","이것은 소중한 사진입니다."],
+  ["a012","大丈夫","だいじょうぶ","괜찮음","na","大丈夫ですか。","괜찮습니까?"],
+  ["a013","暇","ひま","한가함","na","明日は 暇です。","내일은 한가합니다."],
+  ["a014","親切","しんせつ","친절함","na","駅の 人は とても 親切でした。","역 직원은 매우 친절했습니다."],
+  ["a015","大変","たいへん","힘듦·큰일","na","毎日 仕事が 大変です。","매일 일이 힘듭니다."],
+  ["a016","いろいろ","いろいろ","여러 가지","na","いろいろな 国の 料理を 食べました。","여러 나라 요리를 먹었습니다."],
+
+  ["d001","とても","とても","매우","adv","この 店の ラーメンは とても おいしいです。","이 가게의 라멘은 매우 맛있습니다."],
+  ["d002","少し","すこし","조금","adv","日本語が 少し わかります。","일본어를 조금 압니다."],
+  ["d003","たくさん","たくさん","많이","adv","公園に 人が たくさん います。","공원에 사람이 많이 있습니다."],
+  ["d004","もう","もう","벌써·이미","adv","もう 宿題を しました。","벌써 숙제를 했습니다.","もう 一度 = 한 번 더"],
+  ["d005","まだ","まだ","아직","adv","まだ 昼ご飯を 食べて いません。","아직 점심을 먹지 않았습니다."],
+  ["d006","いつも","いつも","항상","adv","父は いつも 七時に 起きます。","아버지는 항상 7시에 일어납니다."],
+  ["d007","ときどき","ときどき","가끔","adv","ときどき 映画を 見ます。","가끔 영화를 봅니다."],
+  ["d008","よく","よく","자주·잘","adv","この 店には よく 来ます。","이 가게에는 자주 옵니다."],
+  ["d009","ちょっと","ちょっと","잠깐·조금","adv","ちょっと 待って ください。","잠깐 기다려 주세요."],
+  ["d010","また","また","또","adv","また 来て ください。","또 와 주세요."],
+  ["d011","すぐ","すぐ","곧·바로","adv","すぐ 行きます。","곧 가겠습니다."],
+  ["d012","ゆっくり","ゆっくり","천천히","adv","ゆっくり 話して ください。","천천히 말해 주세요."],
+  ["d013","まっすぐ","まっすぐ","똑바로","adv","この 道を まっすぐ 行って ください。","이 길을 똑바로 가 주세요."],
+  ["d014","いっしょに","いっしょに","함께","adv","いっしょに 帰りましょう。","함께 돌아갑시다."],
+  ["d015","ぜんぜん","ぜんぜん","전혀","adv","お酒は ぜんぜん 飲みません。","술은 전혀 마시지 않습니다.","뒤에 부정이 옵니다"],
+  ["d016","あまり","あまり","그다지","adv","肉は あまり 好きじゃ ありません。","고기는 그다지 좋아하지 않습니다.","뒤에 부정이 옵니다"],
+  ["d017","たぶん","たぶん","아마","adv","明日は たぶん 雨でしょう。","내일은 아마 비가 오겠지요."],
+  ["d018","いちばん","いちばん","가장","adv","果物の 中で りんごが いちばん 好きです。","과일 중에서 사과를 가장 좋아합니다."],
+  ["d019","だんだん","だんだん","점점","adv","だんだん 寒く なりました。","점점 추워졌습니다."],
+  ["d020","もっと","もっと","더","adv","もっと ゆっくり 話して ください。","더 천천히 말해 주세요."]
+];
+
+</script>
+<script>
+/* questions.js */
+/* JLPT N5 연습 문제(자체 제작). o[0]이 정답이며 화면에서는 보기 순서를 섞는다.
+   유형: kr 한자 읽기 · pk 표기 · cx 문맥 규정 · pa 유의 표현 · gr 문법
+   [말] = 밑줄, （　） = 빈칸 */
+window.JLPT_DATA = window.JLPT_DATA || {};
+window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
+window.JLPT_DATA.N5.questions = [
+  {id:"kr01",t:"kr",q:"きのう [学校]を 休みました。",o:["がっこう","がこう","かっこう","がっこ"],e:"学校는 がっこう로 읽습니다. 작은 っ와 장음 う를 모두 씁니다. かっこう(格好)는 '모습'이라는 다른 단어입니다."},
+  {id:"kr02",t:"kr",q:"[電車]で 会社へ 行きます。",o:["でんしゃ","でんしや","てんしゃ","でんじゃ"],e:"電車는 でんしゃ입니다. しゃ의 ゃ는 작게 씁니다."},
+  {id:"kr03",t:"kr",q:"この [時計]は 高いです。",o:["とけい","どけい","じけい","ときけい"],e:"時計는 とけい로 읽습니다. 時는 보통 じ나 とき로 읽지만 時計에서는 と로 읽는 특별한 읽기입니다."},
+  {id:"kr04",t:"kr",q:"今日は [天気]が いいですね。",o:["てんき","でんき","てんぎ","でんぎ"],e:"天気는 てんき입니다. でんき(電気)는 '전기'입니다."},
+  {id:"kr05",t:"kr",q:"父は 毎朝 [新聞]を 読みます。",o:["しんぶん","しんもん","しぶん","しんふん"],e:"新聞은 しんぶん입니다. 聞은 동사 聞く(きく)와 달리 여기서는 ぶん으로 읽습니다."},
+  {id:"kr06",t:"kr",q:"[来週] テストが あります。",o:["らいしゅう","らいしゅ","らいしょう","きしゅう"],e:"来週는 らいしゅう입니다. 週는 しゅう로 길게 읽습니다."},
+  {id:"kr07",t:"kr",q:"[午後]は ひまです。",o:["ごご","ごうご","こご","ごこ"],e:"午後는 ごご입니다. 오전 午前은 ごぜん입니다."},
+  {id:"kr08",t:"kr",q:"[外国]の 友だちが います。",o:["がいこく","かいこく","がいごく","そとこく"],e:"外国는 がいこく입니다. 外 단독으로는 そと(밖)라고 읽습니다."},
+  {id:"kr09",t:"kr",q:"駅の [前]で 待って います。",o:["まえ","ぜん","さき","うしろ"],e:"前 단독으로는 まえ입니다. ぜん은 午前(ごぜん)처럼 한자어 안에서 읽고, うしろ는 後ろ(뒤)입니다."},
+  {id:"kr10",t:"kr",q:"[父]は 会社員です。",o:["ちち","はは","あに","おとうと"],e:"父는 ちち입니다. はは는 母(어머니), あに는 兄(형·오빠), おとうと는 弟(남동생)입니다."},
+  {id:"kr11",t:"kr",q:"どうぞ 部屋に [入って] ください。",o:["はいって","いって","いれて","はって"],e:"入る는 はいる, て형은 はいって입니다(る로 끝나지만 1그룹). いれて는 入れる(넣다), いって는 行く(가다)입니다."},
+  {id:"kr12",t:"kr",q:"[左]に 曲がって ください。",o:["ひだり","みぎ","ひたり","さ"],e:"左는 ひだり(왼쪽), 右는 みぎ(오른쪽)입니다. ひたり처럼 탁점을 빼면 틀립니다."},
+  {id:"kr13",t:"kr",q:"その [話]は おもしろいですね。",o:["はなし","はなす","わ","はなじ"],e:"명사 話는 はなし, 동사 話す는 はなす입니다."},
+  {id:"kr14",t:"kr",q:"[大きい] かばんですね。",o:["おおきい","おきい","おうきい","だいきい"],e:"大きい는 おおきい입니다. 장음을 おう가 아니라 おお로 씁니다."},
+  {id:"kr15",t:"kr",q:"毎晩 [九時]に 寝ます。",o:["くじ","きゅうじ","ここのじ","くうじ"],e:"9시는 くじ로 읽습니다. 숫자 9는 보통 きゅう지만 시각에서는 く입니다."},
+  {id:"kr16",t:"kr",q:"[四月]に 日本へ 行きます。",o:["しがつ","よんがつ","よがつ","しげつ"],e:"4월은 しがつ입니다. 4시는 よじ, 4명은 よにん으로 읽는 것과 구별하세요."},
+  {id:"kr17",t:"kr",q:"[四時]に 会いましょう。",o:["よじ","よんじ","しじ","よっじ"],e:"4시는 よじ입니다. 4월(しがつ)과 읽는 법이 다릅니다."},
+  {id:"kr18",t:"kr",q:"[一人]で 行きます。",o:["ひとり","ひどり","いちり","ひとに"],e:"1명은 ひとり, 2명은 ふたり, 3명부터는 さんにん처럼 にん을 붙입니다."},
+
+  {id:"pk01",t:"pk",q:"日曜日に [やま]に 登りました。",o:["山","川","出","田"],e:"やま는 山입니다. 川는 かわ(강), 出는 でる(나가다)의 出, 田는 た(논)입니다."},
+  {id:"pk02",t:"pk",q:"[あめ]が 降って います。",o:["雨","雪","両","電"],e:"あめ는 雨입니다. 雪는 ゆき(눈)입니다."},
+  {id:"pk03",t:"pk",q:"[みず]を ください。",o:["水","氷","木","永"],e:"みず는 水입니다. 氷는 こおり(얼음), 木는 き(나무)입니다."},
+  {id:"pk04",t:"pk",q:"[たかい] ビルですね。",o:["高い","商い","京い","亮い"],e:"たかい는 高い입니다. 모양이 비슷한 商·京·亮과 구별하세요."},
+  {id:"pk05",t:"pk",q:"[やすみ]の 日は 何を しますか。",o:["休み","体み","木み","林み"],e:"やすみ는 休み(쉴 휴)입니다. 体는 からだ(몸)입니다."},
+  {id:"pk06",t:"pk",q:"[おとこ]の 人が 来ました。",o:["男","町","思","界"],e:"おとこ는 男입니다. 町는 まち(동네)입니다."},
+  {id:"pk07",t:"pk",q:"あの [みせ]で 買いました。",o:["店","広","席","庁"],e:"みせ는 店입니다. 広는 広い(ひろい, 넓다)의 広입니다."},
+  {id:"pk08",t:"pk",q:"[ひだり]の 手で 書きます。",o:["左","右","友","在"],e:"ひだり는 左, みぎ는 右입니다. 友는 とも(친구)입니다."},
+  {id:"pk09",t:"pk",q:"ここに [なまえ]を 書いて ください。",o:["名前","各前","名先","多前"],e:"なまえ는 名前입니다."},
+  {id:"pk10",t:"pk",q:"夜 友だちに [でんわ]を かけます。",o:["電話","雷話","電活","電語"],e:"でんわ는 電話입니다. 雷는 かみなり(천둥)입니다."},
+  {id:"pk11",t:"pk",q:"[しろい] シャツを 着ます。",o:["白い","百い","自い","日い"],e:"しろい는 白い입니다. 百는 ひゃく, 自는 自分(じぶん)의 じ입니다."},
+  {id:"pk12",t:"pk",q:"[せんせい]に 聞きました。",o:["先生","先正","失生","洗生"],e:"せんせい는 先生입니다."},
+  {id:"pk13",t:"pk",q:"電車で 本を [よみます]。",o:["読みます","説みます","話みます","続みます"],e:"よみます는 読みます입니다. 話す(はなす)와 모양이 비슷하니 주의하세요."},
+  {id:"pk14",t:"pk",q:"[がっこう]は 九時からです。",o:["学校","字校","学枚","学交"],e:"がっこう는 学校입니다."},
+
+  {id:"cx01",t:"cx",q:"寒いですから、窓を （　） ください。",o:["しめて","あけて","つけて","きて"],e:"추우니까 창문을 '닫아(しめて)' 주세요. あけて는 '열어', つけて는 '(불을) 켜', きて는 '입어' 또는 '와'입니다."},
+  {id:"cx02",t:"cx",q:"暑いですから、冷たい （　）を 飲みたいです。",o:["ジュース","パン","ケーキ","ごはん"],e:"마시는 것은 ジュース(주스)뿐입니다."},
+  {id:"cx03",t:"cx",q:"あした テストが ありますから、今晩は （　）します。",o:["べんきょう","さんぽ","せんたく","そうじ"],e:"내일 시험이 있으니 오늘 밤은 공부(べんきょう)합니다. さんぽ는 산책, せんたく는 빨래, そうじ는 청소입니다."},
+  {id:"cx04",t:"cx",q:"この 部屋は （　）ですから、電気を つけましょう。",o:["くらい","あかるい","ひろい","あつい"],e:"어두우니까(くらい) 불을 켭시다. あかるい는 '밝다'입니다."},
+  {id:"cx05",t:"cx",q:"毎朝 六時に （　）、シャワーを あびます。",o:["おきて","ねて","はいって","つかれて"],e:"아침에 일어나서(おきて) 샤워를 합니다. ねて는 '자고'입니다."},
+  {id:"cx06",t:"cx",q:"きのうは 頭が （　）、学校を 休みました。",o:["いたくて","おおきくて","ながくて","あかくて"],e:"머리가 아파서(いたくて) 학교를 쉬었습니다. い형용사의 て형(~くて)이 이유를 나타냅니다."},
+  {id:"cx07",t:"cx",q:"新しい くつを 1（　） 買いました。",o:["そく","まい","ほん","だい"],e:"신발·양말은 そく(足)로 셉니다. 1そく는 いっそく로 읽습니다. まい(枚)는 종이·셔츠, ほん(本)은 연필·병, だい(台)는 차·기계를 셉니다."},
+  {id:"cx08",t:"cx",q:"図書館で 本を 3（　） 借りました。",o:["さつ","まい","だい","ひき"],e:"책은 さつ(冊)로 셉니다. 3さつ는 さんさつ입니다. ひき(匹)는 작은 동물을 셉니다."},
+  {id:"cx09",t:"cx",q:"教室に 学生が 5（　） います。",o:["にん","ほん","まい","だい"],e:"사람은 にん(人)으로 셉니다. 1명 ひとり, 2명 ふたり만 예외입니다."},
+  {id:"cx10",t:"cx",q:"家の 前に 車が 2（　） あります。",o:["だい","にん","さつ","ひき"],e:"차·자전거 같은 기계는 だい(台)로 셉니다."},
+  {id:"cx11",t:"cx",q:"わたしの 部屋は とても （　）です。ベッドと 机しか ありません。",o:["せまい","ひろい","おおい","たかい"],e:"침대와 책상밖에 없을 만큼 좁다(せまい)는 뜻입니다."},
+  {id:"cx12",t:"cx",q:"雨が 降って いますから、（　）を 持って 行きます。",o:["かさ","とけい","しんぶん","きって"],e:"비가 오니까 우산(かさ)을 가져갑니다."},
+  {id:"cx13",t:"cx",q:"この 店の パンは 安くて （　）です。",o:["おいしい","いたい","ひくい","わかい"],e:"싸고 맛있다(おいしい)가 자연스럽습니다. ひくい는 '낮다', わかい는 '젊다'입니다."},
+  {id:"cx14",t:"cx",q:"銀行は 九時に （　）。",o:["あきます","あけます","はいります","でます"],e:"은행'이' 열리다는 자동사 あきます(開く)입니다. あけます(開ける)는 '~을 열다'라서 앞에 を가 필요합니다."},
+  {id:"cx15",t:"cx",q:"兄は めがねを （　） います。",o:["かけて","きて","はいて","かぶって"],e:"안경은 かける를 씁니다. 셔츠는 きる, 바지·신발은 はく, 모자는 かぶる입니다."},
+
+  {id:"pa01",t:"pa",q:"この 部屋は くらいです。",o:["この 部屋は あかるくないです。","この 部屋は あかるいです。","この 部屋は せまくないです。","この 部屋は しずかです。"],e:"くらい(어둡다)는 あかるくない(밝지 않다)와 뜻이 같습니다."},
+  {id:"pa02",t:"pa",q:"わたしは さかなが きらいです。",o:["わたしは さかなが すきじゃ ありません。","わたしは さかなを よく たべます。","わたしは さかなが すきです。","わたしは さかなが じょうずです。"],e:"きらい(싫어함)는 すきじゃ ありません(좋아하지 않습니다)과 가깝습니다."},
+  {id:"pa03",t:"pa",q:"おととい びょういんへ 行きました。",o:["ふつか まえに びょういんへ 行きました。","きのう びょういんへ 行きました。","ふつか あとに びょういんへ 行きます。","きょう びょういんへ 行きました。"],e:"おととい(그저께)는 ふつか まえ(이틀 전)입니다."},
+  {id:"pa04",t:"pa",q:"この もんだいは やさしいです。",o:["この もんだいは むずかしくないです。","この もんだいは むずかしいです。","この もんだいは ながいです。","この もんだいは おもしろいです。"],e:"やさしい(쉽다)는 むずかしくない(어렵지 않다)와 같습니다."},
+  {id:"pa05",t:"pa",q:"ちちは いま でかけて います。",o:["ちちは いま いえに いません。","ちちは いま いえに います。","ちちは いま ねて います。","ちちは いま ごはんを たべて います。"],e:"でかけて いる(외출해 있다)는 いえに いない(집에 없다)와 같습니다."},
+  {id:"pa06",t:"pa",q:"きょうしつに だれも いません。",o:["きょうしつに ひとが ひとりも いません。","きょうしつに ひとが たくさん います。","きょうしつに せんせいだけ います。","きょうしつに がくせいが ふたり います。"],e:"だれも + 부정은 '아무도 없다'입니다. ひとりも + 부정과 같은 뜻입니다."},
+  {id:"pa07",t:"pa",q:"この みせは いつも ひとが おおいです。",o:["この みせは いつも にぎやかです。","この みせは いつも しずかです。","この みせは いつも やすいです。","この みせは いつも ちかいです。"],e:"사람이 많다는 にぎやか(북적이다)와 가깝습니다."},
+  {id:"pa08",t:"pa",q:"しゅくだいは もう おわりました。",o:["しゅくだいは もう しました。","しゅくだいは まだ して いません。","しゅくだいは これから します。","しゅくだいは ぜんぜん しません。"],e:"もう おわりました(벌써 끝났습니다)는 もう しました(벌써 했습니다)와 같습니다."},
+
+  {id:"gr01",t:"gr",q:"わたし（　） 学生です。",o:["は","を","に","で"],e:"'A는 B입니다'의 주제는 は로 나타냅니다."},
+  {id:"gr02",t:"gr",q:"毎朝 パン（　） 食べます。",o:["を","が","に","へ"],e:"동작의 대상(목적어)은 を입니다."},
+  {id:"gr03",t:"gr",q:"駅（　） 友だちに 会います。",o:["で","に","を","が"],e:"동작이 일어나는 장소는 で입니다. '~를 만나다'는 「~に 会う」입니다."},
+  {id:"gr04",t:"gr",q:"机の 上（　） 猫が います。",o:["に","で","を","へ"],e:"존재하는 장소(います·あります)는 に입니다."},
+  {id:"gr05",t:"gr",q:"バス（　） 乗って 学校へ 行きます。",o:["に","を","で","が"],e:"乗る는 「~に 乗る」입니다. 우리말 '~을 타다'와 조사가 다르니 주의하세요."},
+  {id:"gr06",t:"gr",q:"わたしは 日本語（　） 少し わかります。",o:["が","を","に","で"],e:"わかる는 「~が わかる」로 씁니다."},
+  {id:"gr07",t:"gr",q:"きのうの テストは （　）。",o:["むずかしかったです","むずかしいでした","むずかしだったです","むずかしいかったです"],e:"い형용사 과거 정중형은 い를 빼고 かったです를 붙입니다. 「~いでした」는 틀린 형태입니다."},
+  {id:"gr08",t:"gr",q:"きのうは （　）でした。",o:["ひま","ひまい","ひまだ","ひまく"],e:"な형용사 과거 정중형은 어간에 でした를 붙입니다: ひまでした."},
+  {id:"gr09",t:"gr",q:"この ケーキは （　） おいしくないです。",o:["あまり","とても","よく","たくさん"],e:"あまり는 뒤에 부정이 와서 '그다지 ~않다'가 됩니다. とても는 긍정과 함께 씁니다."},
+  {id:"gr10",t:"gr",q:"いっしょに 映画を （　）。",o:["見ませんか","見ますか","見ましたか","見て いますか"],e:"함께하자고 권할 때는 「~ませんか」(~하지 않겠습니까?)를 씁니다."},
+  {id:"gr11",t:"gr",q:"窓を （　） ください。",o:["あけて","あけって","あいて","あけ"],e:"2그룹 동사 あける는 る를 떼고 て를 붙입니다: あけて. あいて는 開く(열리다)의 て형입니다."},
+  {id:"gr12",t:"gr",q:"手紙を （　） います。",o:["書いて","書きて","書って","書いって"],e:"く로 끝나는 1그룹 동사는 いて가 됩니다: 書く → 書いて."},
+  {id:"gr13",t:"gr",q:"きのう スーパーで 野菜を （　）。",o:["買いました","買います","買って","買う"],e:"きのう(어제)가 있으므로 과거형 「~ました」를 씁니다."},
+  {id:"gr14",t:"gr",q:"ここで 写真を （　）も いいですか。",o:["撮って","撮りて","撮て","撮った"],e:"허락을 구할 때는 「~ても いいですか」입니다. 撮る → 撮って."},
+  {id:"gr15",t:"gr",q:"部屋で たばこを （　） ください。",o:["すわないで","すわなくて","すいないで","すわずに"],e:"'~하지 말아 주세요'는 「~ないで ください」입니다. 吸う(すう)의 부정형은 すわない입니다."},
+  {id:"gr16",t:"gr",q:"わたしは 新しい くつが （　）。",o:["ほしいです","ほしいます","たいです","ほしがります"],e:"'~을 갖고 싶다'는 「~が ほしいです」입니다. ほしがります는 다른 사람의 바람을 말할 때 씁니다."},
+  {id:"gr17",t:"gr",q:"日本へ （　）たいです。",o:["行き","行く","行って","行か"],e:"「~たい」는 ます형 어간에 붙습니다: 行きます → 行きたい."},
+  {id:"gr18",t:"gr",q:"ご飯を （　） 前に、手を 洗います。",o:["食べる","食べた","食べて","食べ"],e:"「~まえに」 앞에는 사전형이 옵니다. 「~た あとで」와 구별하세요."},
+  {id:"gr19",t:"gr",q:"ご飯を 食べた （　）、散歩します。",o:["あとで","まえに","ながら","ないで"],e:"た형 + あとで는 '~한 후에'입니다."},
+  {id:"gr20",t:"gr",q:"音楽を （　）ながら 勉強します。",o:["聞き","聞く","聞いて","聞いた"],e:"「~ながら」(~하면서)는 ます형 어간에 붙습니다: 聞きながら."},
+  {id:"gr21",t:"gr",q:"この かばんは あの かばん（　） 大きいです。",o:["より","ほど","から","まで"],e:"비교의 'B보다'는 より입니다. ほど는 「~ほど ~ない」처럼 부정과 함께 씁니다."},
+  {id:"gr22",t:"gr",q:"果物の 中で りんごが （　） 好きです。",o:["いちばん","もっと","とても","よく"],e:"여러 개 가운데 '가장'은 いちばん입니다."},
+  {id:"gr23",t:"gr",q:"A「だれが 来ましたか。」 B「山田さん（　） 来ました。」",o:["が","は","を","に"],e:"의문사(だれ)가 주어인 질문에는 답도 が로 합니다."},
+  {id:"gr24",t:"gr",q:"夏休みに どこ（　） 行きませんでした。",o:["へも","へが","へを","へは"],e:"의문사 + も + 부정은 '아무 데도 ~하지 않았다'입니다: どこへも 行きませんでした."},
+  {id:"gr25",t:"gr",q:"わたしは まだ 昼ご飯を （　）。",o:["食べて いません","食べませんでした","食べて います","食べました"],e:"'아직 ~하지 않았다(지금도 안 한 상태)'는 「まだ ~て いません」입니다."},
+  {id:"gr26",t:"gr",q:"静か（　） 部屋ですね。",o:["な","の","い","だ"],e:"な형용사가 명사를 꾸밀 때는 な를 붙입니다: 静かな 部屋."},
+  {id:"gr27",t:"gr",q:"これは だれ（　） かさですか。",o:["の","が","を","に"],e:"'누구의'는 だれの입니다."},
+  {id:"gr28",t:"gr",q:"きのう 友だち（　） 電話を かけました。",o:["に","を","で","が"],e:"전화를 거는 상대는 に로 나타냅니다."},
+  {id:"gr29",t:"gr",q:"ここから 駅（　） 十分 かかります。",o:["まで","より","を","で"],e:"범위의 끝 '~까지'는 まで입니다. 「~から ~まで」로 짝지어 씁니다."},
+  {id:"gr30",t:"gr",q:"雨が 降って いますから、タクシー（　） 行きましょう。",o:["で","に","を","が"],e:"수단·방법 '~로'는 で입니다."},
+  {id:"gr31",t:"gr",q:"だんだん 寒く （　）。",o:["なりました","しました","ありました","いました"],e:"い형용사 + く なる는 '~해지다'입니다: 寒く なりました(추워졌습니다)."},
+  {id:"gr32",t:"gr",q:"りんごは 一つ 100円です。三つ（　） 300円です。",o:["で","に","を","が"],e:"수량을 합쳐 '~에(합계)'는 で입니다: 三つで 300円."}
+];
+
+</script>
+<script>
+/* core.js */
+/* 상태·저장·동기화·학습 규칙. 화면 코드는 ui.js */
+(function () {
+  'use strict';
+  const LV = window.JLPT_DATA.N5;
+  const App = (window.App = {});
+
+  App.POS = { n: '명사', v: '동사', i: 'い형용사', na: 'な형용사', adv: '부사' };
+  App.QT = { kr: '한자 읽기', pk: '표기', cx: '문맥 규정', pa: '유의 표현', gr: '문법' };
+  App.QP = {
+    kr: '밑줄 친 말은 히라가나로 어떻게 씁니까?',
+    pk: '밑줄 친 말은 한자로 어떻게 씁니까?',
+    cx: '（　）에 들어갈 가장 알맞은 것을 고르세요.',
+    pa: '다음 문장과 뜻이 가장 가까운 문장을 고르세요.',
+    gr: '（　）에 들어갈 가장 알맞은 것을 고르세요.'
+  };
+  App.WORDS = LV.words.map((a) => ({ id: a[0], w: a[1], r: a[2], m: a[3], p: a[4], ex: a[5], exk: a[6], note: a[7] || '' }));
+  App.WMAP = new Map(App.WORDS.map((x) => [x.id, x]));
+  App.QS = LV.questions;
+  App.QMAP = new Map(App.QS.map((q) => [q.id, q]));
+  App.INTERVAL = [0, 1, 3, 7, 14, 30];
+  /* JLPT N5 언어지식(문자·어휘) 공식 구성: 한자 읽기 7, 표기 5, 문맥 규정 6, 유의 표현 3, 20분 */
+  App.MOCK_PLAN = [['kr', 7], ['pk', 5], ['cx', 6], ['pa', 3]];
+  App.MOCK_MIN = 20;
+  const KEY = 'jlpt-n5-study-v1';
+
+  /* ---------- 공통 도구 ---------- */
+  App.esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  App.shuffle = (a) => { const b = a.slice(); for (let i = b.length - 1; i > 0; i--) { const j = Math.floor(Math.random() * (i + 1)); [b[i], b[j]] = [b[j], b[i]]; } return b; };
+  const clampInt = (v, lo, hi, def) => { const n = Number(v); return Number.isFinite(n) ? Math.min(hi, Math.max(lo, Math.round(n))) : def; };
+  App.clampInt = clampInt;
+  const isDate = (s) => typeof s === 'string' && /^\d{4}-\d{2}-\d{2}$/.test(s);
+  App.isDate = isDate;
+  App.ymd = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
+  App.addDays = (s, n) => { const [y, m, d] = s.split('-').map(Number); return App.ymd(new Date(y, m - 1, d + n)); };
+  App.diffDays = (a, b) => { const [y1, m1, d1] = a.split('-').map(Number); const [y2, m2, d2] = b.split('-').map(Number); return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000); };
+
+  /* ---------- 상태 ---------- */
+  function freshState() {
+    return {
+      v: 1, updatedAt: 0,
+      settings: { examDate: '2026-12-06', goalW: 20, goalQ: 10 },
+      words: {}, qs: {}, wrong: { w: {}, q: {} }, days: {},
+      today: { date: '', wids: [] },
+      streak: { cur: 0, best: 0, last: '' },
+      mocks: [], run: null
+    };
+  }
+  function normalize(raw) {
+    const s = freshState();
+    if (!raw || typeof raw !== 'object' || raw.v !== 1) return s;
+    s.updatedAt = Number(raw.updatedAt) || 0;
+    const st = raw.settings || {};
+    if (isDate(st.examDate)) s.settings.examDate = st.examDate;
+    s.settings.goalW = clampInt(st.goalW, 5, 100, 20);
+    s.settings.goalQ = clampInt(st.goalQ, 5, 50, 10);
+    const t = App.ymd();
+    for (const [id, p] of Object.entries(raw.words || {})) {
+      if (App.WMAP.has(id) && p && typeof p === 'object') s.words[id] = { b: clampInt(p.b, 0, 5, 0), due: isDate(p.due) ? p.due : t, n: clampInt(p.n, 0, 1e7, 0), x: clampInt(p.x, 0, 1e7, 0) };
+    }
+    for (const [id, p] of Object.entries(raw.qs || {})) {
+      if (App.QMAP.has(id) && p && typeof p === 'object') { const n = clampInt(p.n, 0, 1e7, 0); s.qs[id] = { n, c: clampInt(p.c, 0, n, 0) }; }
+    }
+    const wr = raw.wrong || {};
+    for (const [id, p] of Object.entries(wr.w || {})) if (App.WMAP.has(id) && p) s.wrong.w[id] = { n: clampInt(p.n, 1, 1e7, 1), at: isDate(p.at) ? p.at : t };
+    for (const [id, p] of Object.entries(wr.q || {})) if (App.QMAP.has(id) && p) s.wrong.q[id] = { n: clampInt(p.n, 1, 1e7, 1), at: isDate(p.at) ? p.at : t };
+    for (const [d, p] of Object.entries(raw.days || {})) {
+      if (isDate(d) && p && typeof p === 'object') s.days[d] = { w: clampInt(p.w, 0, 1e5, 0), q: clampInt(p.q, 0, 1e5, 0), qc: clampInt(p.qc, 0, 1e5, 0), t: clampInt(p.t, 0, 1e5, 0), tc: clampInt(p.tc, 0, 1e5, 0), g: !!p.g };
+    }
+    if (raw.today && isDate(raw.today.date) && Array.isArray(raw.today.wids)) {
+      s.today = { date: raw.today.date, wids: [...new Set(raw.today.wids.filter((id) => App.WMAP.has(id)))] };
+    }
+    const sk = raw.streak || {};
+    s.streak = { cur: clampInt(sk.cur, 0, 1e5, 0), best: clampInt(sk.best, 0, 1e5, 0), last: isDate(sk.last) ? sk.last : '' };
+    if (Array.isArray(raw.mocks)) {
+      s.mocks = raw.mocks.filter((m) => m && Array.isArray(m.items)).slice(0, 20).map((m) => ({
+        at: Number(m.at) || 0, c: clampInt(m.c, 0, 100, 0), n: clampInt(m.n, 1, 100, 1), auto: !!m.auto,
+        by: m.by && typeof m.by === 'object' ? m.by : {},
+        items: m.items.filter((it) => Array.isArray(it) && App.QMAP.has(it[0])).map((it) => [it[0], typeof it[1] === 'string' ? it[1] : null, it[2] ? 1 : 0])
+      }));
+    }
+    const r = raw.run;
+    if (r && Array.isArray(r.ids) && r.ids.length && r.ids.every((id) => App.QMAP.has(id)) && Number.isFinite(r.deadline) && r.opts && typeof r.opts === 'object') {
+      const opts = {}; let ok = true;
+      for (const id of r.ids) { const o = r.opts[id]; if (Array.isArray(o) && o.length === 4) opts[id] = o.map(String); else ok = false; }
+      if (ok) {
+        const ans = {};
+        for (const [id, v] of Object.entries(r.ans || {})) if (r.ids.includes(id) && typeof v === 'string') ans[id] = v;
+        s.run = { ids: r.ids.slice(), opts, ans, deadline: r.deadline, i: clampInt(r.i, 0, r.ids.length - 1, 0) };
+      }
+    }
+    return s;
+  }
+  App.freshState = freshState;
+  App.normalize = normalize;
+
+  function loadLocal() { try { const raw = localStorage.getItem(KEY); return raw ? normalize(JSON.parse(raw)) : freshState(); } catch (e) { return freshState(); } }
+  function saveLocal() { try { localStorage.setItem(KEY, JSON.stringify(App.S)); } catch (e) { /* 저장소를 못 쓰는 환경 */ } }
+  App.S = loadLocal();
+  App.save = function () { App.S.updatedAt = Date.now(); saveLocal(); Sync.schedule(1500); };
+  App.onRemote = null; /* ui.js가 등록: 다른 기기 기록으로 바뀌었을 때 다시 그림 */
+  App.onSyncMode = null;
+
+  /* ---------- 계정 저장(db capability, 사용자별 비공개 경로) ---------- */
+  const Sync = {
+    ref: null, mode: 'local', writing: false, again: false, timer: 0,
+    set(m) { this.mode = m; if (App.onSyncMode) App.onSyncMode(m); },
+    schedule(ms) { if (!this.ref) return; clearTimeout(this.timer); this.timer = setTimeout(() => this.push(), ms); },
+    async push() {
+      if (!this.ref) return;
+      if (this.writing) { this.again = true; return; }
+      this.writing = true;
+      try {
+        await this.ref.set({ state: JSON.parse(JSON.stringify(App.S)), savedAt: Date.now() });
+        this.set('cloud');
+      } catch (e) {
+        const c = e && e.code;
+        if (c === 'unavailable' || c === 'resource_exhausted') { this.again = true; }
+        else if (c === 'quota_exceeded') { this.set('full'); }
+        else { this.ref = null; this.set('local'); }
+      } finally {
+        this.writing = false;
+        if (this.again && this.ref) { this.again = false; this.schedule(4000 + Math.random() * 2000); }
+      }
+    },
+    flush() { if (!this.ref) return; clearTimeout(this.timer); this.push(); },
+    async pull() {
+      if (!this.ref) return;
+      let snap;
+      try { snap = await this.ref.get(); }
+      catch (e) {
+        if (e && e.code === 'unavailable') {
+          await new Promise((r) => setTimeout(r, 800 + Math.random() * 800));
+          try { snap = await this.ref.get(); } catch (e2) { return; }
+        } else { this.ref = null; this.set('local'); return; }
+      }
+      const data = snap.exists ? snap.data() : null;
+      const remote = data && data.state && typeof data.state === 'object' ? data.state : null;
+      const rAt = remote ? Number(remote.updatedAt) || 0 : 0;
+      if (remote && remote.v === 1 && rAt > (App.S.updatedAt || 0)) {
+        App.S = normalize(JSON.parse(JSON.stringify(remote)));
+        saveLocal();
+        if (App.onRemote) App.onRemote();
+      } else if ((App.S.updatedAt || 0) > rAt) {
+        this.schedule(0);
+      }
+    }
+  };
+  App.Sync = Sync;
+  App.initSync = async function () {
+    try {
+      if (!window.claude || typeof window.claude.use !== 'function') return;
+      const [db, user] = await Promise.all([window.claude.use('db'), window.claude.use('user')]);
+      if (!db || !user) return;
+      const uid = await user.id();
+      if (!uid) return;
+      Sync.ref = db.doc('data/users/' + uid + '/progress');
+      await Sync.pull();
+      if (Sync.ref) Sync.set('cloud');
+      document.addEventListener('visibilitychange', () => { if (document.visibilityState === 'hidden') Sync.flush(); else Sync.pull(); });
+    } catch (e) { Sync.ref = null; Sync.set('local'); }
+  };
+
+  /* ---------- 날짜·목표·연속 달성 ---------- */
+  App.today = function () { const t = App.ymd(); if (App.S.today.date !== t) App.S.today = { date: t, wids: [] }; return t; };
+  App.dayView = (t) => App.S.days[t] || { w: 0, q: 0, qc: 0, t: 0, tc: 0, g: false };
+  function dayRec(t) { return App.S.days[t] || (App.S.days[t] = { w: 0, q: 0, qc: 0, t: 0, tc: 0, g: false }); }
+  function touchWord(id) { const t = App.today(); const w = App.S.today.wids; if (!w.includes(id)) w.push(id); dayRec(t).w = w.length; }
+  App.celebrate = false;
+  App.checkGoal = function () {
+    const t = App.today(); const d = App.S.days[t];
+    if (!d || d.g) return;
+    if (d.w >= App.S.settings.goalW && d.q >= App.S.settings.goalQ) {
+      d.g = true;
+      const st = App.S.streak;
+      st.cur = st.last === App.addDays(t, -1) ? st.cur + 1 : 1;
+      st.last = t;
+      st.best = Math.max(st.best, st.cur);
+      App.celebrate = true;
+    }
+  };
+  App.streakNow = function () { const t = App.ymd(); const st = App.S.streak; return st.last === t || st.last === App.addDays(t, -1) ? st.cur : 0; };
+  App.dueCount = function () { const t = App.ymd(); let n = 0; for (const p of Object.values(App.S.words)) if (p.b >= 1 && p.due <= t) n++; return n; };
+  App.learnedCount = function () { let n = 0; for (const p of Object.values(App.S.words)) if (p.b >= 3) n++; return n; };
+
+  /* ---------- 단어: 카드(라이트너 상자 1·3·7·14·30일) ---------- */
+  function addWrongW(id) { const w = App.S.wrong.w[id] || { n: 0, at: '' }; w.n++; w.at = App.ymd(); App.S.wrong.w[id] = w; }
+  App.gradeCard = function (id, known) {
+    const t = App.today();
+    const p = App.S.words[id] || { b: 0, due: t, n: 0, x: 0 };
+    p.n++;
+    if (known) { p.b = Math.min(5, p.b + 1); p.due = App.addDays(t, App.INTERVAL[p.b]); }
+    else { p.b = 0; p.due = t; p.x++; addWrongW(id); }
+    App.S.words[id] = p;
+    touchWord(id);
+    App.checkGoal();
+  };
+  App.buildCards = function (n) {
+    const S = App.S; const t = App.ymd(); const used = new Set(); const out = [];
+    const push = (id, cap) => { if (out.length < n && !used.has(id) && App.WMAP.has(id) && (cap === undefined || cap.left-- > 0)) { used.add(id); out.push(id); } };
+    const capW = { left: 5 }, capD = { left: 5 };
+    Object.entries(S.wrong.w).sort((a, b) => b[1].n - a[1].n).forEach(([id]) => push(id, capW));
+    App.WORDS.filter((w) => { const p = S.words[w.id]; return p && p.b >= 1 && p.due <= t; })
+      .sort((a, b) => S.words[a.id].due.localeCompare(S.words[b.id].due)).forEach((w) => push(w.id, capD));
+    App.WORDS.filter((w) => !S.words[w.id]).forEach((w) => push(w.id));
+    Object.keys(S.wrong.w).forEach((id) => push(id));
+    App.shuffle(App.WORDS).sort((a, b) => (S.words[a.id] ? S.words[a.id].b : 0) - (S.words[b.id] ? S.words[b.id].b : 0)).forEach((w) => push(w.id));
+    return out;
+  };
+
+  /* ---------- 단어 테스트(4지선다) ---------- */
+  const tokens = (m) => m.replace(/\(.*?\)/g, '').split(/[·,]/).map((s) => s.trim()).filter(Boolean);
+  function distractors(word, k) {
+    const own = new Set(tokens(word.m)); const seenW = new Set([word.w]); const seenM = new Set([word.m]); const out = [];
+    for (const x of App.shuffle(App.WORDS)) {
+      if (out.length >= k) break;
+      if (x.id === word.id || x.p !== word.p || seenW.has(x.w) || seenM.has(x.m) || tokens(x.m).some((tk) => own.has(tk))) continue;
+      seenW.add(x.w); seenM.add(x.m); out.push(x);
+    }
+    return out;
+  }
+  App.makeTest = function (ids) {
+    return ids.map((id, k) => {
+      const w = App.WMAP.get(id); const dir = k % 2 === 0 ? 'jk' : 'kj';
+      const opts = App.shuffle([w, ...distractors(w, 3)]).map((x) => (dir === 'jk' ? x.m : x.w));
+      return { id, dir, opts, ans: dir === 'jk' ? w.m : w.w, picked: null };
+    });
+  };
+  App.buildTestIds = function (n) {
+    const used = new Set(); const out = [];
+    const push = (id) => { if (out.length < n && !used.has(id) && App.WMAP.has(id)) { used.add(id); out.push(id); } };
+    App.today();
+    App.shuffle(App.S.today.wids).forEach(push);
+    App.shuffle(Object.keys(App.S.words)).forEach(push);
+    App.shuffle(App.WORDS.map((w) => w.id)).forEach(push);
+    return out;
+  };
+  App.answerTest = function (id, ok) {
+    const t = App.today(); const d = dayRec(t);
+    d.t++;
+    let p = App.S.words[id];
+    if (ok) {
+      d.tc++;
+      delete App.S.wrong.w[id];
+      if (!p) p = { b: 1, due: App.addDays(t, 1), n: 0, x: 0 };
+    } else {
+      p = p || { b: 0, due: t, n: 0, x: 0 };
+      p.b = 0; p.due = t; p.x++;
+      addWrongW(id);
+    }
+    p.n++;
+    App.S.words[id] = p;
+    touchWord(id);
+    App.checkGoal();
+  };
+
+  /* ---------- 문제 ---------- */
+  App.answerQ = function (id, ok) {
+    const t = App.today(); const d = dayRec(t);
+    d.q++; if (ok) d.qc++;
+    const s = App.S.qs[id] || { n: 0, c: 0 };
+    s.n++; if (ok) s.c++;
+    App.S.qs[id] = s;
+    if (ok) delete App.S.wrong.q[id];
+    else { const w = App.S.wrong.q[id] || { n: 0, at: '' }; w.n++; w.at = t; App.S.wrong.q[id] = w; }
+    App.checkGoal();
+  };
+  App.buildQuiz = function (type, n, onlyIds) {
+    const S = App.S;
+    const pool = onlyIds ? onlyIds.map((id) => App.QMAP.get(id)).filter(Boolean) : App.QS.filter((q) => type === 'all' || q.t === type);
+    const used = new Set(); const out = [];
+    const push = (q) => { if (out.length < n && !used.has(q.id)) { used.add(q.id); out.push(q.id); } };
+    const ratio = (q) => { const s = S.qs[q.id]; return s && s.n ? s.c / s.n : 0; };
+    if (!onlyIds) {
+      App.shuffle(pool.filter((q) => !S.qs[q.id])).forEach(push);
+      App.shuffle(pool.filter((q) => S.wrong.q[q.id])).forEach(push);
+    }
+    App.shuffle(pool).sort((a, b) => ratio(a) - ratio(b)).forEach(push);
+    return out.map((id) => ({ id, opts: App.shuffle(App.QMAP.get(id).o), picked: null, done: false }));
+  };
+
+  /* ---------- 미니 모의고사 ---------- */
+  App.startMock = function () {
+    const ids = [];
+    for (const [t, k] of App.MOCK_PLAN) App.shuffle(App.QS.filter((q) => q.t === t)).slice(0, k).forEach((q) => ids.push(q.id));
+    const opts = {};
+    ids.forEach((id) => { opts[id] = App.shuffle(App.QMAP.get(id).o); });
+    App.S.run = { ids, opts, ans: {}, deadline: Date.now() + App.MOCK_MIN * 60000, i: 0 };
+    App.save();
+  };
+  App.finishMock = function (auto) {
+    const run = App.S.run;
+    if (!run) return null;
+    const items = []; const by = {}; let c = 0;
+    for (const id of run.ids) {
+      const q = App.QMAP.get(id);
+      const my = Object.prototype.hasOwnProperty.call(run.ans, id) ? run.ans[id] : null;
+      const ok = my === q.o[0];
+      if (ok) c++;
+      by[q.t] = by[q.t] || [0, 0];
+      by[q.t][1]++; if (ok) by[q.t][0]++;
+      App.answerQ(id, ok);
+      items.push([id, my, ok ? 1 : 0]);
+    }
+    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto };
+    App.S.mocks.unshift(res);
+    App.S.mocks = App.S.mocks.slice(0, 20);
+    App.S.run = null;
+    App.save();
+    return res;
+  };
+
+  /* ---------- 설정·초기화 ---------- */
+  App.applySettings = function (examDate, goalW, goalQ) {
+    App.S.settings = { examDate, goalW, goalQ };
+    App.checkGoal();
+    App.save();
+  };
+  App.resetAll = function () {
+    const keep = App.S.settings;
+    App.S = freshState();
+    App.S.settings = keep;
+    App.save();
+  };
+})();
+
+</script>
+<script>
+/* ui.js */
+/* 화면 그리기와 입력 처리 */
+(function () {
+  'use strict';
+  const A = window.App;
+  const esc = A.esc;
+  const $view = document.getElementById('view');
+  const $main = document.getElementById('main');
+  const DOW = ['일', '월', '화', '수', '목', '금', '토'];
+  const NUM = ['1', '2', '3', '4'];
+
+  let view = 'home';
+  let X = null;            /* 진행 중인 학습 세션 */
+  let quizType = 'all';
+  let lastMock = null;
+  let resetAsk = false;
+  let submitAsk = false;
+  let settingsMsg = '';
+
+  const TAB_OF = { home: 'home', words: 'words', cards: 'words', cardsDone: 'words', test: 'words', testDone: 'words', quiz: 'quiz', qsess: 'quiz', qdone: 'quiz', mock: 'quiz', mockres: 'quiz', notes: 'notes', stats: 'stats' };
+  const tabFor = (v) => (X && X.from === 'notes' ? 'notes' : TAB_OF[v] || 'home');
+
+  /* ---------- 작은 부품 ---------- */
+  const jp = (s) => `<span class="jp">${esc(s)}</span>`;
+  const qText = (s) => esc(s).replace(/\[(.+?)\]/g, '<u>$1</u>').replace(/（　）/g, '<span class="blank">（　　）</span>');
+  const plain = (s) => s.replace(/\[(.+?)\]/g, '$1');
+  const pct = (a, b) => (b ? Math.round((a / b) * 100) : 0);
+  const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
+  const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
+  const sayBtn = (text, label) => (canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(text)}" aria-label="${esc(label)} 발음 듣기">▶ 발음</button>` : '');
+  function meter(label, cur, goal, unit) {
+    const done = cur >= goal;
+    return `<div class="meter">
+      <div class="meter-top"><span>${label}</span><span class="num">${cur} / ${goal}${unit}</span></div>
+      <div class="track"><i style="width:${Math.min(100, pct(cur, goal))}%"></i></div>
+      <div class="meter-note">${done ? '<b>✓ 달성</b>' : `${goal - cur}${unit} 남음`}</div>
+    </div>`;
+  }
+  function progress(i, n, label) {
+    return `<div class="sess-top"><span>${label}</span><span class="num">${i + 1} / ${n}</span></div><div class="track thin"><i style="width:${pct(i + 1, n)}%"></i></div>`;
+  }
+  function ddayText() {
+    const d = A.diffDays(A.ymd(), A.S.settings.examDate);
+    return d > 0 ? `D-${d}` : d === 0 ? 'D-DAY' : '시험 종료';
+  }
+  function examLabel() {
+    const [y, m, d] = A.S.settings.examDate.split('-').map(Number);
+    return `${y}년 ${m}월 ${d}일(${DOW[new Date(y, m - 1, d).getDay()]})`;
+  }
+  function syncText(m) { return m === 'cloud' ? '계정에 저장' : m === 'full' ? '계정 저장 공간 부족' : '이 기기에 저장'; }
+
+  /* ---------- 홈 ---------- */
+  function vHome() {
+    const S = A.S; const t = A.ymd(); const d = A.dayView(t); const g = S.settings;
+    const streak = A.streakNow(); const due = A.dueCount();
+    const wrongN = Object.keys(S.wrong.w).length + Object.keys(S.wrong.q).length;
+    let label = '단어 카드로 시작', act = 'start-cards';
+    if (d.w >= g.goalW && d.q < g.goalQ) { label = '문제 풀이로 이어가기'; act = 'start-quiz'; }
+    else if (d.w >= g.goalW && d.q >= g.goalQ) { if (wrongN) { label = '오답 복습하기'; act = 'go-notes'; } else { label = '단어 카드 더 하기'; } }
+    const streakLine = d.g ? '오늘 목표 완료' : streak > 0 ? `오늘 채우면 연속 ${streak + 1}일` : '오늘 목표를 채우면 연속 1일';
+    const run = S.run ? `<div class="notice"><div><b>진행 중인 모의고사가 있습니다</b><br><span class="muted">남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span></span></div><button class="btn sm" data-act="resume-mock">이어서 풀기</button></div>` : '';
+    return `
+      <section class="hero">
+        <div class="dday num">${ddayText()}</div>
+        <div class="muted">JLPT N5 · ${examLabel()} 시험</div>
+      </section>
+      ${run}
+      <section class="panel">
+        <div class="panel-head"><h2>오늘 목표</h2><span class="chip">연속 ${streak}일</span></div>
+        <p class="muted small">${streakLine}</p>
+        ${meter('단어', d.w, g.goalW, '개')}
+        ${meter('문제', d.q, g.goalQ, '문제')}
+        <button class="btn primary wide" data-act="${act}">${label}</button>
+      </section>
+      <section class="facts">
+        <button class="fact" data-act="start-cards"><span class="num big">${due}</span><span>오늘 복습할 단어</span></button>
+        <button class="fact" data-act="go-notes"><span class="num big">${wrongN}</span><span>오답노트</span></button>
+        <button class="fact" data-act="go-mock"><span class="num big">${S.mocks.length ? `${S.mocks[0].c}/${S.mocks[0].n}` : '-'}</span><span>최근 모의고사</span></button>
+      </section>`;
+  }
+
+  /* ---------- 단어 ---------- */
+  function vWords() {
+    const seen = Object.keys(A.S.words).length;
+    return `
+      <h1 class="title">단어</h1>
+      <p class="muted small">N5 단어 ${A.WORDS.length}개 · 본 단어 ${seen}개 · 익힌 단어(3단계 이상) ${A.learnedCount()}개</p>
+      <section class="panel">
+        <h2>카드 학습</h2>
+        <p class="muted small">10장씩 넘깁니다. 오답 단어, 오늘 복습할 단어, 새 단어 순서로 나옵니다. "알아요"를 누르면 1·3·7·14·30일 간격으로 다시 나옵니다.</p>
+        <button class="btn primary wide" data-act="start-cards">카드 10장 시작</button>
+      </section>
+      <section class="panel">
+        <h2>단어 테스트</h2>
+        <p class="muted small">10문제, 4지선다입니다. 일본어→한국어와 한국어→일본어가 번갈아 나오고, 오늘 본 단어가 먼저 나옵니다.</p>
+        <button class="btn wide" data-act="start-test">테스트 10문제 시작</button>
+      </section>`;
+  }
+  function vCards() {
+    const id = X.ids[X.i]; const w = A.WMAP.get(id); const p = A.S.words[id];
+    const stage = p ? `${p.b}단계` : '새 단어';
+    const back = X.flip ? `
+        <div class="card-back">
+          ${w.r !== w.w ? `<div class="reading jp">${esc(w.r)}</div>` : ''}
+          <div class="meaning">${esc(w.m)}</div>
+          <div class="example"><div class="jp">${esc(w.ex)}</div><div class="muted">${esc(w.exk)}</div></div>
+          ${w.note ? `<div class="note">${esc(w.note)}</div>` : ''}
+        </div>` : '<div class="hint">카드를 누르면 읽기와 뜻이 나옵니다</div>';
+    const actions = X.flip
+      ? `<div class="row2"><button class="btn" data-act="card-no">× 모름</button><button class="btn primary" data-act="card-yes">○ 알아요</button></div>
+         <div class="say-row">${sayBtn(w.r, '단어')}${canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.ex)}" aria-label="예문 발음 듣기">▶ 예문</button>` : ''}</div>`
+      : `<button class="btn wide" data-act="flip">뜻 보기</button>`;
+    return `${progress(X.i, X.ids.length, '카드 학습')}
+      <div class="card" role="button" tabindex="0" data-act="flip" aria-label="카드 뒤집기">
+        <div class="card-meta"><span>${A.POS[w.p]}</span><span>${stage}</span></div>
+        <div class="word jp">${esc(w.w)}</div>
+        ${back}
+      </div>
+      ${actions}`;
+  }
+  function vCardsDone() {
+    return `<section class="panel center">
+        <h2>카드 ${X.ids.length}장을 마쳤습니다</h2>
+        <p class="num">○ 알아요 ${X.k} · × 모름 ${X.u}</p>
+        <p class="muted small">모름으로 표시한 단어는 오답노트에 들어갔습니다.</p>
+        <div class="stack">
+          <button class="btn primary wide" data-act="start-test">이 단어들로 테스트</button>
+          <button class="btn wide" data-act="start-cards">카드 10장 더</button>
+          <button class="btn ghost wide" data-tab="home">홈으로</button>
+        </div>
+      </section>`;
+  }
+  function vTest() {
+    const it = X.items[X.i]; const w = A.WMAP.get(it.id); const answered = it.picked !== null;
+    const prompt = it.dir === 'jk'
+      ? `<p class="prompt">이 단어의 뜻은?</p><div class="word jp">${esc(w.w)}</div>`
+      : `<p class="prompt">이 뜻의 일본어는?</p><div class="word ko">${esc(w.m)}</div>`;
+    const opts = it.opts.map((o, k) => {
+      let cls = 'opt', mark = '';
+      if (answered) {
+        if (o === it.ans) { cls += ' right'; mark = '<span class="mark">○ 정답</span>'; }
+        else if (k === it.picked) { cls += ' wrong'; mark = '<span class="mark">× 내 답</span>'; }
+        else cls += ' dim';
+      }
+      return `<button class="${cls}" data-act="test-pick" data-k="${k}" ${answered ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="${it.dir === 'kj' ? 'jp' : ''}">${esc(o)}</span>${mark}</button>`;
+    }).join('');
+    const fb = answered ? `<div class="feedback">${jp(w.w)}${w.r !== w.w ? ` (${jp(w.r)})` : ''} · ${esc(w.m)} ${sayBtn(w.r, '단어')}</div>
+      <button class="btn primary wide" data-act="test-next">${X.i + 1 < X.items.length ? '다음' : '결과 보기'}</button>` : '';
+    return `${progress(X.i, X.items.length, X.retry ? '단어 오답 다시 풀기' : '단어 테스트')}${prompt}<div class="opts">${opts}</div>${fb}`;
+  }
+  function vTestDone() {
+    const rows = X.items.map((it) => { const w = A.WMAP.get(it.id); const ok = it.opts[it.picked] === it.ans; return `<li><span class="okmark">${ok ? '○' : '×'}</span>${jp(w.w)} <span class="muted">${w.r !== w.w ? esc(w.r) + ' · ' : ''}${esc(w.m)}</span></li>`; }).join('');
+    return `<section class="panel">
+        <h2>${X.retry ? '오답 다시 풀기' : '단어 테스트'} 결과</h2>
+        <p class="score num">${X.c} / ${X.items.length}</p>
+        <ul class="result-list">${rows}</ul>
+        <p class="muted small">${X.retry ? '맞힌 단어는 오답노트에서 지웠습니다.' : '틀린 단어는 오답노트에 들어갔습니다.'}</p>
+        <div class="stack">
+          <button class="btn primary wide" data-act="${X.retry ? 'retry-words' : 'start-test'}">${X.retry ? '남은 오답 다시 풀기' : '테스트 10문제 더'}</button>
+          <button class="btn ghost wide" data-tab="${X.from === 'notes' ? 'notes' : 'home'}">${X.from === 'notes' ? '오답노트로' : '홈으로'}</button>
+        </div>
+      </section>`;
+  }
+
+  /* ---------- 문제 ---------- */
+  function vQuiz() {
+    const S = A.S;
+    const types = ['all', 'kr', 'pk', 'cx', 'pa', 'gr'];
+    const chips = types.map((t) => {
+      const n = t === 'all' ? A.QS.length : A.QS.filter((q) => q.t === t).length;
+      return `<button class="chip-btn${quizType === t ? ' on' : ''}" data-act="qtype" data-t="${t}" aria-pressed="${quizType === t}">${quizType === t ? '● ' : ''}${t === 'all' ? '전체' : A.QT[t]} <span class="num">${n}</span></button>`;
+    }).join('');
+    const acc = ['kr', 'pk', 'cx', 'pa', 'gr'].map((t) => {
+      let n = 0, c = 0;
+      for (const q of A.QS) if (q.t === t && S.qs[q.id]) { n += S.qs[q.id].n; c += S.qs[q.id].c; }
+      return `<li><span>${A.QT[t]}</span><span class="num">${n ? pct(c, n) + '%' : '-'}</span><span class="muted num">${n}회</span></li>`;
+    }).join('');
+    const mock = S.run
+      ? `<p><b>진행 중</b> · 남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span></p><button class="btn primary wide" data-act="resume-mock">이어서 풀기</button>`
+      : `<button class="btn primary wide" data-act="start-mock">모의고사 시작 (21문항 · 20분)</button>`;
+    const last = S.mocks.length ? `<button class="btn ghost wide" data-act="show-last-mock">지난 결과 보기 · <span class="num">${S.mocks[0].c} / ${S.mocks[0].n}</span></button>` : '';
+    return `
+      <h1 class="title">문제</h1>
+      <section class="panel">
+        <h2>문자·어휘 미니 모의고사</h2>
+        <p class="muted small">JLPT N5 언어지식(문자·어휘)의 공식 구성인 한자 읽기 7, 표기 5, 문맥 규정 6, 유의 표현 3문항을 20분 안에 풉니다. 결과는 정답 수이며 실제 시험의 척도 점수와는 다릅니다.</p>
+        ${mock}${last}
+      </section>
+      <section class="panel">
+        <h2>유형별 연습</h2>
+        <div class="chips">${chips}</div>
+        <button class="btn wide" data-act="start-quiz">10문제 풀기</button>
+        <p class="muted small">처음 보는 문제, 틀렸던 문제, 정답률이 낮은 문제 순서로 나옵니다.</p>
+      </section>
+      <section class="panel">
+        <h2>유형별 정답률</h2>
+        <ul class="acc">${acc}</ul>
+      </section>`;
+  }
+  function questionBlock(q) {
+    const stem = q.t === 'pa' ? `<div class="stem jp">${qText(q.q)}</div>` : `<div class="qtext jp">${qText(q.q)}</div>`;
+    return `<p class="prompt">${A.QP[q.t]}</p>${stem}`;
+  }
+  function vQsess() {
+    const it = X.items[X.i]; const q = A.QMAP.get(it.id);
+    const opts = it.opts.map((o, k) => {
+      let cls = 'opt', mark = '';
+      if (it.done) {
+        if (o === q.o[0]) { cls += ' right'; mark = '<span class="mark">○ 정답</span>'; }
+        else if (k === it.picked) { cls += ' wrong'; mark = '<span class="mark">× 내 답</span>'; }
+        else cls += ' dim';
+      } else if (k === it.picked) { cls += ' picked'; mark = '<span class="mark">선택</span>'; }
+      return `<button class="${cls}" data-act="q-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="jp">${esc(o)}</span>${mark}</button>`;
+    }).join('');
+    const foot = it.done
+      ? `<div class="explain"><b>${it.opts[it.picked] === q.o[0] ? '○ 맞았습니다' : '× 틀렸습니다'}</b><p>${esc(q.e)}</p></div>
+         <button class="btn primary wide" data-act="q-next">${X.i + 1 < X.items.length ? '다음' : '결과 보기'}</button>`
+      : `<button class="btn primary wide" data-act="q-check" ${it.picked === null ? 'disabled' : ''}>정답 확인</button>`;
+    return `${progress(X.i, X.items.length, `${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} · ${A.QT[q.t]}`)}${questionBlock(q)}<div class="opts">${opts}</div>${foot}`;
+  }
+  function vQdone() {
+    const rows = X.items.map((it) => { const q = A.QMAP.get(it.id); const ok = it.opts[it.picked] === q.o[0]; return `<li><span class="okmark">${ok ? '○' : '×'}</span><span class="jp">${esc(plain(q.q))}</span> <span class="muted">→ ${esc(q.o[0])}</span></li>`; }).join('');
+    return `<section class="panel">
+        <h2>${X.retry ? '문제 오답 다시 풀기' : '문제 풀이'} 결과</h2>
+        <p class="score num">${X.c} / ${X.items.length}</p>
+        <ul class="result-list">${rows}</ul>
+        <div class="stack">
+          <button class="btn primary wide" data-act="${X.retry ? 'retry-qs' : 'start-quiz'}">${X.retry ? '남은 오답 다시 풀기' : '10문제 더'}</button>
+          <button class="btn ghost wide" data-tab="${X.from === 'notes' ? 'notes' : 'home'}">${X.from === 'notes' ? '오답노트로' : '홈으로'}</button>
+        </div>
+      </section>`;
+  }
+
+  /* ---------- 모의고사 ---------- */
+  function vMock() {
+    const run = A.S.run;
+    if (!run) return vQuiz();
+    const id = run.ids[run.i]; const q = A.QMAP.get(id); const opts = run.opts[id];
+    const picked = Object.prototype.hasOwnProperty.call(run.ans, id) ? run.ans[id] : null;
+    const answered = run.ids.filter((x) => Object.prototype.hasOwnProperty.call(run.ans, x)).length;
+    const optHtml = opts.map((o, k) => `<button class="opt${o === picked ? ' picked' : ''}" data-act="m-pick" data-k="${k}"><span class="no">${NUM[k]}</span><span class="jp">${esc(o)}</span>${o === picked ? '<span class="mark">선택</span>' : ''}</button>`).join('');
+    const grid = run.ids.map((x, k) => { const has = Object.prototype.hasOwnProperty.call(run.ans, x); return `<button class="gnum${has ? ' has' : ''}${k === run.i ? ' cur' : ''}" data-act="m-go" data-i="${k}" aria-label="${k + 1}번${has ? ' 답함' : ' 안 답함'}">${k + 1}</button>`; }).join('');
+    const left = run.ids.length - answered;
+    const submit = submitAsk
+      ? `<div class="confirm"><p>${left ? `답하지 않은 문항이 ${left}개 있습니다. 답하지 않은 문항은 틀린 것으로 처리됩니다.` : '모든 문항에 답했습니다.'} 제출할까요?</p><div class="row2"><button class="btn" data-act="m-submit-no">계속 풀기</button><button class="btn primary" data-act="m-submit-yes">제출</button></div></div>`
+      : `<button class="btn wide" data-act="m-submit">제출하기 · <span class="num">${answered}/${run.ids.length}</span> 답함</button>`;
+    return `
+      <div class="mock-bar"><span>미니 모의고사</span><span class="timer num" id="mock-timer">${mmss(run.deadline - Date.now())}</span></div>
+      <div class="sess-top"><span>${A.QT[q.t]}</span><span class="num">${run.i + 1} / ${run.ids.length}</span></div>
+      ${questionBlock(q)}
+      <div class="opts">${optHtml}</div>
+      <div class="row2"><button class="btn" data-act="m-prev" ${run.i === 0 ? 'disabled' : ''}>‹ 이전</button><button class="btn" data-act="m-next" ${run.i === run.ids.length - 1 ? 'disabled' : ''}>다음 ›</button></div>
+      <div class="grid" aria-label="문항 목록">${grid}</div>
+      <p class="muted small">진하게 칠한 번호는 답한 문항입니다. 시간이 끝나면 자동으로 제출됩니다.</p>
+      ${submit}`;
+  }
+  function vMockres() {
+    const r = lastMock || A.S.mocks[0];
+    if (!r) return vQuiz();
+    const by = A.MOCK_PLAN.map(([t]) => { const v = r.by[t] || [0, 0]; return `<li><span>${A.QT[t]}</span><span class="num">${v[0]} / ${v[1]}</span></li>`; }).join('');
+    const items = r.items.map(([id, my, ok], k) => {
+      const q = A.QMAP.get(id);
+      return `<details class="ritem"><summary><span class="okmark">${ok ? '○' : '×'}</span><span class="num">${k + 1}.</span> ${A.QT[q.t]} <span class="jp muted">${esc(plain(q.q).slice(0, 40))}</span></summary>
+        ${questionBlock(q)}
+        <p>내 답: ${my === null ? '<b>답하지 않음</b>' : `<span class="jp">${esc(my)}</span>`}</p>
+        <p>정답: <b class="jp">${esc(q.o[0])}</b></p>
+        <p class="muted">${esc(q.e)}</p></details>`;
+    }).join('');
+    const when = new Date(r.at);
+    return `<section class="panel">
+        <h2>미니 모의고사 결과</h2>
+        <p class="muted small">${when.getMonth() + 1}월 ${when.getDate()}일 ${String(when.getHours()).padStart(2, '0')}:${String(when.getMinutes()).padStart(2, '0')}${r.auto ? ' · 시간 종료로 자동 제출' : ''}</p>
+        <p class="score num">${r.c} / ${r.n} <span class="muted small">(${pct(r.c, r.n)}%)</span></p>
+        <ul class="acc">${by}</ul>
+        <p class="muted small">틀린 문항과 답하지 않은 문항은 오답노트에 들어갔습니다. 문항을 누르면 해설이 열립니다.</p>
+      </section>
+      <section class="panel">${items}</section>
+      <div class="stack"><button class="btn primary wide" data-tab="notes">오답노트로</button><button class="btn ghost wide" data-tab="quiz">문제 탭으로</button></div>`;
+  }
+
+  /* ---------- 오답노트 ---------- */
+  function vNotes() {
+    const S = A.S;
+    const ws = Object.entries(S.wrong.w).sort((a, b) => b[1].n - a[1].n);
+    const qs = Object.entries(S.wrong.q).sort((a, b) => b[1].n - a[1].n);
+    const wl = ws.map(([id, v]) => { const w = A.WMAP.get(id); return `<li><div class="li-main">${jp(w.w)} <span class="muted">${w.r !== w.w ? esc(w.r) + ' · ' : ''}${esc(w.m)}</span></div><span class="num cnt">×${v.n}</span><button class="del" data-act="del-w" data-id="${id}" aria-label="${esc(w.w)} 지우기">지우기</button></li>`; }).join('');
+    const ql = qs.map(([id, v]) => { const q = A.QMAP.get(id); return `<li><div class="li-main"><span class="tag">${A.QT[q.t]}</span> <span class="jp">${esc(plain(q.q))}</span></div><span class="num cnt">×${v.n}</span><button class="del" data-act="del-q" data-id="${id}" aria-label="문제 지우기">지우기</button></li>`; }).join('');
+    return `
+      <h1 class="title">오답노트</h1>
+      <p class="muted small">틀린 단어와 문제가 틀린 횟수와 함께 쌓입니다. 다시 풀어서 맞히면 자동으로 지워집니다.</p>
+      <section class="panel">
+        <div class="panel-head"><h2>단어 <span class="num">${ws.length}</span></h2>${ws.length ? '<button class="btn sm primary" data-act="retry-words">다시 풀기</button>' : ''}</div>
+        ${ws.length ? `<ul class="notes">${wl}</ul>` : '<p class="muted">틀린 단어가 없습니다. 카드에서 "모름"을 누르거나 테스트에서 틀리면 여기에 모입니다.</p>'}
+      </section>
+      <section class="panel">
+        <div class="panel-head"><h2>문제 <span class="num">${qs.length}</span></h2>${qs.length ? '<button class="btn sm primary" data-act="retry-qs">다시 풀기</button>' : ''}</div>
+        ${qs.length ? `<ul class="notes">${ql}</ul>` : '<p class="muted">틀린 문제가 없습니다.</p>'}
+      </section>`;
+  }
+
+  /* ---------- 기록·설정 ---------- */
+  function chart() {
+    const t = A.ymd(); const days = []; for (let k = 6; k >= 0; k--) days.push(A.addDays(t, -k));
+    const vals = days.map((d) => A.dayView(d));
+    const g = A.S.settings;
+    const max = Math.max(1, g.goalW, g.goalQ, ...vals.map((v) => Math.max(v.w, v.q)));
+    const W = 336, H = 172, top = 22, base = 136, gw = W / 7, bw = 13, gap = 2;
+    const y = (v) => base - ((base - top) * v) / max;
+    let bars = '';
+    vals.forEach((v, k) => {
+      const cx = gw * k + gw / 2; const d = days[k]; const [yy, mm, dd] = d.split('-').map(Number);
+      const lab = d === t ? '오늘' : DOW[new Date(yy, mm - 1, dd).getDay()];
+      const x1 = cx - bw - gap / 2, x2 = cx + gap / 2;
+      const h1 = base - y(v.w), h2 = base - y(v.q);
+      bars += `<g><title>${mm}/${dd} 단어 ${v.w}개 · 문제 ${v.q}문제${v.g ? ' · 목표 달성' : ''}</title>
+        <rect class="hit" x="${cx - gw / 2 + 2}" y="${top - 18}" width="${gw - 4}" height="${base - top + 18}"></rect>
+        ${v.w ? `<rect class="b-w" x="${x1}" y="${y(v.w)}" width="${bw}" height="${h1}" rx="3"></rect>` : ''}
+        ${v.q ? `<rect class="b-q" x="${x2}" y="${y(v.q)}" width="${bw}" height="${h2}" rx="3"></rect>` : ''}
+        ${v.w ? `<text class="val" x="${x1 + bw / 2}" y="${y(v.w) - 4}">${v.w}</text>` : ''}
+        ${v.q ? `<text class="val" x="${x2 + bw / 2}" y="${y(v.q) - 4}">${v.q}</text>` : ''}
+        <text class="lab${d === t ? ' today' : ''}" x="${cx}" y="${base + 16}">${lab}</text>
+        ${v.g ? `<text class="lab" x="${cx}" y="${base + 31}">✓</text>` : ''}</g>`;
+    });
+    return `<div class="legend"><span><i class="lg-w"></i>단어</span><span><i class="lg-q"></i>문제</span><span>✓ 목표 달성</span></div>
+      <svg class="chart" viewBox="0 0 ${W} ${H}" role="img" aria-label="최근 7일 학습량">
+        <defs><pattern id="hatch" patternUnits="userSpaceOnUse" width="5" height="5" patternTransform="rotate(45)"><rect class="hatch-bg" width="5" height="5"></rect><rect class="hatch-ln" width="2.2" height="5"></rect></pattern></defs>
+        <line class="axis" x1="0" x2="${W}" y1="${base}" y2="${base}"></line>${bars}</svg>`;
+  }
+  function vStats() {
+    const S = A.S; const t = A.ymd(); const d = A.dayView(t); const g = S.settings;
+    const studyDays = Object.values(S.days).filter((v) => v.w || v.q || v.t).length;
+    const wrongN = Object.keys(S.wrong.w).length + Object.keys(S.wrong.q).length;
+    const answered = d.q + d.t; const correct = d.qc + d.tc;
+    const tiles = [
+      ['오늘 학습한 단어', `${d.w}개`], ['오늘 푼 문제', `${d.q}문제`],
+      ['오늘 정답률', answered ? `${pct(correct, answered)}%` : '-'], ['연속 달성', `${A.streakNow()}일 (최장 ${S.streak.best}일)`],
+      ['학습한 날', `${studyDays}일`], ['익힌 단어', `${A.learnedCount()} / ${A.WORDS.length}`], ['오답', `${wrongN}개`]
+    ].map(([k, v]) => `<div class="tile"><span class="muted small">${k}</span><b class="num">${v}</b></div>`).join('');
+    const mocks = S.mocks.slice(0, 5).map((m, k) => { const dt = new Date(m.at); return `<li><span>${dt.getMonth() + 1}/${dt.getDate()}</span><span class="num">${m.c} / ${m.n}</span><span class="num muted">${pct(m.c, m.n)}%</span>${k === 0 ? '<button class="del" data-act="show-last-mock">보기</button>' : '<span></span>'}</li>`; }).join('');
+    const reset = resetAsk
+      ? `<div class="confirm"><p>단어 진도, 문제 기록, 오답노트, 연속 달성, 모의고사 기록이 모두 지워집니다. 시험일과 목표 설정은 남습니다.</p><div class="row2"><button class="btn" data-act="reset-no">취소</button><button class="btn danger" data-act="reset-yes">모두 지우기</button></div></div>`
+      : `<button class="btn ghost wide" data-act="reset-ask">기록 초기화</button>`;
+    const mode = A.Sync.mode;
+    return `
+      <h1 class="title">기록</h1>
+      <section class="tiles">${tiles}</section>
+      <section class="panel"><h2>최근 7일</h2>${chart()}</section>
+      ${S.mocks.length ? `<section class="panel"><h2>모의고사 기록</h2><ul class="acc mocks">${mocks}</ul></section>` : ''}
+      <section class="panel">
+        <h2>설정</h2>
+        <form id="settings" class="form" novalidate>
+          <label for="set-exam">시험일</label>
+          <input id="set-exam" name="exam" type="date" value="${esc(g.examDate)}" required>
+          <label for="set-gw">하루 단어 목표 (5~100개)</label>
+          <input id="set-gw" name="gw" type="number" inputmode="numeric" min="5" max="100" step="1" value="${g.goalW}" required>
+          <label for="set-gq">하루 문제 목표 (5~50문제)</label>
+          <input id="set-gq" name="gq" type="number" inputmode="numeric" min="5" max="50" step="1" value="${g.goalQ}" required>
+          <p class="muted small">오늘 목표를 아직 채우지 않았다면 바뀐 목표가 오늘부터 적용됩니다.</p>
+          <button class="btn primary wide" type="submit">저장</button>
+          <p class="form-msg" role="status">${esc(settingsMsg)}</p>
+        </form>
+      </section>
+      <section class="panel">
+        <h2>저장 위치</h2>
+        <p class="small">${mode === 'cloud' ? '기록은 이 화면을 연 Claude 계정에 저장됩니다. 다른 기기에서 같은 링크를 열어도 이어서 학습할 수 있고, 다른 사람에게는 보이지 않습니다.' : mode === 'full' ? '계정 저장 공간이 가득 차서 이 기기에만 저장하고 있습니다.' : '지금은 이 기기의 브라우저에만 저장됩니다. 브라우저 데이터를 지우면 기록이 사라집니다.'}</p>
+        ${reset}
+      </section>`;
+  }
+
+  const VIEWS = { home: vHome, words: vWords, cards: vCards, cardsDone: vCardsDone, test: vTest, testDone: vTestDone, quiz: vQuiz, qsess: vQsess, qdone: vQdone, mock: vMock, mockres: vMockres, notes: vNotes, stats: vStats };
+
+  /* ---------- 렌더 ---------- */
+  function renderChrome() {
+    document.getElementById('hdr-dday').textContent = ddayText();
+    document.getElementById('hdr-sync').textContent = syncText(A.Sync.mode);
+    const tab = tabFor(view);
+    document.querySelectorAll('.tabs [data-tab]').forEach((b) => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-current', on ? 'page' : 'false'); });
+  }
+  function render(keepScroll) {
+    A.today();
+    renderChrome();
+    $view.innerHTML = (VIEWS[view] || vHome)();
+    if (!keepScroll) $main.scrollTop = 0;
+  }
+  function go(v) { view = v; submitAsk = false; resetAsk = false; render(); }
+  function commit() {
+    A.save();
+    if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+  }
+
+  let toastTimer = 0;
+  function toast(msg) {
+    const el = document.getElementById('toast');
+    el.textContent = msg; el.hidden = false;
+    clearTimeout(toastTimer); toastTimer = setTimeout(() => { el.hidden = true; }, 2600);
+  }
+  function showCelebrate() {
+    const d = A.dayView(A.ymd());
+    const el = document.getElementById('overlay');
+    el.innerHTML = `<div class="dialog" role="dialog" aria-modal="true" aria-labelledby="cel-t">
+        <div class="done-mark" aria-hidden="true">✓</div>
+        <h2 id="cel-t">오늘 목표를 채웠어요</h2>
+        <p class="streak-big num">연속 ${A.streakNow()}일</p>
+        <p class="muted">단어 ${d.w}개 · 문제 ${d.q}문제</p>
+        <button class="btn primary wide" data-act="close-overlay">계속하기</button>
+      </div>`;
+    el.hidden = false;
+    const b = el.querySelector('button'); if (b) b.focus();
+  }
+
+  /* ---------- 세션 시작 ---------- */
+  function startCards() { X = { kind: 'cards', ids: A.buildCards(10), i: 0, flip: false, k: 0, u: 0, from: 'words' }; go('cards'); }
+  function startTest(ids, retry) {
+    const list = ids && ids.length ? ids : A.buildTestIds(10);
+    X = { kind: 'test', items: A.makeTest(list), i: 0, c: 0, retry: !!retry, from: retry ? 'notes' : 'words' };
+    go('test');
+  }
+  function startQuiz(retry) {
+    const items = retry ? A.buildQuiz('all', 10, Object.keys(A.S.wrong.q)) : A.buildQuiz(quizType, 10);
+    if (!items.length) { toast('풀 문제가 없습니다.'); return; }
+    X = { kind: 'quiz', items, i: 0, c: 0, retry: !!retry, from: retry ? 'notes' : 'quiz' };
+    go('qsess');
+  }
+
+  /* ---------- 입력 ---------- */
+  const handlers = {
+    'start-cards': startCards,
+    'start-test': () => { if (X && X.kind === 'cards') startTest(X.ids.slice(), false); else startTest(null, false); },
+    'start-quiz': () => startQuiz(false),
+    'go-notes': () => { X = null; go('notes'); },
+    'go-mock': () => { X = null; go(A.S.mocks.length && !A.S.run ? 'mockres' : 'quiz'); },
+    flip: () => { if (X && X.kind === 'cards' && !X.flip) { X.flip = true; render(true); } },
+    'card-yes': () => cardGrade(true),
+    'card-no': () => cardGrade(false),
+    'test-pick': (el) => {
+      const it = X.items[X.i]; if (it.picked !== null) return;
+      it.picked = Number(el.dataset.k);
+      const ok = it.opts[it.picked] === it.ans; if (ok) X.c++;
+      A.answerTest(it.id, ok); commit(); render(true);
+    },
+    'test-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(); } else go('testDone'); },
+    qtype: (el) => { quizType = el.dataset.t; render(true); },
+    'q-pick': (el) => { const it = X.items[X.i]; if (it.done) return; it.picked = Number(el.dataset.k); render(true); },
+    'q-check': () => {
+      const it = X.items[X.i]; if (it.done || it.picked === null) return;
+      it.done = true; const ok = it.opts[it.picked] === A.QMAP.get(it.id).o[0]; if (ok) X.c++;
+      A.answerQ(it.id, ok); commit(); render(true);
+    },
+    'q-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(); } else go('qdone'); },
+    'start-mock': () => { A.startMock(); X = null; go('mock'); },
+    'resume-mock': () => { X = null; go(A.S.run ? 'mock' : 'quiz'); },
+    'm-pick': (el) => { const run = A.S.run; if (!run) return; const id = run.ids[run.i]; run.ans[id] = run.opts[id][Number(el.dataset.k)]; A.save(); render(true); },
+    'm-prev': () => { const run = A.S.run; if (run && run.i > 0) { run.i--; A.save(); render(); } },
+    'm-next': () => { const run = A.S.run; if (run && run.i < run.ids.length - 1) { run.i++; A.save(); render(); } },
+    'm-go': (el) => { const run = A.S.run; if (!run) return; run.i = A.clampInt(el.dataset.i, 0, run.ids.length - 1, 0); A.save(); render(); },
+    'm-submit': () => { submitAsk = true; render(true); },
+    'm-submit-no': () => { submitAsk = false; render(true); },
+    'm-submit-yes': () => { lastMock = A.finishMock(false); if (A.celebrate) { A.celebrate = false; showCelebrate(); } go('mockres'); },
+    'show-last-mock': () => { lastMock = A.S.mocks[0] || null; X = null; go('mockres'); },
+    'retry-words': () => { const ids = Object.entries(A.S.wrong.w).sort((a, b) => b[1].n - a[1].n).slice(0, 10).map(([id]) => id); if (!ids.length) { toast('틀린 단어가 없습니다.'); go('notes'); return; } startTest(ids, true); },
+    'retry-qs': () => { if (!Object.keys(A.S.wrong.q).length) { toast('틀린 문제가 없습니다.'); go('notes'); return; } startQuiz(true); },
+    'del-w': (el) => { delete A.S.wrong.w[el.dataset.id]; A.save(); render(true); },
+    'del-q': (el) => { delete A.S.wrong.q[el.dataset.id]; A.save(); render(true); },
+    'reset-ask': () => { resetAsk = true; render(true); },
+    'reset-no': () => { resetAsk = false; render(true); },
+    'reset-yes': () => { A.resetAll(); resetAsk = false; X = null; lastMock = null; toast('기록을 모두 지웠습니다.'); render(true); },
+    speak: (el) => speak(el.dataset.say || ''),
+    'close-overlay': () => { const o = document.getElementById('overlay'); o.hidden = true; o.innerHTML = ''; }
+  };
+  function cardGrade(known) {
+    if (!X || X.kind !== 'cards' || !X.flip) return;
+    A.gradeCard(X.ids[X.i], known);
+    if (known) X.k++; else X.u++;
+    commit();
+    if (X.i + 1 < X.ids.length) { X.i++; X.flip = false; render(); } else go('cardsDone');
+  }
+  function speak(text) {
+    if (!canSpeak || !text) return;
+    try {
+      window.speechSynthesis.cancel();
+      const u = new window.SpeechSynthesisUtterance(text);
+      u.lang = 'ja-JP'; u.rate = 0.9;
+      const v = window.speechSynthesis.getVoices().find((x) => /^ja/i.test(x.lang));
+      if (v) u.voice = v;
+      window.speechSynthesis.speak(u);
+    } catch (e) { toast('이 기기에서는 발음 재생을 쓸 수 없습니다.'); }
+  }
+
+  document.addEventListener('click', (e) => {
+    const tabEl = e.target.closest('[data-tab]');
+    if (tabEl) { X = null; go(tabEl.dataset.tab); return; }
+    const el = e.target.closest('[data-act]');
+    if (!el || el.disabled) return;
+    const fn = handlers[el.dataset.act];
+    if (fn) fn(el);
+  });
+  document.addEventListener('submit', (e) => {
+    if (e.target.id !== 'settings') return;
+    e.preventDefault();
+    const f = e.target;
+    const exam = f.exam.value; const gw = Number(f.gw.value); const gq = Number(f.gq.value);
+    if (!A.isDate(exam)) { settingsMsg = '시험일을 날짜로 입력해 주세요.'; render(true); return; }
+    if (!Number.isInteger(gw) || gw < 5 || gw > 100) { settingsMsg = '하루 단어 목표는 5에서 100 사이로 정해 주세요.'; render(true); return; }
+    if (!Number.isInteger(gq) || gq < 5 || gq > 50) { settingsMsg = '하루 문제 목표는 5에서 50 사이로 정해 주세요.'; render(true); return; }
+    A.applySettings(exam, gw, gq);
+    settingsMsg = '설정을 저장했습니다.';
+    if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+    render(true);
+  });
+  document.addEventListener('keydown', (e) => {
+    if ((e.key === 'Enter' || e.key === ' ') && e.target.matches && e.target.matches('[role="button"][data-act]')) { e.preventDefault(); const fn = handlers[e.target.dataset.act]; if (fn) fn(e.target); return; }
+    if (e.key === 'Escape') { const o = document.getElementById('overlay'); if (!o.hidden) { o.hidden = true; o.innerHTML = ''; } }
+  });
+
+  /* ---------- 모의고사 타이머 ---------- */
+  setInterval(() => {
+    const run = A.S.run;
+    if (!run) return;
+    const left = run.deadline - Date.now();
+    if (left <= 0) {
+      lastMock = A.finishMock(true);
+      if (A.celebrate) { A.celebrate = false; showCelebrate(); }
+      if (view === 'mock') go('mockres');
+      else { toast('모의고사 시간이 끝나 자동으로 제출했습니다.'); if (!X) render(true); }
+      return;
+    }
+    const t = document.getElementById('mock-timer'); if (t) t.textContent = mmss(left);
+    document.querySelectorAll('.run-left').forEach((s) => { s.textContent = mmss(left); });
+  }, 1000);
+
+  A.onSyncMode = () => renderChrome();
+  A.onRemote = () => { if (!X && view !== 'mock') render(true); else renderChrome(); };
+  render();
+  A.initSync();
+})();
+
+</script>
+
+</body>
+</html>

@@ -342,6 +342,12 @@ svg.chart { width: 100%; height: auto; display: block; }
 .tile:active:not(:disabled) { transform: translateY(2px); border-bottom-width: 1.5px; }
 .tile:focus-visible, .slot:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .tile.ghost { visibility: visible; color: transparent; background: var(--soft); border-color: transparent; box-shadow: none; cursor: default; }
+.passage.reading p { white-space: pre-wrap; }
+.passage.info { border-style: double; border-width: 4px; }
+.passage.info p { font-family: var(--f-ui); font-variant-numeric: tabular-nums; font-size: 1rem; line-height: 1.8; }
+.rq { font-size: 1.0625rem; border-left: 4px solid var(--ink); padding-left: 10px; }
+details.tr { border-top: 1px dashed var(--line); padding-top: 6px; }
+details.tr summary { cursor: pointer; font-size: 13px; font-weight: 700; color: var(--ink-2); }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1305,6 +1311,95 @@ window.JLPT_DATA.N5.passages = {
 
 </script>
 <script>
+/* questions-reading.js */
+/* JLPT N5 독해(자체 제작). rs 내용 이해(단문) · rm 내용 이해(중문) · ri 정보 검색
+   문항의 g는 readings의 글 id, o[0]이 정답. 글의 줄바꿈은 \n. */
+window.JLPT_DATA = window.JLPT_DATA || {};
+window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
+window.JLPT_DATA.N5.readings = {
+  rs1: {
+    text: "（学校で）\nリンさんの 机の 上に、この メモが あります。\n\nリンさん\n先生から 話が ありました。あしたの テストは 九時からでは なくて、十時からです。教室も 三階では なくて、四階に なりました。\nキム",
+    tr: "(학교에서) 린 씨의 책상 위에 이 메모가 있습니다. / 린 씨, 선생님께서 말씀하셨어요. 내일 시험은 9시가 아니라 10시부터예요. 교실도 3층이 아니라 4층이 되었어요. / 김"
+  },
+  rs2: {
+    text: "わたしは 毎朝 六時に 起きます。起きて から、犬と いっしょに 公園を 三十分ぐらい 散歩します。家に 帰って、シャワーを 浴びて から、朝ご飯を 食べます。そして、八時に 家を 出ます。",
+    tr: "저는 매일 아침 6시에 일어납니다. 일어나서 개와 함께 공원을 30분쯤 산책합니다. 집에 돌아와서 샤워를 하고 나서 아침을 먹습니다. 그리고 8시에 집을 나섭니다."
+  },
+  rs3: {
+    text: "テニス部の みなさんへ\n\nあしたは 雨ですから、午後の テニスの 練習は ありません。練習は あさって します。あさっては ラケットを 持って きて ください。\n\n山田",
+    tr: "테니스부 여러분께 / 내일은 비가 오니까 오후 테니스 연습은 없습니다. 연습은 모레 합니다. 모레는 라켓을 가지고 오세요. / 야마다"
+  },
+  rs4: {
+    text: "マリアさん\n\nあしたの 映画の ことですが、わたしは 六時まで 仕事が あります。ですから、六時の 映画は 見ません。七時の 映画を 見ませんか。駅の 前の 喫茶店で 六時半に 会いましょう。\n\nゆき",
+    tr: "마리아 씨 / 내일 영화 말인데요, 저는 6시까지 일이 있어요. 그래서 6시 영화는 못 봐요. 7시 영화를 보지 않을래요? 역 앞 찻집에서 6시 반에 만나요. / 유키"
+  },
+  rs5: {
+    text: "わたしの 部屋には ベッドと 机が あります。机の 上には パソコンと 時計が あります。本棚は ありません。本は ベッドの 下の 箱に 入れて います。",
+    tr: "제 방에는 침대와 책상이 있습니다. 책상 위에는 컴퓨터와 시계가 있습니다. 책장은 없습니다. 책은 침대 아래 상자에 넣어 둡니다."
+  },
+  rs6: {
+    text: "きのう デパートへ 行きました。青い シャツが ほしかったですが、高かったですから、買いませんでした。白い シャツは 安かったですから、二枚 買いました。",
+    tr: "어제 백화점에 갔습니다. 파란 셔츠를 갖고 싶었지만 비싸서 사지 않았습니다. 흰 셔츠는 싸서 두 장 샀습니다."
+  },
+  rm1: {
+    title: "わたしの 毎日",
+    text: "わたしは 去年の 四月に 韓国から 来ました。今、日本語学校の 学生です。学校は 午前 九時から 十二時までです。午後は 図書館で 日本語の 本を 読んだり、宿題を したり します。\n　日曜日は 学校が 休みですから、よく 友だちと 出かけます。先週の 日曜日は 友だちと いっしょに 山へ 行きました。山の 上は とても 寒かったですが、空が きれいでした。来週の 日曜日は 海へ 行きたいです。",
+    tr: "저는 작년 4월에 한국에서 왔습니다. 지금 일본어 학교 학생입니다. 학교는 오전 9시부터 12시까지입니다. 오후에는 도서관에서 일본어 책을 읽거나 숙제를 하거나 합니다. 일요일은 학교가 쉬어서 자주 친구와 외출합니다. 지난주 일요일에는 친구와 함께 산에 갔습니다. 산 위는 매우 추웠지만 하늘이 예뻤습니다. 다음 주 일요일에는 바다에 가고 싶습니다."
+  },
+  rm2: {
+    title: "好きな 店",
+    text: "わたしの 家の 近くに 小さい パン屋が あります。この 店の パンは 安くて、とても おいしいです。朝 七時から 開いて いますから、わたしは 毎朝 学校へ 行く 前に パンを 買います。\n　店の 人は やさしい おばあさんです。おばあさんは いつも 「いってらっしゃい」と 言います。わたしは この 店が 大好きです。でも、来月 店が 閉まります。それまで、毎朝 この 店で パンを 買いたいです。",
+    tr: "우리 집 근처에 작은 빵집이 있습니다. 이 가게의 빵은 싸고 아주 맛있습니다. 아침 7시부터 열려 있어서 저는 매일 아침 학교에 가기 전에 빵을 삽니다. 가게 사람은 상냥한 할머니입니다. 할머니는 늘 '잘 다녀와'라고 말합니다. 저는 이 가게를 아주 좋아합니다. 하지만 다음 달에 가게가 문을 닫습니다. 그때까지 매일 아침 이 가게에서 빵을 사고 싶습니다."
+  },
+  rm3: {
+    title: "パーティーの メール",
+    text: "リーさん\n\nこの 前は ありがとう ございました。リーさんの 国の 料理は とても おいしかったです。\n　今度の 土曜日、わたしの 家で パーティーを します。わたしの 母が すしを 作ります。リーさんも 来ませんか。パーティーは 午後 一時からです。駅から わたしの 家まで 歩いて 十五分ぐらい かかります。駅に 着いて から、わたしに 電話を かけて ください。わたしが 駅まで 行きます。\n\n田中",
+    tr: "리 씨 / 지난번에는 고마웠어요. 리 씨 나라 요리는 아주 맛있었어요. 이번 토요일에 우리 집에서 파티를 해요. 우리 어머니가 초밥을 만들어요. 리 씨도 오지 않을래요? 파티는 오후 1시부터예요. 역에서 우리 집까지 걸어서 15분쯤 걸려요. 역에 도착하면 저에게 전화해 주세요. 제가 역까지 갈게요. / 다나카"
+  },
+  ri1: {
+    title: "さくら図書館",
+    text: "【開いて いる 時間】\n火曜日〜金曜日　午前 9:00〜午後 7:00\n土曜日・日曜日　午前 10:00〜午後 5:00\n月曜日　休み\n\n【本を 借りる とき】\n一人 5冊まで、2週間まで",
+    tr: "사쿠라 도서관 / 여는 시간: 화~금 오전 9시~오후 7시, 토·일 오전 10시~오후 5시, 월요일 휴관 / 책을 빌릴 때: 1인 5권까지, 2주일까지"
+  },
+  ri2: {
+    title: "バスの 時間（駅前 → 大学）",
+    text: "朝　　7:10　7:40　8:10　8:40\n昼　　12:00　1:00\n夕方　5:30　6:30\n\n※ 駅前から 大学まで 20分 かかります。",
+    tr: "버스 시간(역 앞 → 대학) / 아침 7:10, 7:40, 8:10, 8:40 / 낮 12:00, 1:00 / 저녁 5:30, 6:30 / ※ 역 앞에서 대학까지 20분 걸립니다."
+  },
+  ri3: {
+    title: "やまだスーパー　今週の 安い もの",
+    text: "月曜日　卵 10個　150円\n水曜日　牛乳 1本　120円\n金曜日　りんご 3個　200円\n土曜日・日曜日　肉 100グラム　180円\n\n※ 毎日 夜 8時からは パンが 安く なります。",
+    tr: "야마다 슈퍼 이번 주 할인 상품 / 월요일 달걀 10개 150엔 / 수요일 우유 1병 120엔 / 금요일 사과 3개 200엔 / 토·일요일 고기 100그램 180엔 / ※ 매일 밤 8시부터는 빵이 싸집니다."
+  },
+  ri4: {
+    title: "日本語クラスの パーティー",
+    text: "日　　12月20日（日）\n時間　午後 2:00〜5:00\n所　　学校の 3階　301教室\nお金　一人 500円\n\n※ 飲み物は 学校に あります。食べ物を 一つ 持って きて ください。",
+    tr: "일본어 반 파티 / 날짜 12월 20일(일) / 시간 오후 2~5시 / 장소 학교 3층 301호 / 회비 1인 500엔 / ※ 음료는 학교에 있습니다. 음식을 하나 가지고 오세요."
+  }
+};
+window.JLPT_DATA.N5.questions = (window.JLPT_DATA.N5.questions || []).concat([
+  {id:"rs1a",t:"rs",g:"rs1",q:"あした リンさんは 何時に どこへ 行きますか。",o:["十時に 四階の 教室へ 行きます","九時に 四階の 教室へ 行きます","十時に 三階の 教室へ 行きます","九時に 三階の 教室へ 行きます"],e:"시험은 9시가 아니라 10시부터, 교실은 3층이 아니라 4층으로 바뀌었어요. 「Aでは なくて B」는 'A가 아니라 B'예요."},
+  {id:"rs2a",t:"rs",g:"rs2",q:"この 人は 朝ご飯の 前に 何を しますか。",o:["散歩を して、シャワーを 浴びます","シャワーを 浴びて、散歩を します","散歩を して、家を 出ます","朝ご飯を 食べて、散歩を します"],e:"일어나서 → 산책 → 집에 와서 샤워 → 아침밥 → 8시에 집을 나서요. 「~て から」의 순서를 따라가 보세요."},
+  {id:"rs3a",t:"rs",g:"rs3",q:"あしたの テニスの 練習は どう なりましたか。",o:["あさって します","あしたの 午前に します","あしたの 午後に します","雨でも 外で します"],e:"「練習は あさって します」라고 했어요. 내일은 비라서 연습이 없어요."},
+  {id:"rs4a",t:"rs",g:"rs4",q:"二人は あした 何時に どこで 会いますか。",o:["六時半に 喫茶店で 会います","六時に 喫茶店で 会います","七時に 映画館で 会います","六時半に 映画館で 会います"],e:"「駅の 前の 喫茶店で 六時半に 会いましょう」라고 했어요. 7시는 영화가 시작하는 시간이에요."},
+  {id:"rs5a",t:"rs",g:"rs5",q:"本は どこに ありますか。",o:["ベッドの 下の 箱の 中","本棚の 中","机の 上","箱の 上"],e:"「本は ベッドの 下の 箱に 入れて います」라고 했어요. 책장은 없어요."},
+  {id:"rs6a",t:"rs",g:"rs6",q:"この 人は きのう 何を 買いましたか。",o:["白い シャツを 二枚","青い シャツを 一枚","青い シャツと 白い シャツ","何も 買いませんでした"],e:"파란 셔츠는 비싸서 사지 않았고, 흰 셔츠를 두 장 샀어요."},
+  {id:"rm1a",t:"rm",g:"rm1",q:"この 人は 午後 何を しますか。",o:["図書館で 本を 読んだり、宿題を したり します","学校で 日本語を 勉強します","友だちと 山へ 行きます","海へ 行きます"],e:"「午後は 図書館で 日本語の 本を 読んだり、宿題を したり します」라고 했어요. 학교는 오전뿐이에요."},
+  {id:"rm1b",t:"rm",g:"rm1",q:"先週の 日曜日、山は どうでしたか。",o:["寒かったですが、空が きれいでした","暑かったですが、空が きれいでした","寒くて、空も 暗かったです","暖かくて、空が きれいでした"],e:"「とても 寒かったですが、空が きれいでした」라고 했어요."},
+  {id:"rm2a",t:"rm",g:"rm2",q:"この 人は いつ パンを 買いますか。",o:["毎朝 学校へ 行く 前","毎日 学校から 帰った 後","毎晩 寝る 前","日曜日だけ"],e:"「毎朝 学校へ 行く 前に パンを 買います」라고 했어요."},
+  {id:"rm2b",t:"rm",g:"rm2",q:"来月 何が ありますか。",o:["パン屋が 閉まります","パン屋が 開きます","おばあさんが 店に 来ます","新しい パンが できます"],e:"「来月 店が 閉まります」라고 했어요. 그래서 그때까지 매일 사고 싶다고 했어요."},
+  {id:"rm3a",t:"rm",g:"rm3",q:"パーティーで だれが 料理を 作りますか。",o:["田中さんの お母さん","リーさん","田中さん","リーさんの お母さん"],e:"메일을 쓴 사람은 다나카 씨이고 「わたしの 母が すしを 作ります」라고 했어요."},
+  {id:"rm3b",t:"rm",g:"rm3",q:"リーさんは 駅に 着いて から、何を しますか。",o:["田中さんに 電話を かけます","田中さんの 家まで 歩きます","駅で 十五分 待ちます","すしを 買います"],e:"「駅に 着いて から、わたしに 電話を かけて ください」라고 했어요. 다나카 씨가 역까지 와요."},
+  {id:"ri1a",t:"ri",g:"ri1",q:"日曜日、図書館は 何時まで 開いて いますか。",o:["午後 五時まで","午後 七時まで","午前 十時まで","日曜日は 休みです"],e:"토요일·일요일은 오전 10시부터 오후 5시까지예요. 쉬는 날은 월요일이에요."},
+  {id:"ri1b",t:"ri",g:"ri1",q:"キムさんは 月曜日の 午後に 図書館へ 行きました。どう でしたか。",o:["休みでした","午後 七時まで 開いて いました","午後 五時まで 開いて いました","本を 十冊 借りました"],e:"월요일은 휴관이에요. 책은 한 사람이 5권까지 빌릴 수 있어요."},
+  {id:"ri2a",t:"ri",g:"ri2",q:"大学は 九時からです。九時 前に 大学に 着きたいです。いちばん 遅い バスは どれですか。",o:["8:10","8:40","7:40","7:10"],e:"대학까지 20분 걸려요. 8:40 버스는 9:00에 도착해서 9시 전이 아니에요. 8:10 버스는 8:30에 도착해요."},
+  {id:"ri3a",t:"ri",g:"ri3",q:"キムさんは 安い 牛乳を 買いたいです。何曜日に 行きますか。",o:["水曜日","月曜日","金曜日","土曜日"],e:"우유가 싼 날은 수요일이에요."},
+  {id:"ri3b",t:"ri",g:"ri3",q:"土曜日に 安い ものは 何ですか。",o:["肉","卵","牛乳","りんご"],e:"토요일·일요일은 고기가 싸요. 빵은 매일 밤 8시부터 싸져요."},
+  {id:"ri4a",t:"ri",g:"ri4",q:"パーティーに 何を 持って 行きますか。",o:["食べ物を 一つと 500円","飲み物と 500円","食べ物と 飲み物","500円だけ"],e:"회비가 500엔이고, 음료는 학교에 있으니 음식을 하나 가져가요."}
+]);
+
+</script>
+<script>
 /* core.js */
 /* 상태·저장·동기화·학습 규칙. 화면 코드는 ui.js */
 (function () {
@@ -1316,7 +1411,10 @@ window.JLPT_DATA.N5.passages = {
   /* 단어 주제(학습 경로와 주제별 카드에 쓴다) */
   App.TOPICS = [['greet', '인사·표현'], ['num', '숫자·조수사'], ['time', '날짜·시간'], ['q', '지시어·의문사'], ['people', '사람·가족'], ['body', '몸·건강'], ['food', '음식'], ['home', '집·물건'], ['place', '장소'], ['town', '교통·길'], ['pos', '위치·방향'], ['school', '학교·일'], ['nature', '자연·날씨'], ['shop', '쇼핑·옷'], ['hobby', '취미'], ['kata', '외래어'], ['verb', '동사'], ['adj', '형용사'], ['adv', '부사·접속사']];
   App.TOPIC_NAME = Object.fromEntries(App.TOPICS);
-  App.QT = { kr: '한자 읽기', pk: '표기', cx: '문맥 규정', pa: '유의 표현', gr: '문법', so: '문장 만들기', bp: '글의 문법' };
+  App.QT = { kr: '한자 읽기', pk: '표기', cx: '문맥 규정', pa: '유의 표현', gr: '문법', so: '문장 만들기', bp: '글의 문법', rs: '독해(단문)', rm: '독해(중문)', ri: '정보 검색', rd: '독해' };
+  /* 여러 유형을 한 번에 연습하는 묶음 */
+  App.QGROUP = { rd: ['rs', 'rm', 'ri'] };
+  App.inType = (q, type) => type === 'all' || q.t === type || (App.QGROUP[type] || []).includes(q.t);
   App.QP = {
     kr: '밑줄 친 말은 히라가나로 어떻게 씁니까?',
     pk: '밑줄 친 말은 한자로 어떻게 씁니까?',
@@ -1324,7 +1422,10 @@ window.JLPT_DATA.N5.passages = {
     pa: '다음 문장과 뜻이 가장 가까운 문장을 고르세요.',
     gr: '（　）에 들어갈 가장 알맞은 것을 고르세요.',
     so: '★에 들어갈 가장 알맞은 것을 고르세요.',
-    bp: '글을 읽고 （　）에 들어갈 가장 알맞은 것을 고르세요.'
+    bp: '글을 읽고 （　）에 들어갈 가장 알맞은 것을 고르세요.',
+    rs: '글을 읽고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
+    rm: '글을 읽고 질문에 답하세요. 가장 알맞은 것을 고르세요.',
+    ri: '안내문을 보고 질문에 답하세요. 가장 알맞은 것을 고르세요.'
   };
   const OLD_TOPIC = {};
   for (const [t, ids] of Object.entries(LV.wordTopics || {})) for (const id of ids) OLD_TOPIC[id] = t;
@@ -1350,6 +1451,7 @@ window.JLPT_DATA.N5.passages = {
 
   /* 문장 만들기·글의 문법 문항은 원본 데이터에서 보기와 문제 문장을 만든다 */
   App.PASSAGES = LV.passages || {};
+  App.READINGS = LV.readings || {};
   for (const q of App.QS) {
     if (q.t === 'so' && Array.isArray(q.parts) && q.parts.length === 4) {
       const star = clampInt(q.star, 0, 3, 2);
@@ -1634,7 +1736,7 @@ window.JLPT_DATA.N5.passages = {
   };
   App.buildQuiz = function (type, n, onlyIds) {
     const S = App.S;
-    const pool = onlyIds ? onlyIds.map((id) => App.QMAP.get(id)).filter(Boolean) : App.QS.filter((q) => type === 'all' || q.t === type);
+    const pool = onlyIds ? onlyIds.map((id) => App.QMAP.get(id)).filter(Boolean) : App.QS.filter((q) => App.inType(q, type));
     const used = new Set(); const out = [];
     const push = (q) => { if (out.length < n && !used.has(q.id)) { used.add(q.id); out.push(q.id); } };
     const ratio = (q) => { const s = S.qs[q.id]; return s && s.n ? s.c / s.n : 0; };
@@ -2119,14 +2221,14 @@ window.JLPT_DATA.N5.passages = {
   /* ---------- 문제 ---------- */
   function vQuiz() {
     const S = A.S;
-    const types = ['all', 'kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp'];
+    const types = ['all', 'kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd'];
     const chips = types.map((t) => {
-      const n = t === 'all' ? A.QS.length : A.QS.filter((q) => q.t === t).length;
+      const n = A.QS.filter((q) => A.inType(q, t)).length;
       return `<button class="chip-btn${quizType === t ? ' on' : ''}" data-act="qtype" data-t="${t}" aria-pressed="${quizType === t}">${quizType === t ? '● ' : ''}${t === 'all' ? '전체' : A.QT[t]} <span class="num">${n}</span></button>`;
     }).join('');
-    const acc = ['kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp'].map((t) => {
+    const acc = ['kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd'].map((t) => {
       let n = 0, c = 0;
-      for (const q of A.QS) if (q.t === t && S.qs[q.id]) { n += S.qs[q.id].n; c += S.qs[q.id].c; }
+      for (const q of A.QS) if (A.inType(q, t) && S.qs[q.id]) { n += S.qs[q.id].n; c += S.qs[q.id].c; }
       return `<li><span>${A.QT[t]}</span><span class="num">${n ? pct(c, n) + '%' : '-'}</span><span class="muted num">${n}회</span></li>`;
     }).join('');
     const mock = S.run
@@ -2156,7 +2258,17 @@ window.JLPT_DATA.N5.passages = {
     const body = esc(p.text).replace(/（(\d)）/g, (m, d) => (Number(d) === q.n ? `<b class="pblank on">（ ${d} ）</b>` : `<span class="pblank">（${d}）</span>`));
     return `<div class="passage"><div class="p-head"><b class="jp">${esc(p.title)}</b><span class="muted small jp">${esc(p.by || '')}</span></div><p class="jp">${body}</p></div>`;
   }
+  function readingHtml(q) {
+    const r = A.READINGS[q.g]; if (!r) return '';
+    return `<div class="passage reading${q.t === 'ri' ? ' info' : ''}">${r.title ? `<div class="p-head"><b class="jp">${esc(r.title)}</b></div>` : ''}<p class="jp">${esc(r.text)}</p></div>`;
+  }
+  /* 글이 있는 문항은 답한 뒤 해석을 펼쳐 볼 수 있다 */
+  function trHtml(q) {
+    const src = q.t === 'bp' ? A.PASSAGES[q.g] : A.READINGS[q.g];
+    return src && src.tr ? `<details class="tr"><summary>글 해석 보기</summary><p class="small">${esc(src.tr)}</p></details>` : '';
+  }
   function questionBlock(q) {
+    if (q.t === 'rs' || q.t === 'rm' || q.t === 'ri') return `<p class="prompt">${A.QP[q.t]}</p>${readingHtml(q)}<p class="rq jp"><b>${esc(q.q)}</b></p>`;
     if (q.t === 'bp') return `<p class="prompt">${A.QP.bp}</p>${passageHtml(q)}<p class="prompt"><b>（ ${q.n} ）</b>에 들어갈 것은?</p>`;
     const stem = q.t === 'pa' ? `<div class="stem jp">${qText(q.q)}</div>` : `<div class="qtext jp">${qText(q.q)}</div>`;
     return `<p class="prompt">${A.QP[q.t]}</p>${stem}`;
@@ -2197,7 +2309,7 @@ window.JLPT_DATA.N5.passages = {
       return `<button class="${cls}" data-act="q-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${NUM[k]}</span><span class="jp">${esc(o)}</span>${mark}</button>`;
     }).join('');
     const foot = it.done
-      ? `<div class="explain"><b>${ok ? '○ 맞았어요' : '× 틀렸어요'}${fx ? xpPop(it.xp) : ''}</b><p>${esc(q.e)}</p></div>
+      ? `<div class="explain"><b>${ok ? '○ 맞았어요' : '× 틀렸어요'}${fx ? xpPop(it.xp) : ''}</b><p>${esc(q.e)}</p>${trHtml(q)}</div>
          <button class="btn primary wide" data-act="q-next">${X.i + 1 < X.items.length ? '다음' : '결과 보기'}</button>
          ${X.i === 0 ? '<p class="swipe-tip">화면을 왼쪽으로 밀어도 넘어가요</p>' : ''}`
       : `<button class="btn primary wide" data-act="q-check" ${it.picked === null ? 'disabled' : ''}>정답 확인</button>`;

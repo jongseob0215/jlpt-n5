@@ -72,6 +72,9 @@ header.top { display: flex; align-items: center; justify-content: space-between;
 .icon-btn { width: 32px; height: 32px; border-radius: 50%; border: 1px solid var(--line); background: var(--surface); color: var(--ink); display: grid; place-items: center; padding: 0; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.12s ease; }
 .icon-btn:active { transform: scale(0.9); }
 .icon-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.pill-btn { height: 32px; padding: 0 11px; border-radius: 999px; border: 1px solid var(--line); background: var(--surface); color: var(--ink); font-size: 14px; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.12s ease; }
+.pill-btn:active { transform: scale(0.94); }
+.pill-btn:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 main { flex: 1; overflow-y: auto; overflow-x: hidden; overscroll-behavior: contain; padding: 8px 16px 28px; touch-action: pan-y; touch-action: pan-y pinch-zoom; }
 #view { display: flex; flex-direction: column; gap: 14px; }
 nav.tabs { display: grid; grid-template-columns: repeat(5, 1fr); background: var(--surface); border-top: 1px solid var(--line); padding: 6px 8px calc(6px + env(safe-area-inset-bottom, 0px)); }
@@ -95,6 +98,20 @@ p { margin: 0; }
 .hello .jp { margin-right: 8px; }
 .dday { font-size: 3rem; line-height: 1.05; font-weight: 700; letter-spacing: -0.02em; margin-top: 4px; }
 .exam { font-size: 13px; margin-top: 4px; opacity: 0.92; }
+.hero-link { position: relative; z-index: 1; margin-top: 10px; background: rgba(255, 255, 255, 0.18); color: inherit; border: 1px solid rgba(255, 255, 255, 0.45); border-radius: 999px; padding: 4px 12px; font-size: 13px; font-weight: 700; cursor: pointer; }
+:root[data-theme="dark"] .hero-link { background: rgba(0, 0, 0, 0.12); border-color: rgba(0, 0, 0, 0.35); }
+@media (prefers-color-scheme: dark) { :root:not([data-theme="light"]) .hero-link { background: rgba(0, 0, 0, 0.12); border-color: rgba(0, 0, 0, 0.35); } }
+.links { display: flex; flex-direction: column; gap: 8px; }
+.link-row { display: flex; align-items: center; gap: 12px; width: 100%; text-align: left; background: var(--surface); border: 1px solid var(--line); border-radius: 18px; padding: 12px 14px; cursor: pointer; box-shadow: var(--shadow-sm); transition: transform 0.12s ease; }
+.link-row:active { transform: scale(0.98); }
+.link-row:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.lr-ico { flex: none; width: 42px; height: 42px; border-radius: 12px; background: var(--accent-soft); color: var(--accent); display: grid; place-items: center; font-weight: 700; font-size: 15px; }
+.lr-main { flex: 1; min-width: 0; display: flex; flex-direction: column; }
+.exam-part { display: flex; flex-direction: column; gap: 4px; }
+.ep-head { display: flex; justify-content: space-between; align-items: center; gap: 8px; }
+.steps { margin: 0; padding-left: 20px; display: flex; flex-direction: column; gap: 6px; font-size: 14px; }
+.ext { display: block; border: 1px solid var(--line); border-radius: 12px; padding: 10px 12px; color: var(--ink); text-decoration: none; background: var(--surface); font-weight: 500; }
+.ext:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .panel { background: var(--surface); border: 1px solid var(--line); border-radius: 20px; padding: 18px; display: flex; flex-direction: column; gap: 12px; min-width: 0; box-shadow: var(--shadow-sm); }
 .panel-head { display: flex; align-items: center; justify-content: space-between; gap: 8px; }
 .chip { border: 1.5px solid var(--ink); border-radius: 999px; padding: 1px 10px; font-size: 13px; font-weight: 700; white-space: nowrap; background: var(--surface); }
@@ -247,9 +264,40 @@ svg.chart { width: 100%; height: auto; display: block; }
 .confetti .bit { position: absolute; top: -16px; width: 8px; height: 12px; border-radius: 2px; background: var(--accent); }
 .confetti .bit.s1 { width: 9px; height: 9px; border-radius: 50%; background: var(--warm); }
 .confetti .bit.s2 { width: 5px; height: 15px; background: #fff6e6; }
+.sheet { position: fixed; inset: 0; z-index: 12; visibility: hidden; pointer-events: none; }
+.sheet.open { visibility: visible; pointer-events: auto; }
+.sheet-backdrop { position: absolute; inset: 0; background: rgba(10, 14, 22, 0.45); opacity: 0; }
+.sheet.open .sheet-backdrop { opacity: 1; }
+.sheet-panel { position: absolute; top: 0; right: 0; bottom: 0; width: min(440px, 94vw); background: var(--bg); border-left: 1px solid var(--line); border-radius: 22px 0 0 22px; box-shadow: var(--shadow); display: flex; flex-direction: column; gap: 12px; padding: 14px 16px calc(18px + env(safe-area-inset-bottom, 0px)); overflow-y: auto; overscroll-behavior: contain; transform: translateX(100%); }
+.sheet.open .sheet-panel { transform: none; }
+.sheet-head { display: flex; align-items: center; justify-content: space-between; }
+.sheet-head .icon-btn { font-size: 20px; line-height: 1; }
+.seg.two { grid-template-columns: repeat(2, 1fr); }
+.seg.four { grid-template-columns: repeat(4, 1fr); }
+.seg.four .chip-btn { font-size: 12px; padding: 7px 2px; }
+.kana-grid { display: grid; gap: 6px; }
+.kana-grid.c5 { grid-template-columns: repeat(5, 1fr); }
+.kana-grid.c4 { grid-template-columns: repeat(4, 1fr); }
+.kana-grid.c3 { grid-template-columns: repeat(3, 1fr); }
+.kcell { min-height: 58px; border: 1px solid var(--line); background: var(--surface); border-radius: 12px; display: flex; flex-direction: column; align-items: center; justify-content: center; padding: 4px 2px; cursor: pointer; box-shadow: var(--shadow-sm); color: var(--ink); transition: transform 0.1s ease; }
+.kcell:active { transform: scale(0.93); }
+.kcell:focus-visible { outline: 3px solid var(--accent); outline-offset: 1px; }
+.kcell .k { font-family: var(--f-jp); font-weight: 600; font-size: 1.5rem; line-height: 1.2; }
+.kana-grid.c3 .kcell .k, .kana-grid.c4 .kcell .k { font-size: 1.3rem; }
+.kcell .r { font-size: 11px; color: var(--muted); line-height: 1.3; white-space: nowrap; }
+.kcell.empty { visibility: hidden; }
+.kana-sub { font-size: 15px; margin: 4px 0 0; }
+.kana-notes { display: flex; flex-direction: column; gap: 10px; }
+.kn { display: flex; gap: 12px; align-items: flex-start; background: var(--surface); border: 1px solid var(--line); border-radius: 14px; padding: 10px 12px; }
+.kn .k { flex: none; min-width: 44px; font-size: 1.5rem; text-align: center; }
+.kana-big { display: block; margin: 4px auto 0; min-width: 120px; min-height: 120px; border-radius: 24px; border: 1px solid var(--line); background: var(--surface); box-shadow: var(--shadow); font-size: 4rem; line-height: 1; cursor: pointer; color: var(--ink); }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 
 @media (prefers-reduced-motion: no-preference) {
+  .sheet { transition: visibility 0s linear 0.3s; }
+  .sheet.open { transition-delay: 0s; }
+  .sheet-backdrop { transition: opacity 0.28s ease; }
+  .sheet-panel { transition: transform 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
   html.theme-anim, html.theme-anim * { transition: background-color 0.3s ease, color 0.3s ease, border-color 0.3s ease, fill 0.3s ease !important; }
   .meter .track i { animation: grow 0.7s cubic-bezier(0.2, 0.8, 0.2, 1); }
   #view.a-fade { animation: vFade 0.22s ease-out; }
@@ -281,7 +329,7 @@ svg.chart { width: 100%; height: auto; display: block; }
 <div class="app">
   <header class="top">
     <div class="brand"><span class="logo jp" aria-hidden="true">あ</span><span>N5 학습장</span></div>
-    <div class="hdr-right"><span class="sync" id="hdr-sync">이 기기에 저장</span><button type="button" class="icon-btn" id="theme-btn" data-act="theme-toggle" aria-label="화면 밝기 바꾸기"></button><span class="dd" id="hdr-dday">D-</span></div>
+    <div class="hdr-right"><button type="button" class="pill-btn" data-kana="open" aria-label="히라가나·가타카나 표 열기"><span class="jp">あア</span></button><button type="button" class="icon-btn" id="theme-btn" data-act="theme-toggle" aria-label="화면 밝기 바꾸기"></button><span class="dd" id="hdr-dday">D-</span></div>
   </header>
   <main id="main"><div id="view" aria-live="polite"></div></main>
   <nav class="tabs" aria-label="메뉴">
@@ -1004,7 +1052,7 @@ window.JLPT_DATA.N5.questions = [
   let settingsMsg = '';
   let busy = false;        /* 카드가 날아가는 동안 입력을 막는다 */
 
-  const TAB_OF = { home: 'home', words: 'words', cards: 'words', cardsDone: 'words', test: 'words', testDone: 'words', quiz: 'quiz', qsess: 'quiz', qdone: 'quiz', mock: 'quiz', mockres: 'quiz', notes: 'notes', stats: 'stats' };
+  const TAB_OF = { home: 'home', words: 'words', cards: 'words', cardsDone: 'words', test: 'words', testDone: 'words', quiz: 'quiz', qsess: 'quiz', qdone: 'quiz', mock: 'quiz', mockres: 'quiz', notes: 'notes', stats: 'stats', guide: 'home' };
   const tabFor = (v) => (X && X.from === 'notes' ? 'notes' : TAB_OF[v] || 'home');
 
   /* ---------- 작은 부품 ---------- */
@@ -1015,7 +1063,7 @@ window.JLPT_DATA.N5.questions = [
   const mmss = (ms) => { const s = Math.max(0, Math.ceil(ms / 1000)); return `${String(Math.floor(s / 60)).padStart(2, '0')}:${String(s % 60).padStart(2, '0')}`; };
   const canSpeak = 'speechSynthesis' in window && typeof window.SpeechSynthesisUtterance === 'function';
   const sayBtn = (text, label) => (canSpeak ? `<button type="button" class="say" data-act="speak" data-say="${esc(text)}" aria-label="${esc(label)} 발음 듣기">▶ 발음</button>` : '');
-  const buzz = (p) => { try { if (typeof navigator.vibrate === 'function') navigator.vibrate(p); } catch (e) { /* 진동을 못 쓰는 기기 */ } };
+  const buzz = (p) => { try { if (typeof navigator.vibrate !== 'function' || (navigator.userActivation && !navigator.userActivation.hasBeenActive)) return; navigator.vibrate(p); } catch (e) { /* 진동을 못 쓰는 기기 */ } };
   function meter(label, cur, goal, unit) {
     const done = cur >= goal;
     return `<div class="meter">
@@ -1094,6 +1142,7 @@ window.JLPT_DATA.N5.questions = [
         <p class="hello"><span class="jp">${hiJ}</span>${hiK}</p>
         <div class="dday num">${ddayText()}</div>
         <p class="exam">JLPT N5 · ${examLabel()} 시험</p>
+        <button type="button" class="hero-link" data-act="go-guide">시험 안내 보기 ›</button>
       </section>
       ${run}
       <section class="panel">
@@ -1107,7 +1156,74 @@ window.JLPT_DATA.N5.questions = [
         <button class="fact" data-act="start-cards"><span class="num big">${due}</span><span>오늘 복습할 단어</span></button>
         <button class="fact" data-act="go-notes"><span class="num big">${wrongN}</span><span>오답노트</span></button>
         <button class="fact" data-act="go-mock"><span class="num big">${S.mocks.length ? `${S.mocks[0].c}/${S.mocks[0].n}` : '-'}</span><span>최근 모의고사</span></button>
+      </section>
+      <section class="links">
+        <button type="button" class="link-row" data-kana="open"><span class="lr-ico jp" aria-hidden="true">あア</span><span class="lr-main"><b>히라가나·가타카나 표</b><span class="muted small">눌러서 발음 듣기, 가나 퀴즈</span></span><span aria-hidden="true">›</span></button>
+        <button type="button" class="link-row" data-act="go-guide"><span class="lr-ico" aria-hidden="true">N5</span><span class="lr-main"><b>JLPT N5 시험 안내</b><span class="muted small">시험 구성, 합격 기준, 시험 당일 준비</span></span><span aria-hidden="true">›</span></button>
       </section>`;
+  }
+
+  /* ---------- JLPT 안내 (공식 정보: jlpt.jp 2026-10-05 확인) ---------- */
+  function vGuide() {
+    const d = A.diffDays(A.ymd(), A.S.settings.examDate);
+    const sec = (title, time, rows) => `<div class="exam-part"><div class="ep-head"><b>${title}</b><span class="chip">${time}</span></div><ul class="acc">${rows.map(([k, n]) => `<li><span>${k}</span><span class="num">${n}문항</span><span></span></li>`).join('')}</ul></div>`;
+    const link = (href, label) => `<a class="ext" href="${href}" target="_blank" rel="noopener noreferrer">${label} ↗</a>`;
+    return `
+      <h1 class="title">JLPT N5 시험 안내</h1>
+      <p class="muted small">${d > 0 ? `시험까지 ${d}일 남았어요. ` : ''}일본국제교류기금과 일본국제교육지원협회가 주관하는 일본어능력시험이에요. 1년에 두 번, 7월과 12월에 치러지고 2026년 시험일은 7월 5일과 12월 6일이에요.</p>
+      <section class="panel">
+        <h2>N5는 어느 정도 수준인가요?</h2>
+        <p>기본적인 일본어를 어느 정도 이해할 수 있는 수준이에요. 다섯 단계(N1~N5) 가운데 가장 쉬운 단계예요.</p>
+        <p class="small"><b>읽기</b> · 히라가나와 가타카나, 일상생활에서 쓰는 기본 한자로 쓰인 정해진 표현이나 짧은 글을 읽고 이해할 수 있어요.</p>
+        <p class="small"><b>듣기</b> · 교실이나 주변처럼 일상에서 자주 만나는 장면에서, 천천히 말하는 짧은 대화라면 필요한 정보를 알아들을 수 있어요.</p>
+      </section>
+      <section class="panel">
+        <h2>시험 구성</h2>
+        <p class="muted small">시험은 세 시간으로 나뉘어요. 문항 수는 회차마다 조금 다를 수 있어요.</p>
+        ${sec('1교시 · 언어지식(문자·어휘)', '20분', [['한자 읽기', 7], ['표기', 5], ['문맥 규정', 6], ['유의 표현', 3]])}
+        ${sec('2교시 · 언어지식(문법)·독해', '40분', [['문법 형식 판단', 9], ['문장 만들기(배열)', 4], ['글의 문법', 4], ['내용 이해(단문)', 2], ['내용 이해(중문)', 2], ['정보 검색', 1]])}
+        ${sec('3교시 · 청해', '30분', [['과제 이해', 7], ['포인트 이해', 6], ['발화 표현', 5], ['즉시 응답', 6]])}
+      </section>
+      <section class="panel">
+        <h2>점수와 합격 기준</h2>
+        <ul class="acc">
+          <li><span>언어지식(문자·어휘·문법)·독해</span><span class="num">0~120점</span><span class="muted num">기준점 38</span></li>
+          <li><span>청해</span><span class="num">0~60점</span><span class="muted num">기준점 19</span></li>
+          <li><span><b>총점</b></span><span class="num"><b>0~180점</b></span><span class="num"><b>합격 80</b></span></li>
+        </ul>
+        <p class="small">총점이 80점 이상이어야 하고, 두 구분 모두 기준점 이상이어야 합격이에요. 총점이 높아도 한 구분이라도 기준점에 못 미치면 불합격이에요.</p>
+        <p class="muted small">점수는 맞힌 개수가 아니라 등화를 거친 척도 점수예요. 그래서 이 앱의 모의고사 정답 수로 합격 여부를 판단할 수는 없어요.</p>
+      </section>
+      <section class="panel">
+        <h2>2026년 12월 시험(한국)</h2>
+        <ul class="acc">
+          <li><span>시험일</span><span>12월 6일(일)</span><span></span></li>
+          <li><span>입실 완료(N3·N4·N5)</span><span>오후 1시 40분</span><span></span></li>
+          <li><span>준비물</span><span>규정 신분증, HB 연필이나 샤프, 지우개</span><span></span></li>
+          <li><span>온라인 성적 발표</span><span>2027년 1월 말 예정</span><span></span></li>
+        </ul>
+        <p class="muted small">접수는 10월 4일에 끝났어요. 위 내용은 언론 보도로 확인한 안내라서, 시험 전에 수험표와 한국 시행처 공지를 꼭 다시 확인하세요.</p>
+      </section>
+      <section class="panel">
+        <h2>남은 기간 이렇게 해 보세요</h2>
+        <ol class="steps">
+          <li><b>가나 먼저</b> · 히라가나와 가타카나를 막힘없이 읽을 때까지 가나 표와 퀴즈로 연습해요.</li>
+          <li><b>매일 단어</b> · 카드 학습으로 날마다 목표만큼 넘기고, 틀린 단어는 오답노트에서 다시 풀어요.</li>
+          <li><b>유형별 문제</b> · 문제 탭에서 약한 유형의 정답률을 올려요. 조사와 동사 활용은 문법 문제에 자주 나와요.</li>
+          <li><b>시간 재고 풀기</b> · 시험 한 달 전부터는 모의고사로 20분 안에 푸는 연습을 해요.</li>
+          <li><b>듣기</b> · 단어와 예문의 발음 듣기를 자주 눌러 귀에 익혀요.</li>
+        </ol>
+        <p class="muted small">이 순서는 공식 안내가 아니라 이 앱이 권하는 공부 방법이에요.</p>
+      </section>
+      <section class="panel">
+        <h2>공식 사이트</h2>
+        <div class="stack">
+          ${link('https://www.jlpt.jp/about/levelsummary.html', 'N레벨 인정 목표 (jlpt.jp)')}
+          ${link('https://www.jlpt.jp/about/points.html', '득점 구분과 합격 기준 (jlpt.jp)')}
+          ${link('https://www.jlpt.or.kr', '한국 시행처 (jlpt.or.kr)')}
+        </div>
+      </section>
+      <button class="btn ghost wide" data-tab="home">홈으로</button>`;
   }
 
   /* ---------- 단어 ---------- */
@@ -1127,6 +1243,7 @@ window.JLPT_DATA.N5.questions = [
         <p class="muted small">10장씩 넘겨요. 틀렸던 단어, 오늘 복습할 단어, 새 단어 순서로 나와요. 카드를 왼쪽으로 밀면 "알아요", 오른쪽으로 밀면 "모름"이에요. "알아요"로 넘긴 단어는 1·3·7·14·30일 간격으로 다시 나와요.</p>
         <button class="btn primary wide" data-act="start-cards">카드 10장 시작</button>
       </section>
+      <button type="button" class="link-row" data-kana="open"><span class="lr-ico jp" aria-hidden="true">あア</span><span class="lr-main"><b>히라가나·가타카나 표</b><span class="muted small">헷갈리는 글자는 표에서 바로 확인해요</span></span><span aria-hidden="true">›</span></button>
       <section class="panel">
         <h2>단어 테스트</h2>
         <p class="muted small">4지선다 10문제예요. 일본어→한국어와 한국어→일본어가 번갈아 나오고, 오늘 본 단어가 먼저 나와요.</p>
@@ -1422,12 +1539,12 @@ window.JLPT_DATA.N5.questions = [
       </section>`;
   }
 
-  const VIEWS = { home: vHome, words: vWords, cards: vCards, cardsDone: vCardsDone, test: vTest, testDone: vTestDone, quiz: vQuiz, qsess: vQsess, qdone: vQdone, mock: vMock, mockres: vMockres, notes: vNotes, stats: vStats };
+  const VIEWS = { home: vHome, words: vWords, cards: vCards, cardsDone: vCardsDone, test: vTest, testDone: vTestDone, quiz: vQuiz, qsess: vQsess, qdone: vQdone, mock: vMock, mockres: vMockres, notes: vNotes, stats: vStats, guide: vGuide };
 
   /* ---------- 렌더 ---------- */
   function renderChrome() {
     document.getElementById('hdr-dday').textContent = ddayText();
-    document.getElementById('hdr-sync').textContent = syncText(A.Sync.mode);
+    const sync = document.getElementById('hdr-sync'); if (sync) sync.textContent = syncText(A.Sync.mode);
     const tab = tabFor(view);
     document.querySelectorAll('.tabs [data-tab]').forEach((b) => { const on = b.dataset.tab === tab; b.classList.toggle('on', on); b.setAttribute('aria-current', on ? 'page' : 'false'); });
   }
@@ -1608,6 +1725,7 @@ window.JLPT_DATA.N5.questions = [
     'start-test': () => { if (X && X.kind === 'cards') startTest(X.ids.slice(), false); else startTest(null, false); },
     'start-quiz': () => startQuiz(false),
     'go-notes': () => { X = null; go('notes'); },
+    'go-guide': () => { X = null; go('guide'); },
     'go-mock': () => { X = null; go(A.S.mocks.length && !A.S.run ? 'mockres' : 'quiz'); },
     flip: () => { if (X && X.kind === 'cards' && !X.flip && !busy) { X.flip = true; X.anim = 'flip-in'; render(true); } },
     'card-yes': () => flyCard(true),
@@ -1657,6 +1775,8 @@ window.JLPT_DATA.N5.questions = [
     speak: (el) => speak(el.dataset.say || ''),
     'close-overlay': closeOverlay
   };
+  A.speak = (text) => speak(text);
+  A.feedback = (ok) => buzz(ok ? 12 : [10, 60, 10]);
   function speak(text) {
     if (!canSpeak || !text) return;
     try {
@@ -1716,6 +1836,180 @@ window.JLPT_DATA.N5.questions = [
   applyTheme();
   render();
   A.initSync();
+})();
+
+</script>
+<script>
+/* kana.js */
+/* 히라가나·가타카나 표. 화면 오른쪽에서 열리는 서랍으로, 어느 화면에서든 열 수 있다.
+   글자를 누르면 발음을 들려주고, 가나 퀴즈(10문제, 4지선다)를 풀 수 있다. */
+(function () {
+  'use strict';
+  const A = window.App;
+  const esc = A.esc;
+
+  /* [히라가나, 가타카나, 로마자, 한글 발음] · 빈 칸은 null */
+  const BASIC = [
+    [['あ', 'ア', 'a', '아'], ['い', 'イ', 'i', '이'], ['う', 'ウ', 'u', '우'], ['え', 'エ', 'e', '에'], ['お', 'オ', 'o', '오']],
+    [['か', 'カ', 'ka', '카'], ['き', 'キ', 'ki', '키'], ['く', 'ク', 'ku', '쿠'], ['け', 'ケ', 'ke', '케'], ['こ', 'コ', 'ko', '코']],
+    [['さ', 'サ', 'sa', '사'], ['し', 'シ', 'shi', '시'], ['す', 'ス', 'su', '스'], ['せ', 'セ', 'se', '세'], ['そ', 'ソ', 'so', '소']],
+    [['た', 'タ', 'ta', '타'], ['ち', 'チ', 'chi', '치'], ['つ', 'ツ', 'tsu', '츠'], ['て', 'テ', 'te', '테'], ['と', 'ト', 'to', '토']],
+    [['な', 'ナ', 'na', '나'], ['に', 'ニ', 'ni', '니'], ['ぬ', 'ヌ', 'nu', '누'], ['ね', 'ネ', 'ne', '네'], ['の', 'ノ', 'no', '노']],
+    [['は', 'ハ', 'ha', '하'], ['ひ', 'ヒ', 'hi', '히'], ['ふ', 'フ', 'fu', '후'], ['へ', 'ヘ', 'he', '헤'], ['ほ', 'ホ', 'ho', '호']],
+    [['ま', 'マ', 'ma', '마'], ['み', 'ミ', 'mi', '미'], ['む', 'ム', 'mu', '무'], ['め', 'メ', 'me', '메'], ['も', 'モ', 'mo', '모']],
+    [['や', 'ヤ', 'ya', '야'], null, ['ゆ', 'ユ', 'yu', '유'], null, ['よ', 'ヨ', 'yo', '요']],
+    [['ら', 'ラ', 'ra', '라'], ['り', 'リ', 'ri', '리'], ['る', 'ル', 'ru', '루'], ['れ', 'レ', 're', '레'], ['ろ', 'ロ', 'ro', '로']],
+    [['わ', 'ワ', 'wa', '와'], null, null, null, ['を', 'ヲ', 'wo', '오']],
+    [['ん', 'ン', 'n', '응'], null, null, null, null]
+  ];
+  const DAKU = [
+    [['が', 'ガ', 'ga', '가'], ['ぎ', 'ギ', 'gi', '기'], ['ぐ', 'グ', 'gu', '구'], ['げ', 'ゲ', 'ge', '게'], ['ご', 'ゴ', 'go', '고']],
+    [['ざ', 'ザ', 'za', '자'], ['じ', 'ジ', 'ji', '지'], ['ず', 'ズ', 'zu', '즈'], ['ぜ', 'ゼ', 'ze', '제'], ['ぞ', 'ゾ', 'zo', '조']],
+    [['だ', 'ダ', 'da', '다'], ['ぢ', 'ヂ', 'ji', '지'], ['づ', 'ヅ', 'zu', '즈'], ['で', 'デ', 'de', '데'], ['ど', 'ド', 'do', '도']],
+    [['ば', 'バ', 'ba', '바'], ['び', 'ビ', 'bi', '비'], ['ぶ', 'ブ', 'bu', '부'], ['べ', 'ベ', 'be', '베'], ['ぼ', 'ボ', 'bo', '보']],
+    [['ぱ', 'パ', 'pa', '파'], ['ぴ', 'ピ', 'pi', '피'], ['ぷ', 'プ', 'pu', '푸'], ['ぺ', 'ペ', 'pe', '페'], ['ぽ', 'ポ', 'po', '포']]
+  ];
+  const YOON = [
+    [['きゃ', 'キャ', 'kya', '캬'], ['きゅ', 'キュ', 'kyu', '큐'], ['きょ', 'キョ', 'kyo', '쿄']],
+    [['しゃ', 'シャ', 'sha', '샤'], ['しゅ', 'シュ', 'shu', '슈'], ['しょ', 'ショ', 'sho', '쇼']],
+    [['ちゃ', 'チャ', 'cha', '차'], ['ちゅ', 'チュ', 'chu', '추'], ['ちょ', 'チョ', 'cho', '초']],
+    [['にゃ', 'ニャ', 'nya', '냐'], ['にゅ', 'ニュ', 'nyu', '뉴'], ['にょ', 'ニョ', 'nyo', '뇨']],
+    [['ひゃ', 'ヒャ', 'hya', '햐'], ['ひゅ', 'ヒュ', 'hyu', '휴'], ['ひょ', 'ヒョ', 'hyo', '효']],
+    [['みゃ', 'ミャ', 'mya', '먀'], ['みゅ', 'ミュ', 'myu', '뮤'], ['みょ', 'ミョ', 'myo', '묘']],
+    [['りゃ', 'リャ', 'rya', '랴'], ['りゅ', 'リュ', 'ryu', '류'], ['りょ', 'リョ', 'ryo', '료']],
+    [['ぎゃ', 'ギャ', 'gya', '갸'], ['ぎゅ', 'ギュ', 'gyu', '규'], ['ぎょ', 'ギョ', 'gyo', '교']],
+    [['じゃ', 'ジャ', 'ja', '자'], ['じゅ', 'ジュ', 'ju', '주'], ['じょ', 'ジョ', 'jo', '조']],
+    [['びゃ', 'ビャ', 'bya', '뱌'], ['びゅ', 'ビュ', 'byu', '뷰'], ['びょ', 'ビョ', 'byo', '뵤']],
+    [['ぴゃ', 'ピャ', 'pya', '퍄'], ['ぴゅ', 'ピュ', 'pyu', '퓨'], ['ぴょ', 'ピョ', 'pyo', '표']]
+  ];
+  /* 외래어를 적을 때 쓰는 가타카나 조합(가타카나 전용) */
+  const FOREIGN = [
+    [[null, 'ファ', 'fa', '파'], [null, 'フィ', 'fi', '피'], [null, 'フェ', 'fe', '페'], [null, 'フォ', 'fo', '포']],
+    [[null, 'ティ', 'ti', '티'], [null, 'ディ', 'di', '디'], [null, 'シェ', 'she', '셰'], [null, 'ジェ', 'je', '제']],
+    [[null, 'チェ', 'che', '체'], [null, 'ウィ', 'wi', '위'], [null, 'ウェ', 'we', '웨'], [null, 'ウォ', 'wo', '워']]
+  ];
+  const SETS = { basic: '기본', daku: '탁음·반탁음', yoon: '요음', special: '특수' };
+
+  let script = 'h';          /* h 히라가나 · k 가타카나 */
+  let set = 'basic';
+  let quiz = null;           /* { items:[{k, r, opts}], i, c, picked } */
+  let lastFocus = null;
+
+  const root = document.createElement('div');
+  root.className = 'sheet';
+  root.id = 'kana-sheet';
+  root.setAttribute('aria-hidden', 'true');
+  root.innerHTML = '<div class="sheet-backdrop" data-kana="close"></div><aside class="sheet-panel" role="dialog" aria-modal="true" aria-labelledby="kana-title"></aside>';
+  document.body.appendChild(root);
+  const panel = root.querySelector('.sheet-panel');
+
+  const pick = (cell) => (script === 'h' ? cell[0] : cell[1]);
+  function cellHtml(cell) {
+    if (!cell || !pick(cell)) return '<span class="kcell empty" aria-hidden="true"></span>';
+    const k = pick(cell);
+    return `<button type="button" class="kcell" data-kana="say" data-say="${esc(k)}" aria-label="${esc(k)} ${esc(cell[2])} 발음 듣기"><span class="k">${esc(k)}</span><span class="r">${esc(cell[2])} · ${esc(cell[3])}</span></button>`;
+  }
+  function grid(rows, cols) { return `<div class="kana-grid c${cols}">${rows.map((r) => r.map(cellHtml).join('')).join('')}</div>`; }
+
+  function vTable() {
+    let body = '';
+    if (set === 'basic') body = grid(BASIC, 5) + '<p class="muted small">は는 조사로 쓰일 때 "와(wa)", へ는 조사로 쓰일 때 "에(e)"로 읽어요. を는 "오(o)"로 소리 나고 조사로만 써요.</p>';
+    else if (set === 'daku') body = grid(DAKU, 5) + '<p class="muted small">점 두 개(゛)는 탁음, 동그라미(゜)는 반탁음이에요. ぢ·づ는 じ·ず와 소리가 같고 쓰이는 일이 드물어요.</p>';
+    else if (set === 'yoon') body = grid(YOON, 3) + '<p class="muted small">い단 글자 뒤에 작은 ゃ·ゅ·ょ를 붙여 한 박자로 읽어요. 예) しゃしん(사진), きょう(오늘)</p>';
+    else {
+      body = `<div class="kana-notes">
+          <div class="kn"><span class="k jp">${script === 'h' ? 'っ' : 'ッ'}</span><div><b>작은 つ(촉음)</b><p class="muted small">다음 소리의 자음을 한 박자 쉬듯 끊어 읽어요. 예) ${script === 'h' ? 'きって(우표), がっこう(학교)' : 'ベッド(침대), カップ(컵)'}</p></div></div>
+          <div class="kn"><span class="k jp">${script === 'h' ? 'おう' : 'ー'}</span><div><b>장음</b><p class="muted small">${script === 'h' ? '모음을 한 박자 더 길게 읽어요. 예) おかあさん, せんせい, がっこう' : '가타카나는 ー로 길게 읽어요. 예) コーヒー, ノート, スーパー'}</p></div></div>
+          <div class="kn"><span class="k jp">${script === 'h' ? 'ん' : 'ン'}</span><div><b>발음(ん)</b><p class="muted small">한 박자를 차지해요. 뒤 소리에 따라 ㄴ·ㅁ·ㅇ처럼 들려요. 예) ${script === 'h' ? 'しんぶん, てんき' : 'パン, ペン'}</p></div></div>
+        </div>
+        ${script === 'k' ? '<h3 class="kana-sub">외래어 표기</h3>' + grid(FOREIGN, 4) + '<p class="muted small">예) パーティー(파티), ファイル(파일)</p>' : '<p class="muted small">외래어 표기(ファ, ティ 등)는 가타카나 표에서 볼 수 있어요.</p>'}`;
+    }
+    return `${body}<button type="button" class="btn primary wide" data-kana="quiz">${script === 'h' ? '히라가나' : '가타카나'} 퀴즈 10문제</button>`;
+  }
+
+  /* ---------- 가나 퀴즈: 기본 + 탁음·반탁음에서 10글자, 로마자 4지선다 ---------- */
+  function poolFor(sc) {
+    const out = [];
+    for (const rows of [BASIC, DAKU]) for (const r of rows) for (const c of r) if (c) out.push({ k: sc === 'h' ? c[0] : c[1], r: c[2] });
+    return out;
+  }
+  function startQuiz() {
+    const pool = poolFor(script);
+    const romaji = [...new Set(pool.map((x) => x.r))];
+    const items = A.shuffle(pool).slice(0, 10).map((x) => ({ k: x.k, r: x.r, opts: A.shuffle([x.r, ...A.shuffle(romaji.filter((r) => r !== x.r)).slice(0, 3)]) }));
+    quiz = { items, i: 0, c: 0, picked: null, sc: script };
+    render();
+  }
+  function vQuiz() {
+    const it = quiz.items[quiz.i];
+    if (!it) {
+      return `<div class="panel center"><h3 class="kana-sub">${quiz.sc === 'h' ? '히라가나' : '가타카나'} 퀴즈 결과</h3><p class="score num">${quiz.c} / ${quiz.items.length}</p>
+        <p class="muted small">${quiz.c === quiz.items.length ? '모두 맞혔어요!' : '틀린 글자는 표에서 한 번 더 눌러 들어 보세요.'}</p></div>
+        <div class="stack"><button type="button" class="btn primary wide" data-kana="quiz">한 번 더</button><button type="button" class="btn ghost wide" data-kana="table">표로 돌아가기</button></div>`;
+    }
+    const answered = quiz.picked !== null;
+    const opts = it.opts.map((o, k) => {
+      let cls = 'opt', mark = '';
+      if (answered) {
+        if (o === it.r) { cls += ' right'; mark = '<span class="mark">○ 정답</span>'; }
+        else if (k === quiz.picked) { cls += ' wrong'; mark = '<span class="mark">× 내 답</span>'; }
+        else cls += ' dim';
+      }
+      return `<button type="button" class="${cls}" data-kana="ans" data-k="${k}" ${answered ? 'disabled' : ''}><span class="no">${k + 1}</span><span>${esc(o)}</span>${mark}</button>`;
+    }).join('');
+    return `<div class="sess-top"><span>가나 퀴즈</span><span class="num">${quiz.i + 1} / ${quiz.items.length}</span></div>
+      <button type="button" class="kana-big jp" data-kana="say" data-say="${esc(it.k)}" aria-label="${esc(it.k)} 발음 듣기">${esc(it.k)}</button>
+      <p class="prompt center">이 글자는 어떻게 읽나요?</p>
+      <div class="opts">${opts}</div>
+      ${answered ? `<button type="button" class="btn primary wide" data-kana="next">${quiz.i + 1 < quiz.items.length ? '다음' : '결과 보기'}</button>` : ''}
+      <button type="button" class="btn ghost wide" data-kana="table">그만하고 표로</button>`;
+  }
+
+  function render() {
+    const tabs = [['h', '히라가나'], ['k', '가타카나']].map(([k, l]) => `<button type="button" class="chip-btn${script === k ? ' on' : ''}" data-kana="script" data-v="${k}" aria-pressed="${script === k}">${script === k ? '● ' : ''}${l}</button>`).join('');
+    const sets = Object.entries(SETS).map(([k, l]) => `<button type="button" class="chip-btn${set === k ? ' on' : ''}" data-kana="set" data-v="${k}" aria-pressed="${set === k}">${l}</button>`).join('');
+    panel.innerHTML = `
+      <div class="sheet-head"><h2 id="kana-title">가나 표</h2><button type="button" class="icon-btn" data-kana="close" aria-label="가나 표 닫기">×</button></div>
+      <div class="seg two" role="group" aria-label="문자 종류">${tabs}</div>
+      ${quiz ? vQuiz() : `<div class="seg four" role="group" aria-label="표 종류">${sets}</div><p class="muted small">글자를 누르면 발음을 들을 수 있어요.</p>${vTable()}`}`;
+  }
+
+  function open() {
+    if (root.classList.contains('open')) return;
+    lastFocus = document.activeElement;
+    render();
+    root.classList.add('open');
+    root.setAttribute('aria-hidden', 'false');
+    const b = panel.querySelector('[data-kana="close"]'); if (b) b.focus();
+  }
+  function close() {
+    if (!root.classList.contains('open')) return;
+    root.classList.remove('open');
+    root.setAttribute('aria-hidden', 'true');
+    if (lastFocus && typeof lastFocus.focus === 'function') lastFocus.focus();
+  }
+  A.openKana = open;
+
+  document.addEventListener('click', (e) => {
+    const el = e.target.closest('[data-kana]');
+    if (!el || el.disabled) return;
+    const act = el.dataset.kana;
+    if (act === 'open') open();
+    else if (act === 'close') close();
+    else if (act === 'say') { if (A.speak) A.speak(el.dataset.say || ''); }
+    else if (act === 'script') { script = el.dataset.v === 'k' ? 'k' : 'h'; quiz = null; render(); }
+    else if (act === 'set') { if (SETS[el.dataset.v]) { set = el.dataset.v; render(); } }
+    else if (act === 'quiz') startQuiz();
+    else if (act === 'table') { quiz = null; render(); }
+    else if (act === 'ans' && quiz && quiz.picked === null) {
+      const it = quiz.items[quiz.i]; quiz.picked = Number(el.dataset.k);
+      const ok = it.opts[quiz.picked] === it.r; if (ok) quiz.c++;
+      if (A.feedback) A.feedback(ok);
+      if (A.speak) A.speak(it.k);
+      render();
+    } else if (act === 'next' && quiz) { quiz.i++; quiz.picked = null; render(); }
+  });
+  document.addEventListener('keydown', (e) => { if (e.key === 'Escape' && root.classList.contains('open')) { e.stopImmediatePropagation(); close(); } }, true);
 })();
 
 </script>

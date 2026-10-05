@@ -5,6 +5,13 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
 <meta name="theme-color" content="#f6f2ea" media="(prefers-color-scheme: light)">
 <meta name="theme-color" content="#121419" media="(prefers-color-scheme: dark)">
+<link rel="manifest" href="manifest.webmanifest">
+<link rel="icon" type="image/png" sizes="32x32" href="icons/favicon-32.png">
+<link rel="apple-touch-icon" href="icons/apple-touch-icon.png">
+<meta name="mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-capable" content="yes">
+<meta name="apple-mobile-web-app-title" content="N5 학습장">
+<meta name="apple-mobile-web-app-status-bar-style" content="default">
 <style>[hidden]{display:none!important}img{max-width:100%}</style>
 </head>
 <body>
@@ -2396,6 +2403,28 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   }
   if (darkQ && typeof darkQ.addEventListener === 'function') darkQ.addEventListener('change', () => { if (themePref === 'system') applyTheme(); });
 
+  /* ---------- 홈 화면 앱(PWA): 사이트 배포본에만 manifest가 있다 ---------- */
+  let installPrompt = null;
+  const hasManifest = () => !!document.querySelector('link[rel="manifest"]');
+  const standalone = () => (typeof window.matchMedia === 'function' && window.matchMedia('(display-mode: standalone)').matches) || window.navigator.standalone === true;
+  const isIOS = () => /iphone|ipad|ipod/i.test(navigator.userAgent) || (navigator.platform === 'MacIntel' && navigator.maxTouchPoints > 1);
+  function installPanel() {
+    if (!hasManifest()) return '';
+    if (standalone()) return '<section class="panel"><h2>홈 화면 앱</h2><p class="small">✓ 홈 화면 앱으로 쓰고 있어요. 한 번 연 뒤에는 인터넷이 없어도 열려요.</p></section>';
+    const steps = isIOS()
+      ? '<li>사파리 아래쪽의 공유 버튼(네모에 위쪽 화살표)을 눌러요.</li><li>목록에서 "홈 화면에 추가"를 고르고 "추가"를 눌러요.</li>'
+      : '<li>크롬 오른쪽 위 메뉴(점 세 개)를 눌러요.</li><li>"홈 화면에 추가" 또는 "앱 설치"를 고르고 "설치"를 눌러요.</li>';
+    return `<section class="panel" id="install-panel"><h2>홈 화면에 추가</h2>
+        <p class="small">홈 화면에 아이콘을 만들면 앱처럼 바로 열리고, 한 번 연 뒤에는 인터넷이 없어도 쓸 수 있어요. 학습 기록은 지금처럼 이 휴대폰에 그대로 남아요.</p>
+        ${installPrompt ? '<button class="btn primary wide" data-act="install">홈 화면에 추가</button>' : `<ol class="steps">${steps}</ol>`}
+      </section>`;
+  }
+  if ('serviceWorker' in navigator && hasManifest() && (location.protocol === 'https:' || location.hostname === 'localhost')) {
+    window.addEventListener('load', () => { navigator.serviceWorker.register('sw.js').catch(() => { /* 오프라인 저장을 못 쓰는 환경 */ }); });
+  }
+  window.addEventListener('beforeinstallprompt', (e) => { e.preventDefault(); installPrompt = e; if (view === 'stats' || view === 'home') render(true); });
+  window.addEventListener('appinstalled', () => { installPrompt = null; toast('홈 화면에 추가했어요.'); if (view === 'stats' || view === 'home') render(true); });
+
   /* ---------- XP·레벨 ---------- */
   function levelPanel() {
     const xp = A.totalXP(); const L = A.levelOf(xp); const [lo, hi] = A.levelRange(L); const today = A.dayView(A.ymd()).x || 0;
@@ -2449,6 +2478,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       </section>
       <section class="links">
         <button type="button" class="link-row" data-kana="open"><span class="lr-ico jp" aria-hidden="true">あア</span><span class="lr-main"><b>히라가나·가타카나 표</b><span class="muted small">눌러서 발음 듣기, 가나 퀴즈</span></span><span aria-hidden="true">›</span></button>
+        ${hasManifest() && !standalone() ? '<button type="button" class="link-row" data-act="install"><span class="lr-ico" aria-hidden="true">＋</span><span class="lr-main"><b>홈 화면에 앱 추가</b><span class="muted small">아이콘으로 바로 열고, 인터넷 없이도 공부해요</span></span><span aria-hidden="true">›</span></button>' : ''}
         <button type="button" class="link-row" data-act="go-guide"><span class="lr-ico" aria-hidden="true">N5</span><span class="lr-main"><b>JLPT N5 시험 안내</b><span class="muted small">시험 구성, 합격 기준, 시험 당일 준비</span></span><span aria-hidden="true">›</span></button>
       </section>`;
   }
@@ -2983,6 +3013,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       <section class="panel"><div class="panel-head"><h2>최근 7일 XP</h2><span class="chip num">${weekXP()} XP</span></div>${xpChart()}</section>
       <section class="panel"><div class="panel-head"><h2>배지</h2><span class="chip num">${Object.keys(S.badges).length} / ${A.BADGES.length}</span></div>${badgeGrid()}</section>
       ${S.mocks.length ? `<section class="panel"><h2>모의고사 기록</h2><ul class="acc mocks">${mocks}</ul></section>` : ''}
+      ${installPanel()}
       <section class="panel">
         <h2>화면</h2>
         <div class="seg" role="group" aria-label="화면 밝기">${THEMES.map(([k, l]) => `<button type="button" class="chip-btn${themePref === k ? ' on' : ''}" data-act="theme" data-t="${k}" aria-pressed="${themePref === k}">${themePref === k ? '● ' : ''}${l}</button>`).join('')}</div>
@@ -3302,6 +3333,15 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     'reset-ask': () => { resetAsk = true; render(true); },
     'reset-no': () => { resetAsk = false; render(true); },
     'reset-yes': () => { A.resetAll(); resetAsk = false; X = null; lastMock = null; toast('기록을 모두 지웠어요.'); render(true); },
+    install: async () => {
+      if (installPrompt) {
+        const p = installPrompt; installPrompt = null;
+        try { p.prompt(); await p.userChoice; } catch (e) { /* 설치 창을 띄우지 못함 */ }
+        render(true); return;
+      }
+      X = null; go('stats');
+      const el = document.getElementById('install-panel'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'start' });
+    },
     'theme-toggle': () => { setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'); if (view === 'stats') render(true); },
     theme: (el) => { setTheme(el.dataset.t); render(true); },
     sound: (el) => { setSound(el.dataset.v === 'on'); if (soundOn) sfx('ok'); render(true); },

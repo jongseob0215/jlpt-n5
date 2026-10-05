@@ -3378,6 +3378,13 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     view: () => view,
     addView(name, fn, tab) { VIEWS[name] = fn; TAB_OF[name] = tab; },
     addHandlers(obj) { Object.assign(handlers, obj); },
+    qBlock: (q, done) => questionBlock(q, done),
+    hideOpt: (q, done) => hideOpt(q, done),
+    scriptHtml: (q, open) => scriptHtml(q, open),
+    trHtml: (q) => trHtml(q),
+    playScript: (q, opts) => playLines(scriptLines(q, opts)),
+    stopAudio: () => stopListening(),
+    isPlaying: () => lsPlaying,
     homeExtra: null
   };
   applyTheme();
@@ -3619,6 +3626,18 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   const soLessons = [];
   for (let i = 0; i < soIds.length; i += 5) soLessons.push({ id: `s-${soLessons.length + 1}`, kind: 'so', qids: soIds.slice(i, i + 5), name: `문장 만들기 ${soLessons.length + 1}` });
 
+  /* 독해·글의 문법·청해: 기존 문항을 레슨으로 묶는다 */
+  const qOf = (t) => A.QS.filter((q) => q.t === t).map((q) => q.id).sort();
+  function chunk(ids, n) {
+    const out = [];
+    for (let i = 0; i < ids.length; i += n) out.push(ids.slice(i, i + n));
+    if (out.length > 1 && out[out.length - 1].length < Math.ceil(n / 2)) { const l = out.pop(); out[out.length - 1] = out[out.length - 1].concat(l); }
+    return out;
+  }
+  const qsetLessons = (prefix, label, groups) => groups.map((qids, k) => ({ id: `${prefix}-${k + 1}`, kind: 'qset', qids, name: `${label} ${k + 1}` }));
+  const bpGroups = [...new Set(A.QS.filter((q) => q.t === 'bp').map((q) => q.g))].map((g) => A.QS.filter((q) => q.t === 'bp' && q.g === g).sort((a, b) => a.n - b.n).map((q) => q.id));
+  const readGroups = chunk(qOf('rs'), 5).concat(chunk(qOf('rm'), 4), chunk(qOf('ri'), 5));
+  const listenGroups = chunk(qOf('lt'), 7).concat(chunk(qOf('lp'), 6), chunk(qOf('le'), 5), chunk(qOf('lr'), 7));
   const ICON = { greet: 'こ', num: '一', time: '時', q: '何', people: '人', body: '体', food: '食', home: '家', place: '町', town: '駅', pos: '上', school: '学', nature: '空', shop: '買', hobby: '歌', kata: 'カ', verb: '行', adj: '高', adv: '少' };
   const wordUnit = (t) => addUnit('u-' + t, A.TOPIC_NAME[t], ICON[t] || '語', wordLessons(t));
   const gq = Math.ceil(gramChunks.length / 4);
@@ -3628,10 +3647,13 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   addUnit('u-g1', '문법 연습 ①', 'は', gramLessons(0, gq));
   ['people', 'body', 'food', 'home'].forEach(wordUnit);
   addUnit('u-g2', '문법 연습 ②', 'て', gramLessons(gq, gq * 2));
+  addUnit('u-ls', '청해', '聞', qsetLessons('l', '청해', listenGroups));
   ['place', 'town', 'pos', 'school'].forEach(wordUnit);
   addUnit('u-g3', '문법 연습 ③', 'に', gramLessons(gq * 2, gq * 3));
+  addUnit('u-bp', '글의 문법', '文', qsetLessons('b', '글의 문법', bpGroups));
   ['nature', 'shop', 'hobby', 'kata', 'verb'].forEach(wordUnit);
   addUnit('u-g4', '문법 연습 ④', 'も', gramLessons(gq * 3, gramChunks.length));
+  addUnit('u-rd', '독해', '読', qsetLessons('r', '독해', readGroups));
   ['adj', 'adv'].forEach(wordUnit);
   addUnit('u-so', '문장 만들기', '★', soLessons);
   const ALL = units.flatMap((u) => u.lessons);
@@ -3708,7 +3730,11 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   function buildSo(les) {
     return les.qids.map((id) => A.QMAP.get(id)).filter((q) => q && q.parts).map((q) => ({ k: 'so', qid: q.id, tiles: A.shuffle(q.parts), order: [], rec: { t: 'q', id: q.id }, note: q.e }));
   }
+  function buildQset(les) {
+    return les.qids.map((id) => A.QMAP.get(id)).filter(Boolean).map((q) => ({ k: 'q', qid: q.id, optJp: true, opts: A.shuffle(q.o), ans: q.o[0], rec: { t: 'q', id: q.id }, note: q.e }));
+  }
   function buildItems(les) {
+    if (les.kind === 'qset') return buildQset(les);
     if (les.kind === 'kana') return buildKana(les);
     if (les.kind === 'words') return buildWords(les);
     if (les.kind === 'gram') return buildGram(les);
@@ -3719,7 +3745,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     const c = Object.assign({}, it, { picked: null, done: false, ok: false, again: true, played: false, fx: false });
     if (c.k === 'match') Object.assign(c, { order: A.shuffle(c.pairs.map((_, k) => k)), matched: new Set(), miss: new Set(), selL: null, selR: null });
     if (c.k === 'so') Object.assign(c, { tiles: A.shuffle(c.tiles), order: [] });
-    if (c.k === 'mcq') c.opts = A.shuffle(c.opts);
+    if (c.k === 'mcq' || c.k === 'q') c.opts = A.shuffle(c.opts);
     return c;
   };
 
@@ -3736,7 +3762,11 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     autoPlay();
   }
   const cur = () => (L && !L.end ? L.items[L.i] : null);
-  function autoPlay() { const it = cur(); if (it && it.listen && !it.played && U.canJa()) { it.played = true; A.speak(it.say); } }
+  function autoPlay() {
+    const it = cur(); if (!it || it.played || !U.canJa()) return;
+    if (it.k === 'q') { const q = A.QMAP.get(it.qid); if (q && A.LISTEN.has(q.t)) { it.played = true; U.playScript(q, it.opts); } }
+    else if (it.listen) { it.played = true; A.speak(it.say); }
+  }
   function record(it, ok) {
     let xp = 0;
     const r = it.rec;
@@ -3798,7 +3828,8 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
         else if (k === it.picked) { cls += ' wrong' + (it.fx ? ' shake' : ''); mark = '<span class="mark">× 내 답</span>'; }
         else cls += ' dim';
       } else if (k === it.picked) { cls += ' picked'; mark = '<span class="mark">선택</span>'; }
-      return `<button type="button" class="${cls}" data-act="p-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${k + 1}</span><span class="${it.optJp ? 'jp' : ''}">${esc(o)}</span>${mark}</button>`;
+      const label = it.k === 'q' && U.hideOpt(A.QMAP.get(it.qid), it.done) ? '<span class="muted">소리로 듣는 보기</span>' : esc(o);
+      return `<button type="button" class="${cls}" data-act="p-pick" data-k="${k}" ${it.done ? 'disabled' : ''}><span class="no">${k + 1}</span><span class="${it.optJp ? 'jp' : ''}">${label}</span>${mark}</button>`;
     }).join('');
   }
   function bodyHtml(it) {
@@ -3814,6 +3845,18 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       const left = it.pairs.map((p, k) => `<button type="button" class="mt jp${it.matched.has(k) ? ' gone' : ''}${it.selL === k ? ' sel' : ''}${it.badL === k ? ' bad' : ''}" data-act="p-ml" data-k="${k}" ${it.matched.has(k) ? 'disabled' : ''}>${it.matched.has(k) ? '✓ ' : ''}${esc(p[0])}</button>`).join('');
       const right = it.order.map((pi) => `<button type="button" class="mt${it.matched.has(pi) ? ' gone' : ''}${it.selR === pi ? ' sel' : ''}${it.badR === pi ? ' bad' : ''}" data-act="p-mr" data-k="${pi}" ${it.matched.has(pi) ? 'disabled' : ''}>${it.matched.has(pi) ? '✓ ' : ''}${esc(it.pairs[pi][1])}</button>`).join('');
       return `<p class="ls-prompt">짝을 맞춰 보세요</p><div class="match"><div class="mcol">${left}</div><div class="mcol">${right}</div></div>`;
+    }
+    if (it.k === 'q') {
+      const q = A.QMAP.get(it.qid);
+      let head;
+      if (A.LISTEN.has(q.t)) {
+        const can = U.canJa();
+        head = `<p class="prompt">${esc(A.QP[q.t])}</p>${q.t === 'le' ? `<p class="sit">${esc(q.sit)}</p>` : ''}` +
+          (can ? '<div class="listen"><button type="button" class="btn primary" id="l-play" data-act="p-lplay">▶ 듣기</button></div>' : '<p class="muted small">이 기기에는 일본어 음성이 없어서 대본을 글로 보여 드려요.</p>') +
+          (q.t === 'lt' || q.t === 'lp' ? `<p class="rq jp"><b>${esc(q.ask)}</b></p>` : '') +
+          (!can || it.done ? U.scriptHtml(q, !can) : '');
+      } else head = U.qBlock(q, it.done);
+      return `${head}<div class="opts">${optsHtml(it)}</div>`;
     }
     if (it.k === 'so') {
       const q = A.QMAP.get(it.qid);
@@ -3849,6 +3892,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
         <b class="fb-t">${ok ? '○ 정답이에요!' : '× 아쉬워요'}${it.xp ? `<span class="xp-pop num">+${it.xp} XP</span>` : ''}</b>
         ${!ok && it.k !== 'match' ? `<p>정답: <b class="jp">${esc(answerText(it))}</b></p>` : ''}
         ${it.note ? `<p class="small">${esc(it.note)}</p>` : ''}
+        ${it.k === 'q' ? U.trHtml(A.QMAP.get(it.qid)) : ''}
         ${!ok && !it.again ? '<p class="muted small">이 문제는 레슨 끝에 한 번 더 나와요.</p>' : ''}
         <button type="button" class="btn primary wide" data-act="p-next">계속</button>
       </div>`;
@@ -3898,8 +3942,9 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     'p-path': () => { L = null; U.go('path'); const el = document.querySelector(focusId ? `.node[data-id="${focusId}"]` : '.node.cur') || document.querySelector('.node.cur'); if (el && el.scrollIntoView) el.scrollIntoView({ block: 'center' }); focusId = null; },
     'p-start-next': () => { const nx = nextLesson(); if (nx) startLesson(nx.id); },
     'p-open': (el) => { const l = lessonMap.get(el.dataset.id); if (l && isOpen(l)) startLesson(l.id); },
+    'p-lplay': () => { const it = cur(); if (!it || it.k !== 'q') return; if (U.isPlaying()) U.stopAudio(); else U.playScript(A.QMAP.get(it.qid), it.opts); },
     'p-say': () => { const it = cur(); if (it && it.say) A.speak(it.say); },
-    'p-pick': (el) => { const it = cur(); if (!it || it.done || it.k !== 'mcq') return; it.picked = Number(el.dataset.k); rerender(); },
+    'p-pick': (el) => { const it = cur(); if (!it || it.done || (it.k !== 'mcq' && it.k !== 'q')) return; it.picked = Number(el.dataset.k); rerender(); },
     'p-check': () => {
       const it = cur(); if (!it || it.done) return;
       let ok;
@@ -3914,6 +3959,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       if (!L || L.end) return;
       const it = cur();
       if (it && !(it.done || it.k === 'intro' || it.k === 'kintro')) return;
+      if (U.isPlaying()) U.stopAudio();
       if (L.i + 1 >= L.items.length) { finish(); return; }
       L.i++;
       U.render(false, 'next');

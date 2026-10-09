@@ -403,6 +403,8 @@ details.tr summary { cursor: pointer; font-size: 13px; font-weight: 700; color: 
 .mt.gone { opacity: 0.45; border-style: solid; cursor: default; }
 .mt:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .lesson-end .tiles { text-align: left; }
+.sets li { gap: 12px; }
+.set-row.done b::after { content: " ✓"; }
 #toast { position: fixed; left: 50%; transform: translateX(-50%); bottom: calc(84px + env(safe-area-inset-bottom, 0px)); background: var(--ink); color: var(--bg); padding: 10px 16px; border-radius: 12px; font-size: 13px; z-index: 11; max-width: calc(100% - 32px); box-shadow: var(--shadow); }
 
 @media (prefers-reduced-motion: no-preference) {
@@ -1785,6 +1787,276 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
 
 </script>
 <script>
+/* mock-base.js */
+/* 회차별 실전 모의고사에 들어가는 기존 문항 배분표(plan-mock-sets.cjs로 만듦). 한 번 정하면 바꾸지 않는다. */
+window.JLPT_DATA = window.JLPT_DATA || {};
+window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
+window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05","kr06","kr07"],
+  "pk":["pk01","pk02","pk03","pk04","pk05"],
+  "cx":["cx01","cx02","cx03","cx04","cx05","cx06"],
+  "pa":["pa01","pa02","pa03"],
+  "gr":["gr01","gr02","gr03","gr04","gr05","gr06","gr07","gr08","gr09"],
+  "so":["so01","so02","so03","so04"],
+  "bp":["bp1a","bp1b","bp1c","bp1d"],
+  "rs":["rs1a","rs2a"],
+  "rm":["rm1a","rm1b"],
+  "ri":["ri1a"],
+  "lt":["lt01","lt02","lt03","lt04","lt05","lt06","lt07"],
+  "lp":["lp06","lp01","lp02","lp03","lp04","lp05"],
+  "le":["le01","le02","le03","le04","le05"],
+  "lr":["lr01","lr02","lr03","lr04","lr05","lr06"]},
+"m02":{"kr":["kr08","kr09","kr10","kr11","kr12","kr13","kr14"],
+  "pk":["pk06","pk07","pk08","pk09","pk10"],
+  "cx":["cx07","cx08","cx09","cx10","cx11","cx12"],
+  "pa":["pa04","pa05","pa06"],
+  "gr":["gr10","gr11","gr12","gr13","gr14","gr15","gr16","gr17","gr18"],
+  "so":["so05","so06","so07","so08"],
+  "bp":["bp2a","bp2b","bp2c","bp2d"],
+  "rs":["rs3a","rs4a"],
+  "rm":["rm2a","rm2b"],
+  "ri":["ri1b"],
+  "lt":["lt08","lt09","lt10","lt11","lt12","lt13","lt14"],
+  "lp":["lp07","lp08","lp09","lp10","lp11","lp12"],
+  "le":["le06","le07","le08","le09","le10"],
+  "lr":["lr07","lr08","lr09","lr10","lr11","lr12"]},
+"m03":{"kr":["kr15","kr16","kr17","kr18","kr19","kr20","kr21"],
+  "pk":["pk11","pk12","pk13","pk14","pk15"],
+  "cx":["cx13","cx14","cx15","cx16","cx17","cx18"],
+  "pa":["pa07","pa08","pa09"],
+  "gr":["gr19","gr20","gr21","gr22","gr23","gr24","gr25","gr26","gr27"],
+  "so":["so09","so10","so11","so12"],
+  "bp":["bp3a","bp3b","bp3c","bp3d"],
+  "rs":["rs5a","rs6a"],
+  "rm":["rm3a","rm3b"],
+  "ri":["ri2a"],
+  "lr":["lr13"]},
+"m04":{"kr":["kr22","kr23","kr24","kr25","kr26","kr27","kr28"],
+  "pk":["pk16","pk17","pk18","pk19","pk20"],
+  "cx":["cx19","cx20","cx21","cx22","cx23","cx24"],
+  "pa":["pa10","pa11","pa12"],
+  "gr":["gr28","gr29","gr30","gr31","gr32","gr33","gr34","gr35","gr36"],
+  "so":["so13","so14","so15"],
+  "bp":["bp4a","bp4b","bp4c","bp4d"],
+  "rs":["rs7a","rs8a"],
+  "rm":["rm4a","rm4b"],
+  "ri":["ri3a"]},
+"m05":{"kr":["kr29","kr30","kr31"],
+  "pk":["pk21","pk22","pk23","pk24"],
+  "pa":["pa13","pa14","pa15"],
+  "gr":["gr37","gr38","gr39","gr40","gr41","gr42","gr43","gr44","gr45"],
+  "bp":["bp5a","bp5b","bp5c","bp5d"],
+  "rs":["rs9a","rs10a"],
+  "rm":["rm5a","rm5b"],
+  "ri":["ri3b"]},
+"m06":{"gr":["gr46","gr47","gr48","gr49","gr50","gr51","gr52"],
+  "bp":["bp6a","bp6b","bp6c","bp6d"],
+  "ri":["ri4a"]},
+"m07":{"ri":["ri5a"]},
+"m08":{"ri":["ri5b"]},
+"m09":{"ri":["ri6a"]},
+"m10":{"ri":["ri7a"]},
+"m11":{},
+"m12":{},
+"m13":{},
+"m14":{},
+"m15":{},
+"m16":{},
+"m17":{},
+"m18":{},
+"m19":{},
+"m20":{}};
+
+</script>
+<script>
+/* mock-03.js */
+/* 실전 모의고사 제3회 전용 문항(자체 제작). 나머지 문항은 mock-base.js의 배분표에서 가져온다. */
+(function (N5) {
+  const M = 'm03';
+  N5.questions = (N5.questions || []).concat([
+    {id:"m03lt1",t:"lt",set:"図書館で 女の 人と 男の 人が 話して います。",ask:"男の 人は まず 何を しますか。",
+     s:[["F","本を 借りますか。図書館の カードは ありますか。"],["M","いいえ、ありません。"],["F","じゃあ、まず この 紙に 名前と 電話番号を 書いて ください。それから カードを 作ります。"],["M","わかりました。"]],
+     o:["紙に 名前と 電話番号を 書きます","本を 借ります","カードを 見せます","電話を かけます"],
+     e:"카드가 없어서 '먼저(まず)' 종이에 이름과 전화번호를 써요. 그다음에 카드를 만들어요.",
+     tr:"여자: 책을 빌리세요? 도서관 카드 있어요? / 남자: 아니요, 없어요. / 여자: 그럼 먼저 이 종이에 이름과 전화번호를 써 주세요. 그다음에 카드를 만들어요. / 남자: 알겠습니다."},
+    {id:"m03lt2",t:"lt",set:"家で お母さんと 男の 子が 話して います。",ask:"男の 子は 何を 持って 行きますか。",
+     s:[["F","きょうは 午後から 雨ですよ。"],["M","じゃあ、かさを 持って 行きます。"],["F","それから、きょうは 寒いですから、コートも 持って 行って ね。"],["M","コートは 重いですから、いいです。セーターを 着て 行きます。"]],
+     o:["かさ","コート","かさと コート","セーター"],
+     e:"우산은 가져가고, 코트는 무거워서 안 가져가요. 스웨터는 '입고' 가는 것이라 가져가는 물건이 아니에요.",
+     tr:"엄마: 오늘은 오후부터 비가 와. / 아이: 그럼 우산 가져갈게요. / 엄마: 그리고 오늘은 추우니까 코트도 가져가렴. / 아이: 코트는 무거우니까 됐어요. 스웨터를 입고 갈게요."},
+    {id:"m03lt3",t:"lt",set:"レストランで 男の 人と 女の 人が 話して います。",ask:"男の 人は 何を 頼みますか。",
+     s:[["F","何に しますか。わたしは カレーに します。"],["M","わたしも カレーが 好きですが、きのう 食べました。きょうは ラーメンに します。"],["F","飲み物は？"],["M","冷たい お茶を お願いします。"]],
+     o:["ラーメンと 冷たい お茶","カレーと 冷たい お茶","ラーメンと 熱い お茶","カレーと ラーメン"],
+     e:"카레는 어제 먹어서 오늘은 라면, 음료는 차가운 차예요.",
+     tr:"여자: 뭘로 할래요? 저는 카레로 할게요. / 남자: 저도 카레를 좋아하지만 어제 먹었어요. 오늘은 라면으로 할게요. / 여자: 음료는요? / 남자: 차가운 차로 부탁해요."},
+    {id:"m03lt4",t:"lt",set:"教室で 先生が 話して います。",ask:"学生は きょう 家で 何ページを 勉強しますか。",
+     s:[["F","きょうの 宿題です。教科書の 十ページから 十二ページまで 読んで ください。十三ページは あした 教室で します。"]],
+     o:["十ページから 十二ページまで","十ページから 十三ページまで","十二ページと 十三ページ","十三ページだけ"],
+     e:"숙제는 10쪽부터 12쪽까지이고, 13쪽은 내일 교실에서 해요.",
+     tr:"선생님: 오늘 숙제예요. 교과서 10쪽부터 12쪽까지 읽어 오세요. 13쪽은 내일 교실에서 해요."},
+    {id:"m03lt5",t:"lt",set:"会社で 男の 人と 女の 人が 話して います。",ask:"女の 人は この あと 何を しますか。",
+     s:[["M","山田さん、この 部屋、少し 暑いですね。"],["F","窓を 開けましょうか。"],["M","外は 車の 音が うるさいですから、窓は 開けないで ください。エアコンを つけて ください。"],["F","はい、わかりました。"]],
+     o:["エアコンを つけます","窓を 開けます","窓を 閉めます","エアコンを 消します"],
+     e:"밖이 시끄러워서 창문은 열지 말고 에어컨을 켜 달라고 했어요.",
+     tr:"남자: 야마다 씨, 이 방 좀 덥네요. / 여자: 창문을 열까요? / 남자: 밖은 차 소리가 시끄러우니까 창문은 열지 마세요. 에어컨을 켜 주세요. / 여자: 네, 알겠습니다."},
+    {id:"m03lt6",t:"lt",set:"店で 女の 人と 店の 人が 話して います。",ask:"女の 人は どの シャツを 買いますか。",
+     s:[["F","すみません、この 白い シャツ、もう 少し 大きいのは ありますか。"],["M","白は ありませんが、青なら 大きいのが ありますよ。"],["F","青ですか。…うーん、じゃあ、その 青い シャツに します。"]],
+     o:["大きい 青い シャツ","大きい 白い シャツ","小さい 白い シャツ","小さい 青い シャツ"],
+     e:"흰색은 큰 사이즈가 없어서, 큰 사이즈가 있는 파란 셔츠로 정했어요.",
+     tr:"여자: 저기요, 이 흰 셔츠 조금 더 큰 거 있어요? / 점원: 흰색은 없지만 파란색이라면 큰 게 있어요. / 여자: 파란색이요? 음, 그럼 그 파란 셔츠로 할게요."},
+    {id:"m03lt7",t:"lt",set:"駅で 男の 人と 女の 人が 電話で 話して います。",ask:"女の 人は この あと どう しますか。",
+     s:[["M","もしもし、今 駅に 着きました。どこに いますか。"],["F","すみません、電車が 遅れて、まだ 一つ 前の 駅です。"],["M","そうですか。じゃあ、駅の 中の 喫茶店で 待って います。"],["F","わかりました。着いたら、すぐ 喫茶店へ 行きます。"]],
+     o:["駅に 着いて から 喫茶店へ 行きます","前の 駅で 待ちます","喫茶店で 電話を かけます","タクシーで 行きます"],
+     e:"여자는 아직 앞 역에 있고, 도착하면 바로 찻집으로 가요. 찻집에서 기다리는 사람은 남자예요.",
+     tr:"남자: 여보세요, 지금 역에 도착했어요. 어디 있어요? / 여자: 미안해요, 전철이 늦어서 아직 한 정거장 전이에요. / 남자: 그래요? 그럼 역 안 찻집에서 기다릴게요. / 여자: 알겠어요. 도착하면 바로 찻집으로 갈게요."},
+
+    {id:"m03lp1",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は どうして 新しい かばんを 買いましたか。",
+     s:[["M","いい かばんですね。新しいですか。"],["F","はい、きのう 買いました。前の かばんは 小さかったですから。"],["M","前の かばんも きれいでしたね。"],["F","ええ。でも、パソコンが 入りませんでした。"]],
+     o:["前の かばんが 小さかったから","前の かばんが 古かったから","前の かばんが 汚かったから","安かったから"],
+     e:"전 가방이 작아서 컴퓨터가 들어가지 않았어요.",
+     tr:"남자: 좋은 가방이네요. 새 거예요? / 여자: 네, 어제 샀어요. 전 가방이 작았거든요. / 남자: 전 가방도 예뻤는데요. / 여자: 네. 그런데 컴퓨터가 안 들어갔어요."},
+    {id:"m03lp2",t:"lp",set:"女の 学生と 男の 学生が 話して います。",ask:"男の 学生の 弟は 何歳ですか。",
+     s:[["F","キムさんは 兄弟が いますか。"],["M","はい、兄と 弟が います。兄は 二十五歳で、弟は 十八歳です。"],["F","弟さんも 学生ですか。"],["M","はい、高校生です。"]],
+     o:["十八歳","二十五歳","十五歳","二十歳"],
+     e:"형은 25살, 남동생은 18살이에요.",
+     tr:"여학생: 김 씨는 형제가 있어요? / 남학생: 네, 형과 남동생이 있어요. 형은 25살이고 남동생은 18살이에요. / 여학생: 남동생도 학생이에요? / 남학생: 네, 고등학생이에요."},
+    {id:"m03lp3",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は 毎朝 何を 飲みますか。",
+     s:[["M","毎朝 コーヒーを 飲みますか。"],["F","いいえ、コーヒーは あまり 好きじゃ ありません。"],["M","じゃあ、紅茶ですか。"],["F","いいえ、朝は いつも 牛乳を 飲みます。"]],
+     o:["牛乳","コーヒー","紅茶","水"],
+     e:"커피도 홍차도 아니고, 아침에는 늘 우유를 마셔요.",
+     tr:"남자: 매일 아침 커피 마셔요? / 여자: 아니요, 커피는 별로 안 좋아해요. / 남자: 그럼 홍차예요? / 여자: 아니요, 아침에는 늘 우유를 마셔요."},
+    {id:"m03lp4",t:"lp",set:"店の 人と 男の 人が 話して います。",ask:"男の 人は いくら 出しますか。",
+     s:[["M","この りんごを 三つ ください。"],["F","一つ 百二十円です。三つで 三百六十円です。"],["M","それから、この 袋も ください。"],["F","袋は 十円です。全部で 三百七十円です。"]],
+     o:["三百七十円","三百六十円","百二十円","三百円"],
+     e:"사과 세 개 360엔에 봉투 10엔을 더해 370엔이에요.",
+     tr:"남자: 이 사과 세 개 주세요. / 점원: 하나에 120엔이에요. 세 개에 360엔이에요. / 남자: 그리고 이 봉투도 주세요. / 점원: 봉투는 10엔이에요. 모두 370엔이에요."},
+    {id:"m03lp5",t:"lp",set:"女の 人と 男の 人が 話して います。",ask:"男の 人は 週末 何を しますか。",
+     s:[["F","今度の 土曜日、いっしょに 映画を 見に 行きませんか。"],["M","すみません、土曜日は 友だちの 引っこしを 手伝います。"],["F","日曜日は どうですか。"],["M","日曜日は 大丈夫です。行きましょう。"]],
+     o:["土曜日は 友だちを 手伝って、日曜日は 映画を 見ます","土曜日に 映画を 見ます","土曜日も 日曜日も 引っこしを 手伝います","日曜日に 友だちを 手伝います"],
+     e:"토요일은 친구 이사를 돕고, 일요일에 같이 영화를 보기로 했어요.",
+     tr:"여자: 이번 토요일에 같이 영화 보러 가지 않을래요? / 남자: 미안해요, 토요일은 친구 이사를 도와요. / 여자: 일요일은 어때요? / 남자: 일요일은 괜찮아요. 가요."},
+    {id:"m03lp6",t:"lp",set:"男の 学生と 女の 学生が 話して います。",ask:"女の 学生の 家から 学校まで どのぐらい かかりますか。",
+     s:[["M","家から 学校まで 遠いですか。"],["F","バスで 二十分、それから 歩いて 五分です。"],["M","じゃあ、二十五分ですね。"],["F","はい。でも 朝は 道が こみますから、四十分ぐらい かかります。"]],
+     o:["朝は 四十分ぐらい","二十分","二十五分","五分"],
+     e:"보통은 25분이지만 아침에는 길이 막혀서 40분쯤 걸린다고 했어요.",
+     tr:"남학생: 집에서 학교까지 멀어요? / 여학생: 버스로 20분, 그다음에 걸어서 5분이에요. / 남학생: 그럼 25분이네요. / 여학생: 네. 그런데 아침에는 길이 막혀서 40분쯤 걸려요."},
+
+    {id:"m03le1",t:"le",sit:"친구에게 지우개를 빌리고 싶습니다. 뭐라고 말합니까?",say:"友だちの 消しゴムを 使いたいです。何と 言いますか。",v:"F",
+     o:["消しゴムを 貸して ください","消しゴムを 借りて ください","消しゴムを 使いましょう"],e:"빌려 달라고 할 때는 「貸して ください」예요."},
+    {id:"m03le2",t:"le",sit:"생일인 친구에게 말합니다. 뭐라고 말합니까?",say:"きょうは 友だちの 誕生日です。何と 言いますか。",v:"M",
+     o:["お誕生日 おめでとう","ありがとう","いただきます"],e:"생일 축하는 「お誕生日 おめでとう(ございます)」예요."},
+    {id:"m03le3",t:"le",sit:"식당에서 계산하고 싶습니다. 점원에게 뭐라고 말합니까?",say:"レストランで お金を 払いたいです。店の 人に 何と 言いますか。",v:"F",
+     o:["すみません、お会計 お願いします","いらっしゃいませ","ごちそうさまでした"],e:"계산을 부탁할 때는 「お会計 お願いします」라고 해요."},
+    {id:"m03le4",t:"le",sit:"사진을 찍어 달라고 부탁합니다. 뭐라고 말합니까?",say:"写真を 撮って ほしいです。何と 言いますか。",v:"M",
+     o:["すみません、写真を 撮って くださいませんか","写真を 撮りましょうか","写真を 撮っても いいですか"],e:"찍어 달라고 부탁할 때는 「撮って くださいませんか」예요. 「撮っても いいですか」는 내가 찍어도 되는지 묻는 말이에요."},
+    {id:"m03le5",t:"le",sit:"수업 시간에 늦게 교실에 들어갑니다. 뭐라고 말합니까?",say:"授業に 遅れました。教室に 入ります。何と 言いますか。",v:"F",
+     o:["遅く なって すみません","いってきます","おやすみなさい"],e:"늦었을 때는 「遅く なって すみません」이라고 사과해요."},
+
+    {id:"m03lr1",t:"lr",sp:"F",line:"お国は どちらですか。",o:["韓国です","ソウルの 会社です","日本語です"],e:"나라를 물었으니 나라 이름으로 답해요."},
+    {id:"m03lr2",t:"lr",sp:"M",line:"その 本、おもしろいですか。",o:["ええ、とても おもしろいです","ええ、本です","いいえ、読みます"],e:"재미있는지 물었으니 재미있다/없다로 답해요."},
+    {id:"m03lr3",t:"lr",sp:"F",line:"いっしょに 帰りませんか。",o:["ええ、帰りましょう","はい、帰りませんでした","いいえ、帰りました"],e:"권유(~ませんか)에는 「~ましょう」로 답해요."},
+    {id:"m03lr4",t:"lr",sp:"M",line:"きのうは 何時に 寝ましたか。",o:["十一時ごろ 寝ました","七時間 寝ました","よく 寝ます"],e:"몇 시에 잤는지 물었으니 시각으로 답해요."},
+    {id:"m03lr5",t:"lr",sp:"F",line:"すみません、この 席、空いて いますか。",o:["はい、どうぞ","はい、空きました","いいえ、どういたしまして"],e:"자리가 비었냐는 물음에는 「はい、どうぞ」(네, 앉으세요)라고 해요."}
+  ].map((q) => Object.assign(q, { mock: M })));
+})(window.JLPT_DATA.N5);
+
+</script>
+<script>
+/* mock-04.js */
+/* 실전 모의고사 제4회 전용 문항(자체 제작). 나머지 문항은 mock-base.js의 배분표에서 가져온다. */
+(function (N5) {
+  const M = 'm04';
+  N5.questions = (N5.questions || []).concat([
+    {id:"m04so1",t:"so",pre:"わたしは",parts:["日本の","アニメを","見るの","が"],star:2,post:"好きです。",tr:"저는 일본 애니메이션을 보는 것을 좋아합니다.",e:"「~の が 好きだ」는 '~하는 것을 좋아하다'예요. 日本の는 アニメ를 꾸며요."},
+
+    {id:"m04lt1",t:"lt",set:"郵便局で 男の 人と 局の 人が 話して います。",ask:"男の 人は 切手を 何枚 買いますか。",
+     s:[["M","すみません、韓国まで、この 手紙は いくらですか。"],["F","百三十円です。"],["M","じゃあ、百三十円の 切手を 三枚 ください。あ、二枚で いいです。一枚は 家に あります。"],["F","はい、二枚ですね。"]],
+     o:["二枚","三枚","一枚","四枚"],
+     e:"처음에 세 장이라고 했다가, 한 장은 집에 있어서 두 장으로 바꿨어요.",
+     tr:"남자: 저기요, 한국까지 이 편지는 얼마예요? / 직원: 130엔이에요. / 남자: 그럼 130엔짜리 우표를 세 장 주세요. 아, 두 장이면 돼요. 한 장은 집에 있어요. / 직원: 네, 두 장이요."},
+    {id:"m04lt2",t:"lt",set:"男の 人と 女の 人が 話して います。",ask:"男の 人は 友だちの 家に 何を 持って 行きますか。",
+     s:[["M","あした 田中さんの 家へ 行きます。何を 持って 行きましょうか。"],["F","お菓子は どうですか。"],["M","田中さんは 甘い 物が あまり 好きじゃ ありません。"],["F","じゃあ、果物は どうですか。"],["M","そうですね。りんごを 持って 行きます。"]],
+     o:["りんご","お菓子","花","ケーキ"],
+     e:"다나카 씨가 단 것을 별로 안 좋아해서 과일(사과)을 가져가기로 했어요.",
+     tr:"남자: 내일 다나카 씨 집에 가요. 뭘 가져갈까요? / 여자: 과자는 어때요? / 남자: 다나카 씨는 단 걸 별로 안 좋아해요. / 여자: 그럼 과일은 어때요? / 남자: 그렇네요. 사과를 가져갈게요."},
+    {id:"m04lt3",t:"lt",set:"学校で 女の 学生と 男の 学生が 話して います。",ask:"男の 学生は 何を 買いますか。",
+     s:[["F","あしたの パーティーの 飲み物は わたしが 買います。"],["M","じゃあ、わたしは 紙の コップと お皿を 買います。"],["F","お皿は 教室に ありますよ。"],["M","そうですか。じゃあ、コップだけ 買います。"]],
+     o:["紙の コップ","飲み物","紙の コップと お皿","お皿"],
+     e:"음료는 여학생이 사고, 접시는 교실에 있어서 남학생은 종이컵만 사요.",
+     tr:"여학생: 내일 파티 음료는 제가 살게요. / 남학생: 그럼 저는 종이컵이랑 접시를 살게요. / 여학생: 접시는 교실에 있어요. / 남학생: 그래요? 그럼 컵만 살게요."},
+    {id:"m04lt4",t:"lt",set:"病院で 男の 人と 病院の 人が 話して います。",ask:"男の 人は まず 何を しますか。",
+     s:[["M","すみません、はじめて 来ました。"],["F","では、この 紙に 名前と 住所を 書いて ください。それから 保険証を 見せて ください。"],["M","はい。あ、保険証は かばんの 中です。先に 出しますね。"],["F","いいえ、紙を 先に 書いて ください。"]],
+     o:["紙に 名前と 住所を 書きます","保険証を 見せます","かばんを 開けます","医者に 会います"],
+     e:"남자는 보험증을 먼저 꺼내려고 했지만, 종이를 먼저 쓰라고 했어요.",
+     tr:"남자: 저기요, 처음 왔어요. / 직원: 그럼 이 종이에 이름과 주소를 써 주세요. 그다음에 보험증을 보여 주세요. / 남자: 네. 아, 보험증은 가방 안에 있어요. 먼저 꺼낼게요. / 직원: 아니요, 종이를 먼저 써 주세요."},
+    {id:"m04lt5",t:"lt",set:"ホテルで 女の 人と ホテルの 人が 話して います。",ask:"女の 人は あした 何時に どこへ 行きますか。",
+     s:[["F","朝ご飯は 何時からですか。"],["M","六時半から 九時までです。二階の レストランです。"],["F","一階では ありませんね。"],["M","はい、二階です。"],["F","じゃあ、七時に 行きます。"]],
+     o:["七時に 二階の レストラン","六時半に 二階の レストラン","七時に 一階の レストラン","九時に 二階の レストラン"],
+     e:"아침은 6시 반부터 9시까지 2층 레스토랑이고, 여자는 7시에 간다고 했어요.",
+     tr:"여자: 아침은 몇 시부터예요? / 직원: 6시 반부터 9시까지예요. 2층 레스토랑이에요. / 여자: 1층이 아니군요. / 직원: 네, 2층이에요. / 여자: 그럼 7시에 갈게요."},
+    {id:"m04lt6",t:"lt",set:"電話で 男の 人と 女の 人が 話して います。",ask:"二人は 何時に 会いますか。",
+     s:[["M","もしもし、あしたの 約束ですが、三時は 大丈夫ですか。"],["F","すみません、三時は 仕事が あります。四時は どうですか。"],["M","四時は わたしが だめです。五時は？"],["F","五時なら 大丈夫です。"]],
+     o:["五時","三時","四時","六時"],
+     e:"3시는 여자가, 4시는 남자가 안 돼서 5시에 만나요.",
+     tr:"남자: 여보세요, 내일 약속 말인데요, 3시 괜찮아요? / 여자: 미안해요, 3시는 일이 있어요. 4시는 어때요? / 남자: 4시는 제가 안 돼요. 5시는요? / 여자: 5시라면 괜찮아요."},
+    {id:"m04lt7",t:"lt",set:"教室で 先生と 学生が 話して います。",ask:"学生は 作文を いつ 出しますか。",
+     s:[["M","先生、作文は きょう 出しますか。"],["F","いいえ、きょうでは ありません。来週の 月曜日に 出して ください。"],["M","火曜日は だめですか。"],["F","だめです。月曜日に お願いします。"]],
+     o:["来週の 月曜日","きょう","来週の 火曜日","あした"],
+     e:"작문은 다음 주 월요일에 내요. 화요일은 안 된다고 했어요.",
+     tr:"학생: 선생님, 작문은 오늘 내요? / 선생님: 아니요, 오늘이 아니에요. 다음 주 월요일에 내세요. / 학생: 화요일은 안 돼요? / 선생님: 안 돼요. 월요일에 내 주세요."},
+
+    {id:"m04lp1",t:"lp",set:"女の 人と 男の 人が 話して います。",ask:"男の 人は どうして 遅く なりましたか。",
+     s:[["F","遅かったですね。どう しましたか。"],["M","すみません。バスが なかなか 来ませんでした。"],["F","道が こんで いましたか。"],["M","いいえ、雪で バスが 遅れました。"]],
+     o:["雪で バスが 遅れたから","道が こんで いたから","朝 起きるのが 遅かったから","電車が 止まったから"],
+     e:"길이 막힌 게 아니라 눈 때문에 버스가 늦게 왔어요.",
+     tr:"여자: 늦었네요. 무슨 일이에요? / 남자: 죄송해요. 버스가 좀처럼 안 왔어요. / 여자: 길이 막혔어요? / 남자: 아니요, 눈 때문에 버스가 늦었어요."},
+    {id:"m04lp2",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は どの 季節が いちばん 好きですか。",
+     s:[["M","わたしは 夏が 好きです。海で 泳ぐのが 好きですから。"],["F","わたしは 暑いのは ちょっと…。春も いいですが、秋が いちばん 好きです。"],["M","どうしてですか。"],["F","涼しくて、果物も おいしいですから。"]],
+     o:["秋","夏","春","冬"],
+     e:"봄도 좋지만 가을을 가장 좋아한다고 했어요. 여름을 좋아하는 사람은 남자예요.",
+     tr:"남자: 저는 여름이 좋아요. 바다에서 수영하는 걸 좋아하거든요. / 여자: 저는 더운 건 좀…. 봄도 좋지만 가을이 가장 좋아요. / 남자: 왜요? / 여자: 선선하고 과일도 맛있으니까요."},
+    {id:"m04lp3",t:"lp",set:"女の 学生と 男の 学生が 話して います。",ask:"男の 学生は 誕生日に 何を もらいましたか。",
+     s:[["F","誕生日に 何か もらいましたか。"],["M","両親から 時計を もらいました。"],["F","いいですね。わたしは 去年 かばんを もらいました。"],["M","兄からは 本を もらいましたが、もう 持って いる 本でした。"]],
+     o:["時計と 本","時計だけ","かばんと 本","かばんと 時計"],
+     e:"부모님께 시계, 형에게 책을 받았어요. 가방은 여학생이 작년에 받은 거예요.",
+     tr:"여학생: 생일에 뭐 받았어요? / 남학생: 부모님께 시계를 받았어요. / 여학생: 좋네요. 저는 작년에 가방을 받았어요. / 남학생: 형한테서는 책을 받았는데, 이미 갖고 있는 책이었어요."},
+    {id:"m04lp4",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人の 新しい 部屋は 何が いいですか。",
+     s:[["M","新しい 部屋は どうですか。"],["F","あまり 広くないですが、駅から 近くて 便利です。"],["M","静かですか。"],["F","いいえ、前の 道に 車が 多くて、少し うるさいです。"]],
+     o:["駅から 近い こと","広い こと","静かな こと","安い こと"],
+     e:"넓지 않고 조금 시끄럽지만, 역에서 가까워서 편리하다고 했어요.",
+     tr:"남자: 새 방은 어때요? / 여자: 별로 넓지는 않지만 역에서 가까워서 편리해요. / 남자: 조용해요? / 여자: 아니요, 앞길에 차가 많아서 조금 시끄러워요."},
+    {id:"m04lp5",t:"lp",set:"女の 人と 男の 人が 話して います。",ask:"男の 人は 日曜日 どこへ 行きましたか。",
+     s:[["F","日曜日は どこかへ 行きましたか。"],["M","はい。はじめは 動物園へ 行きたかったですが、休みでした。"],["F","じゃあ、どこへ 行きましたか。"],["M","近くの 公園へ 行きました。花が きれいでしたよ。"]],
+     o:["近くの 公園","動物園","デパート","どこも 行きませんでした"],
+     e:"동물원은 쉬는 날이어서 근처 공원에 갔어요.",
+     tr:"여자: 일요일에 어디 갔어요? / 남자: 네. 처음에는 동물원에 가고 싶었는데 쉬는 날이었어요. / 여자: 그럼 어디 갔어요? / 남자: 근처 공원에 갔어요. 꽃이 예뻤어요."},
+    {id:"m04lp6",t:"lp",set:"男の 人と 女の 人が 話して います。",ask:"女の 人は 何人で 旅行に 行きますか。",
+     s:[["M","来週 旅行に 行きますね。家族と 行きますか。"],["F","いいえ、友だちと 行きます。"],["M","何人で 行きますか。"],["F","わたしと 友だち 二人の 三人です。"]],
+     o:["三人","二人","四人","一人"],
+     e:"여자와 친구 두 명, 모두 세 명이에요.",
+     tr:"남자: 다음 주에 여행 가죠? 가족이랑 가요? / 여자: 아니요, 친구랑 가요. / 남자: 몇 명이서 가요? / 여자: 저랑 친구 두 명, 세 명이에요."},
+
+    {id:"m04le1",t:"le",sit:"길에서 역이 어디인지 묻고 싶습니다. 뭐라고 말합니까?",say:"駅が どこか わかりません。何と 言いますか。",v:"M",
+     o:["すみません、駅は どこですか","駅は ここですよ","駅へ 行きましょう"],e:"길을 물을 때는 「すみません、~は どこですか」예요."},
+    {id:"m04le2",t:"le",sit:"선생님 방에서 나갑니다. 뭐라고 말합니까?",say:"先生の 部屋を 出ます。何と 言いますか。",v:"F",
+     o:["失礼しました","いらっしゃいませ","おかえりなさい"],e:"방에서 나갈 때는 「失礼しました」예요. 들어갈 때는 「失礼します」."},
+    {id:"m04le3",t:"le",sit:"밥을 먹기 시작합니다. 뭐라고 말합니까?",say:"これから ご飯を 食べます。何と 言いますか。",v:"M",
+     o:["いただきます","ごちそうさまでした","おやすみなさい"],e:"먹기 전에는 いただきます, 다 먹은 뒤에는 ごちそうさまでした예요."},
+    {id:"m04le4",t:"le",sit:"전철에서 다른 사람의 발을 밟았습니다. 뭐라고 말합니까?",say:"電車で 人の 足を ふみました。何と 言いますか。",v:"F",
+     o:["あ、すみません","どういたしまして","いってらっしゃい"],e:"실수했을 때는 「すみません」으로 사과해요."},
+    {id:"m04le5",t:"le",sit:"친구에게 함께 점심을 먹자고 합니다. 뭐라고 말합니까?",say:"友だちと 昼ご飯を 食べたいです。何と 言いますか。",v:"M",
+     o:["いっしょに 昼ご飯を 食べませんか","昼ご飯を 食べましたか","昼ご飯は おいしかったですか"],e:"함께 하자고 권할 때는 「いっしょに ~ませんか」예요."},
+
+    {id:"m04lr1",t:"lr",sp:"F",line:"お元気ですか。",o:["はい、元気です","はい、そうです","いいえ、けっこうです"],e:"안부를 물으면 「はい、元気です」라고 답해요."},
+    {id:"m04lr2",t:"lr",sp:"M",line:"この かさ、使っても いいですか。",o:["ええ、どうぞ","ええ、使いました","いいえ、かさです"],e:"써도 되는지 물으면 「ええ、どうぞ」(네, 쓰세요)라고 해요."},
+    {id:"m04lr3",t:"lr",sp:"F",line:"何で 学校へ 来ますか。",o:["自転車で 来ます","八時に 来ます","友だちと 来ます"],e:"'무엇으로(수단)' 오는지 물었으니 自転車で예요."},
+    {id:"m04lr4",t:"lr",sp:"M",line:"どこで 昼ご飯を 食べましたか。",o:["駅の 前の 食堂で 食べました","十二時に 食べました","カレーを 食べました"],e:"'어디서' 먹었는지 물었으니 장소로 답해요."},
+    {id:"m04lr5",t:"lr",sp:"F",line:"ちょっと 窓を 開けて ください。",o:["はい、いいですよ","はい、開けました","いいえ、窓です"],e:"부탁을 들어줄 때는 「はい、いいですよ」라고 해요."},
+    {id:"m04lr6",t:"lr",sp:"M",line:"おはようございます。",o:["おはようございます","こんばんは","おやすみなさい"],e:"아침 인사에는 같은 인사로 답해요."}
+  ].map((q) => Object.assign(q, { mock: M })));
+})(window.JLPT_DATA.N5);
+
+</script>
+<script>
 /* core.js */
 /* 상태·저장·동기화·학습 규칙. 화면 코드는 ui.js */
 (function () {
@@ -1835,7 +2107,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     { name: '3교시 · 청해', min: 30, plan: [['lt', 7], ['lp', 6], ['le', 5], ['lr', 6]] }
   ];
   const KEY = 'jlpt-n5-study-v1';
-  const BADGE_IDS = new Set(['first', 'goal1', 's3', 's7', 's30', 'w50', 'w150', 'wall', 'l30', 'l100', 'q100', 'm1', 'm80', 'mAll', 'kh', 'kk', 'x500', 'x2000', 'p1', 'p10', 'p30', 'pK']);
+  const BADGE_IDS = new Set(['first', 'goal1', 's3', 's7', 's30', 'w50', 'w150', 'wall', 'l30', 'l100', 'q100', 'm1', 'm80', 'mAll', 'kh', 'kk', 'x500', 'x2000', 'p1', 'p10', 'p30', 'pK', 'ms5', 'ms20']);
 
   /* ---------- 공통 도구 ---------- */
   App.esc = (s) => String(s).replace(/[&<>"']/g, (c) => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
@@ -1864,6 +2136,27 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     else if (q.t === 'le') q.q = q.sit;
     else if (q.t === 'lr') q.q = q.line;
   }
+
+  /* 회차별 실전 모의고사(제1~20회): 기존 문항 배분표(mockBase) + 회차 전용 새 문항(q.mock = 'm05' 등).
+     문항이 다 갖춰진 회차만 목록에 나온다. 회차 전용 문항은 그 회차를 끝낼 때까지 연습·무작위 모의고사에 나오지 않는다. */
+  const SET_PLAN = [['kr', 7], ['pk', 5], ['cx', 6], ['pa', 3], ['gr', 9], ['so', 4], ['bp', 4], ['rs', 2], ['rm', 2], ['ri', 1], ['lt', 7], ['lp', 6], ['le', 5], ['lr', 6]];
+  const SEC_OF = { kr: 0, pk: 0, cx: 0, pa: 0, gr: 1, so: 1, bp: 1, rs: 1, rm: 1, ri: 1, lt: 2, lp: 2, le: 2, lr: 2 };
+  App.MOCK_SETS = [];
+  for (let s = 1; s <= 20; s++) {
+    const id = 'm' + String(s).padStart(2, '0');
+    const base = (LV.mockBase || {})[id] || {};
+    const secs = [[], [], []]; let ok = true;
+    for (const [t, n] of SET_PLAN) {
+      const own = App.QS.filter((q) => q.mock === id && q.t === t).sort((a, b) => String(a.g || '').localeCompare(String(b.g || '')) || (a.n || 0) - (b.n || 0) || a.id.localeCompare(b.id));
+      const ids = (base[t] || []).filter((x) => App.QMAP.has(x)).concat(own.map((q) => q.id));
+      if (ids.length !== n) ok = false;
+      secs[SEC_OF[t]].push(...ids.slice(0, n));
+    }
+    if (ok) App.MOCK_SETS.push({ id, no: s, secs });
+  }
+  App.SETMAP = new Map(App.MOCK_SETS.map((x) => [x.id, x]));
+  App.SET_IDS = new Set(Array.from({ length: 20 }, (_, k) => 'm' + String(k + 1).padStart(2, '0')));
+  App.isOpenQ = (q) => !q.mock || !!(App.S && App.S.sets && App.S.sets[q.mock]);
   App.ymd = (d = new Date()) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, '0')}-${String(d.getDate()).padStart(2, '0')}`;
   App.addDays = (s, n) => { const [y, m, d] = s.split('-').map(Number); return App.ymd(new Date(y, m - 1, d + n)); };
   App.diffDays = (a, b) => { const [y1, m1, d1] = a.split('-').map(Number); const [y2, m2, d2] = b.split('-').map(Number); return Math.round((Date.UTC(y2, m2 - 1, d2) - Date.UTC(y1, m1 - 1, d1)) / 86400000); };
@@ -1877,7 +2170,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       today: { date: '', wids: [] },
       streak: { cur: 0, best: 0, last: '' },
       mocks: [], run: null,
-      badges: {}, kanaBest: { h: 0, k: 0 },
+      badges: {}, kanaBest: { h: 0, k: 0 }, sets: {},
       path: { done: {} }
     };
   }
@@ -1913,10 +2206,11 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     const sk = raw.streak || {};
     s.streak = { cur: clampInt(sk.cur, 0, 1e5, 0), best: clampInt(sk.best, 0, 1e5, 0), last: isDate(sk.last) ? sk.last : '' };
     if (Array.isArray(raw.mocks)) {
-      s.mocks = raw.mocks.filter((m) => m && Array.isArray(m.items)).slice(0, 20).map((m) => ({
+      s.mocks = raw.mocks.filter((m) => m && Array.isArray(m.items)).slice(0, 60).map((m) => ({
         at: Number(m.at) || 0, c: clampInt(m.c, 0, 100, 0), n: clampInt(m.n, 1, 100, 1), auto: !!m.auto,
         by: m.by && typeof m.by === 'object' ? m.by : {},
         kind: m.kind === 'full' ? 'full' : 'mini',
+        set: App.SET_IDS.has(m.set) ? m.set : null,
         secs: Array.isArray(m.secs) ? m.secs.filter((x) => Array.isArray(x) && x.length === 2).map(([c, n]) => [clampInt(c, 0, 100, 0), clampInt(n, 1, 100, 1)]) : [],
         items: m.items.filter((it) => Array.isArray(it) && App.QMAP.has(it[0])).map((it) => [it[0], typeof it[1] === 'string' ? it[1] : null, it[2] ? 1 : 0])
       }));
@@ -1933,10 +2227,11 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
         const valid = secs.length > 0 && secs[0][0] === 0 && secs[secs.length - 1][1] === n && secs.every((x, k) => x[0] < x[1] && (k === 0 || x[0] === secs[k - 1][1]));
         if (!valid) secs = [[0, n, App.MOCK_MIN]];
         const si = clampInt(r.si, 0, secs.length - 1, 0);
-        s.run = { kind: r.kind === 'full' && secs.length === App.FULL_PLAN.length ? 'full' : 'mini', ids: r.ids.slice(), opts, ans, secs, si, brk: !!r.brk, deadline: r.deadline, i: clampInt(r.i, secs[si][0], secs[si][1] - 1, secs[si][0]) };
+        s.run = { set: App.SET_IDS.has(r.set) ? r.set : null, kind: r.kind === 'full' && secs.length === App.FULL_PLAN.length ? 'full' : 'mini', ids: r.ids.slice(), opts, ans, secs, si, brk: !!r.brk, deadline: r.deadline, i: clampInt(r.i, secs[si][0], secs[si][1] - 1, secs[si][0]) };
       }
     }
     for (const [id, at] of Object.entries(raw.badges || {})) if (BADGE_IDS.has(id) && isDate(at)) s.badges[id] = at;
+    for (const [id, v] of Object.entries(raw.sets || {})) if (App.SET_IDS.has(id) && Array.isArray(v) && isDate(v[2])) s.sets[id] = [clampInt(v[0], 0, 100, 0), clampInt(v[1], 1, 100, 67), v[2], clampInt(v[3], 1, 1e4, 1)];
     const pd = (raw.path && raw.path.done) || {};
     for (const [id, v] of Object.entries(pd)) if (/^[a-z0-9-]{1,40}$/.test(id) && Array.isArray(v) && isDate(v[0])) s.path.done[id] = [v[0], clampInt(v[1], 0, 100, 0)];
     const kb = raw.kanaBest || {};
@@ -2144,7 +2439,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   };
   App.buildQuiz = function (type, n, onlyIds) {
     const S = App.S;
-    const pool = onlyIds ? onlyIds.map((id) => App.QMAP.get(id)).filter(Boolean) : App.QS.filter((q) => App.inType(q, type));
+    const pool = onlyIds ? onlyIds.map((id) => App.QMAP.get(id)).filter(Boolean) : App.QS.filter((q) => App.inType(q, type) && App.isOpenQ(q));
     const used = new Set(); const out = [];
     const push = (q) => { if (out.length < n && !used.has(q.id)) { used.add(q.id); out.push(q.id); } };
     const ratio = (q) => { const s = S.qs[q.id]; return s && s.n ? s.c / s.n : 0; };
@@ -2159,7 +2454,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   /* ---------- 미니 모의고사 ---------- */
   /* 글이 있는 유형(글의 문법·중문)은 글 하나를 골라 그 글의 문항을 순서대로 낸다 */
   function pickType(t, k) {
-    const pool = App.QS.filter((q) => q.t === t);
+    const pool = App.QS.filter((q) => q.t === t && App.isOpenQ(q));
     if (t === 'bp' || t === 'rm') {
       const groups = [...new Set(pool.map((q) => q.g))];
       const g = App.shuffle(groups).find((x) => pool.filter((q) => q.g === x).length >= k) || groups[0];
@@ -2167,7 +2462,16 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     }
     return App.shuffle(pool).slice(0, k);
   }
-  App.startMock = function (kind) {
+  App.startMock = function (kind, setId) {
+    if (kind === 'set') {
+      const set = App.SETMAP.get(setId); if (!set) return false;
+      const ids = []; const secs = [];
+      set.secs.forEach((list, k) => { const from = ids.length; ids.push(...list); secs.push([from, ids.length, App.FULL_PLAN[k].min]); });
+      const opts = {}; ids.forEach((id) => { opts[id] = App.shuffle(App.QMAP.get(id).o); });
+      App.S.run = { set: set.id, kind: 'full', ids, opts, ans: {}, secs, si: 0, brk: false, deadline: Date.now() + secs[0][2] * 60000, i: 0 };
+      App.save();
+      return true;
+    }
     const plan = kind === 'full' ? App.FULL_PLAN : [{ name: '문자·어휘', min: App.MOCK_MIN, plan: App.MOCK_PLAN }];
     const ids = []; const secs = [];
     for (const sec of plan) { const from = ids.length; for (const [t, k] of sec.plan) pickType(t, k).forEach((q) => ids.push(q.id)); secs.push([from, ids.length, sec.min]); }
@@ -2206,9 +2510,10 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     }
     xp += App.addXP(10);
     const secs = (run.secs || [[0, run.ids.length, App.MOCK_MIN]]).map(([a, b]) => { let k = 0; for (let x = a; x < b; x++) if (items[x][2]) k++; return [k, b - a]; });
-    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto, xp, kind: run.kind === 'full' ? 'full' : 'mini', secs };
+    const res = { at: Date.now(), c, n: run.ids.length, by, items, auto: !!auto, xp, kind: run.kind === 'full' ? 'full' : 'mini', secs, set: run.set || null };
+    if (run.set) { const prev = App.S.sets[run.set]; App.S.sets[run.set] = [Math.max(c, prev ? prev[0] : 0), run.ids.length, App.ymd(), (prev ? prev[3] : 0) + 1]; }
     App.S.mocks.unshift(res);
-    App.S.mocks = App.S.mocks.slice(0, 20);
+    App.S.mocks = App.S.mocks.slice(0, 60);
     App.S.run = null;
     App.save();
     return res;
@@ -2238,6 +2543,8 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     ['p10', '레슨 10개', '레슨을 10개 마쳤어요', () => Object.keys(App.S.path.done).length >= 10],
     ['p30', '레슨 30개', '레슨을 30개 마쳤어요', () => Object.keys(App.S.path.done).length >= 30],
     ['pK', '가나 정복', '히라가나·가타카나 단원을 모두 마쳤어요', () => ['kh1', 'kh2', 'kh3', 'kh4', 'kh5', 'kk1', 'kk2', 'kk3', 'kk4', 'kk5'].every((id) => App.S.path.done[id])],
+    ['ms5', '모의고사 5회', '회차별 실전 모의고사를 5회 끝냈어요', () => Object.keys(App.S.sets).length >= 5],
+    ['ms20', '모의고사 20회', '회차별 실전 모의고사 20회를 모두 끝냈어요', () => Object.keys(App.S.sets).length >= 20],
     ['x500', 'XP 500', '누적 500 XP를 모았어요', () => App.totalXP() >= 500],
     ['x2000', 'XP 2000', '누적 2000 XP를 모았어요', () => App.totalXP() >= 2000]
   ].map(([id, name, desc, test]) => ({ id, name, desc, test }));
@@ -2296,7 +2603,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
   let settingsMsg = '';
   let busy = false;        /* 카드가 날아가는 동안 입력을 막는다 */
 
-  const TAB_OF = { home: 'home', words: 'words', cards: 'words', cardsDone: 'words', test: 'words', testDone: 'words', quiz: 'quiz', qsess: 'quiz', qdone: 'quiz', mock: 'quiz', mockres: 'quiz', notes: 'notes', stats: 'stats', guide: 'home', dict: 'words' };
+  const TAB_OF = { home: 'home', words: 'words', cards: 'words', cardsDone: 'words', test: 'words', testDone: 'words', quiz: 'quiz', qsess: 'quiz', qdone: 'quiz', mock: 'quiz', mockres: 'quiz', notes: 'notes', stats: 'stats', guide: 'home', dict: 'words', mocklist: 'quiz' };
   const tabFor = (v) => (X && X.from === 'notes' ? 'notes' : TAB_OF[v] || 'home');
 
   /* ---------- 작은 부품 ---------- */
@@ -2685,7 +2992,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     const S = A.S;
     const types = ['all', 'kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd', 'ls'];
     const chips = types.map((t) => {
-      const n = A.QS.filter((q) => A.inType(q, t)).length;
+      const n = A.QS.filter((q) => A.inType(q, t) && A.isOpenQ(q)).length;
       return `<button class="chip-btn${quizType === t ? ' on' : ''}" data-act="qtype" data-t="${t}" aria-pressed="${quizType === t}">${quizType === t ? '● ' : ''}${t === 'all' ? '전체' : A.QT[t]} <span class="num">${n}</span></button>`;
     }).join('');
     const acc = ['kr', 'pk', 'cx', 'pa', 'gr', 'so', 'bp', 'rd', 'ls'].map((t) => {
@@ -2695,7 +3002,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     }).join('');
     const mock = S.run
       ? `<p><b>${S.run.kind === 'full' ? '실전' : '미니'} 모의고사 푸는 중</b> · ${S.run.brk ? '쉬는 시간' : `남은 시간 <span class="run-left num">${mmss(S.run.deadline - Date.now())}</span>`}</p><button class="btn primary wide" data-act="resume-mock">이어서 풀기</button>`
-      : `<button class="btn primary wide" data-act="start-mock" data-kind="full">실전 모의고사 (3교시 · 67문항 · 90분)</button><button class="btn wide" data-act="start-mock" data-kind="mini">미니 모의고사 (문자·어휘 · 21문항 · 20분)</button>`;
+      : `<button class="btn primary wide" data-act="go-mocklist">회차별 실전 모의고사 (${A.MOCK_SETS.length}회 · 회차당 67문항 · 90분)</button><button class="btn wide" data-act="start-mock" data-kind="full">무작위 실전 모의고사</button><button class="btn wide" data-act="start-mock" data-kind="mini">미니 모의고사 (문자·어휘 · 21문항 · 20분)</button>`;
     const last = S.mocks.length ? `<button class="btn ghost wide" data-act="show-last-mock">지난 결과 보기 · <span class="num">${S.mocks[0].c} / ${S.mocks[0].n}</span></button>` : '';
     return `
       <h1 class="title">문제</h1>
@@ -2853,12 +3160,31 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       </section>`;
   }
 
+  /* ---------- 회차별 실전 모의고사 목록 ---------- */
+  const setNo = (id) => Number(String(id).slice(1));
+  function vMockList() {
+    const S = A.S;
+    const rows = A.MOCK_SETS.map((m) => {
+      const r = S.sets[m.id];
+      const busy = S.run && S.run.set === m.id;
+      const info = r ? `✓ 최고 ${r[0]} / ${r[1]} (${pct(r[0], r[1])}%) · ${r[3]}번 풂` : busy ? '푸는 중' : '아직 안 풀었어요';
+      const btn = S.run ? (busy ? '<button type="button" class="btn sm primary" data-act="resume-mock">이어서</button>' : '') : `<button type="button" class="btn sm${r ? '' : ' primary'}" data-act="start-set" data-id="${m.id}">${r ? '다시 풀기' : '시작'}</button>`;
+      return `<li class="set-row${r ? ' done' : ''}"><div class="li-main"><b>제${m.no}회</b><br><span class="small${r ? '' : ' muted'}">${info}</span></div>${btn}</li>`;
+    }).join('');
+    return `<h1 class="title">회차별 실전 모의고사</h1>
+      <p class="muted small">한 회는 실제 JLPT N5와 같은 67문항이에요. 1교시 문자·어휘 20분, 2교시 문법·독해 40분, 3교시 청해 30분이고, 교시 사이에 쉴 수 있어요. 문제는 모두 이 앱에서 직접 만든 것이에요.</p>
+      <p class="muted small">회차마다 다른 문제예요. 처음 풀 때 새 문제가 되도록 회차 전용 문제는 그 회차를 끝낸 뒤에 문제 연습에도 나와요.${A.MOCK_SETS.length < 20 ? ` 지금은 ${A.MOCK_SETS.length}회까지 준비됐어요.` : ''}</p>
+      ${S.run && !S.run.set ? '<div class="notice"><div><b>풀던 무작위·미니 모의고사가 있어요</b><br><span class="muted small">먼저 끝내거나 제출해야 회차를 시작할 수 있어요.</span></div><button class="btn sm" data-act="resume-mock">이어서</button></div>' : ''}
+      <section class="panel"><ul class="notes sets">${rows}</ul></section>
+      <button class="btn ghost wide" data-tab="quiz">문제 탭으로</button>`;
+  }
+
   /* ---------- 모의고사 ---------- */
   function vMock() {
     const run = A.S.run;
     if (!run) return vQuiz();
     const [from, to, min] = run.secs[run.si];
-    const title = run.kind === 'full' ? '실전 모의고사' : '미니 모의고사';
+    const title = run.set ? `실전 모의고사 제${setNo(run.set)}회` : run.kind === 'full' ? '실전 모의고사' : '미니 모의고사';
     const lastSec = run.si === run.secs.length - 1;
     if (run.brk) {
       const done = run.secs.slice(0, run.si).map((x, k) => `<li><span>${esc(A.secName(run, k))}</span><span>✓ 제출함</span><span></span></li>`).join('');
@@ -2912,7 +3238,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     }).join('');
     const when = new Date(r.at);
     return `<section class="panel">
-        <h2>${full ? '실전' : '미니'} 모의고사 결과</h2>
+        <h2>${r.set ? `제${setNo(r.set)}회 실전` : full ? '실전' : '미니'} 모의고사 결과</h2>
         <p class="muted small">${when.getMonth() + 1}월 ${when.getDate()}일 ${String(when.getHours()).padStart(2, '0')}:${String(when.getMinutes()).padStart(2, '0')}${r.auto ? ' · 시간이 끝나 자동 제출' : ''}</p>
         <p class="score num">${r.c} / ${r.n} <span class="muted small">(${pct(r.c, r.n)}%)</span></p>
         ${r.xp ? `<p class="xp-earned num">+${r.xp} XP</p>` : ''}
@@ -3001,7 +3327,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       ['오늘 정답률', answered ? `${pct(correct, answered)}%` : '-'], ['연속 달성', `${A.streakNow()}일 (최장 ${S.streak.best}일)`],
       ['학습한 날', `${studyDays}일`], ['익힌 단어', `${A.learnedCount()} / ${A.WORDS.length}`], ['오답', `${wrongN}개`]
     ].map(([k, v]) => `<div class="tile"><span class="muted small">${k}</span><b class="num">${v}</b></div>`).join('');
-    const mocks = S.mocks.slice(0, 5).map((m, k) => { const dt = new Date(m.at); return `<li><span>${dt.getMonth() + 1}/${dt.getDate()} ${m.kind === 'full' ? '실전' : '미니'}</span><span class="num">${m.c} / ${m.n}</span><span class="num muted">${pct(m.c, m.n)}%</span>${k === 0 ? '<button class="del" data-act="show-last-mock">보기</button>' : '<span></span>'}</li>`; }).join('');
+    const mocks = S.mocks.slice(0, 5).map((m, k) => { const dt = new Date(m.at); return `<li><span>${dt.getMonth() + 1}/${dt.getDate()} ${m.set ? `제${setNo(m.set)}회` : m.kind === 'full' ? '실전' : '미니'}</span><span class="num">${m.c} / ${m.n}</span><span class="num muted">${pct(m.c, m.n)}%</span>${k === 0 ? '<button class="del" data-act="show-last-mock">보기</button>' : '<span></span>'}</li>`; }).join('');
     const reset = resetAsk
       ? `<div class="confirm"><p>단어 진도, 문제 기록, 오답노트, 연속 달성, 모의고사 기록이 모두 지워져요. 시험일과 목표 설정은 남아요.</p><div class="row2"><button class="btn" data-act="reset-no">취소</button><button class="btn danger" data-act="reset-yes">모두 지우기</button></div></div>`
       : `<button class="btn ghost wide" data-act="reset-ask">기록 초기화</button>`;
@@ -3042,7 +3368,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       </section>`;
   }
 
-  const VIEWS = { home: vHome, words: vWords, cards: vCards, cardsDone: vCardsDone, test: vTest, testDone: vTestDone, quiz: vQuiz, qsess: vQsess, qdone: vQdone, mock: vMock, mockres: vMockres, notes: vNotes, stats: vStats, guide: vGuide, dict: vDict };
+  const VIEWS = { home: vHome, words: vWords, cards: vCards, cardsDone: vCardsDone, test: vTest, testDone: vTestDone, quiz: vQuiz, qsess: vQsess, qdone: vQdone, mock: vMock, mockres: vMockres, notes: vNotes, stats: vStats, guide: vGuide, dict: vDict, mocklist: vMockList };
 
   /* ---------- 렌더 ---------- */
   function renderChrome() {
@@ -3305,6 +3631,8 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     'so-clear': () => { const it = X && X.items[X.i]; if (!it || !it.tiles || it.done) return; it.order = []; render(true); },
     'q-next': () => { if (X.i + 1 < X.items.length) { X.i++; render(false, 'next'); } else go('qdone'); },
     'start-mock': (el) => { A.startMock(el.dataset.kind === 'full' ? 'full' : 'mini'); mockPlayed.clear(); X = null; go('mock'); },
+    'go-mocklist': () => { X = null; go('mocklist'); },
+    'start-set': (el) => { if (A.S.run) { toast('풀던 모의고사를 먼저 끝내 주세요.'); return; } if (A.startMock('set', el.dataset.id)) { mockPlayed.clear(); X = null; go('mock'); } },
     'm-start-sec': () => { A.startSection(); submitAsk = false; render(false, 'fade'); },
     'resume-mock': () => { X = null; go(A.S.run ? 'mock' : 'quiz'); },
     'm-pick': (el) => { const run = A.S.run; if (!run || run.brk) return; const id = run.ids[run.i]; run.ans[id] = run.opts[id][Number(el.dataset.k)]; A.save(); render(true); },
@@ -3668,17 +3996,18 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     if (chunks.length > 1 && chunks[chunks.length - 1].length < 4) { const last = chunks.pop(); chunks[chunks.length - 1] = chunks[chunks.length - 1].concat(last); }
     return chunks.map((c, k) => ({ id: `w-${topic}-${k + 1}`, kind: 'words', ids: c, name: `${A.TOPIC_NAME[topic]} ${k + 1}` }));
   }
-  const grIds = A.QS.filter((q) => q.t === 'gr').map((q) => q.id);
+  const grIds = A.QS.filter((q) => q.t === 'gr' && !q.mock).map((q) => q.id);
   const gramChunks = [];
   for (let i = 0; i < grIds.length; i += 6) gramChunks.push(grIds.slice(i, i + 6));
   if (gramChunks.length > 1 && gramChunks[gramChunks.length - 1].length < 3) { const last = gramChunks.pop(); gramChunks[gramChunks.length - 1] = gramChunks[gramChunks.length - 1].concat(last); }
   const gramLessons = (from, to) => gramChunks.slice(from, to).map((qids, k) => ({ id: `g-${from + k + 1}`, kind: 'gram', qids, name: `문법 ${from + k + 1}` }));
-  const soIds = A.QS.filter((q) => q.t === 'so').map((q) => q.id);
+  const soIds = A.QS.filter((q) => q.t === 'so' && !q.mock).map((q) => q.id);
   const soLessons = [];
   for (let i = 0; i < soIds.length; i += 5) soLessons.push({ id: `s-${soLessons.length + 1}`, kind: 'so', qids: soIds.slice(i, i + 5), name: `문장 만들기 ${soLessons.length + 1}` });
 
   /* 독해·글의 문법·청해: 기존 문항을 레슨으로 묶는다 */
-  const qOf = (t) => A.QS.filter((q) => q.t === t).map((q) => q.id).sort();
+  /* 학습 경로는 회차 전용 문항을 쓰지 않는다(모의고사를 처음 볼 때 새 문제이도록) */
+  const qOf = (t) => A.QS.filter((q) => q.t === t && !q.mock).map((q) => q.id).sort();
   function chunk(ids, n) {
     const out = [];
     for (let i = 0; i < ids.length; i += n) out.push(ids.slice(i, i + n));
@@ -3686,7 +4015,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     return out;
   }
   const qsetLessons = (prefix, label, groups) => groups.map((qids, k) => ({ id: `${prefix}-${k + 1}`, kind: 'qset', qids, name: `${label} ${k + 1}` }));
-  const bpGroups = [...new Set(A.QS.filter((q) => q.t === 'bp').map((q) => q.g))].map((g) => A.QS.filter((q) => q.t === 'bp' && q.g === g).sort((a, b) => a.n - b.n).map((q) => q.id));
+  const bpGroups = [...new Set(A.QS.filter((q) => q.t === 'bp' && !q.mock).map((q) => q.g))].map((g) => A.QS.filter((q) => q.t === 'bp' && q.g === g).sort((a, b) => a.n - b.n).map((q) => q.id));
   const readGroups = chunk(qOf('rs'), 5).concat(chunk(qOf('rm'), 4), chunk(qOf('ri'), 5));
   const listenGroups = chunk(qOf('lt'), 7).concat(chunk(qOf('lp'), 6), chunk(qOf('le'), 5), chunk(qOf('lr'), 7));
   const ICON = { greet: 'こ', num: '一', time: '時', q: '何', people: '人', body: '体', food: '食', home: '家', place: '町', town: '駅', pos: '上', school: '学', nature: '空', shop: '買', hobby: '歌', kata: 'カ', verb: '行', adj: '高', adv: '少' };

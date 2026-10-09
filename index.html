@@ -159,7 +159,7 @@ p { margin: 0; }
 .btn.sm { padding: 7px 13px; font-size: 13px; border-radius: 12px; }
 .btn.wide { width: 100%; }
 .btn:disabled { opacity: 0.45; cursor: default; box-shadow: none; }
-.btn:focus-visible, .opt:focus-visible, .card:focus-visible, nav.tabs button:focus-visible, .chip-btn:focus-visible, .fact:focus-visible, .gnum:focus-visible, .del:focus-visible, .say:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
+.btn:focus-visible, .opt:focus-visible, nav.tabs button:focus-visible, .chip-btn:focus-visible, .fact:focus-visible, .gnum:focus-visible, .del:focus-visible, .say:focus-visible { outline: 3px solid var(--accent); outline-offset: 2px; }
 .row2 { display: grid; grid-template-columns: 1fr 1fr; gap: 10px; }
 .stack { display: flex; flex-direction: column; gap: 8px; }
 
@@ -169,25 +169,36 @@ p { margin: 0; }
 .fact .big { font-size: 1.375rem; font-weight: 700; color: var(--ink); }
 
 .sess-top { display: flex; justify-content: space-between; font-size: 13px; color: var(--ink-2); font-weight: 500; }
-.card-stage { position: relative; perspective: 1100px; }
-.card-stage.has-next::before { content: ""; position: absolute; left: 14px; right: 14px; top: 12px; bottom: -9px; border-radius: 24px; background: var(--surface); border: 1px solid var(--line); box-shadow: var(--shadow-sm); }
-.card {
-  position: relative; min-height: 320px; border: 1px solid var(--line); border-radius: 24px; padding: 18px; cursor: pointer;
-  display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 12px; text-align: center;
+/* 단어 카드: 책장처럼 옆으로 넘긴다. 이전·지금·다음 카드를 한 줄(track)에 놓고 손가락을 따라 줄 전체를 민다.
+   덱은 화면 끝까지 넓혀(full-bleed) 옆 카드가 화면 가장자리에서 들어오게 한다. */
+.deck { margin: 0 -16px; padding: 2px 16px 8px; overflow: hidden; touch-action: pan-y; touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; }
+.deck-track { display: flex; gap: 16px; transform: translateX(calc(-100% - 16px)); }
+.dslot { flex: 0 0 100%; min-width: 0; display: flex; }
+.dcard { position: relative; flex: 1; display: flex; perspective: 1200px; cursor: pointer; border-radius: 24px; }
+.dcard:not(.cur) { pointer-events: none; }
+.dcard:focus-visible { outline: 3px solid var(--accent); outline-offset: 3px; }
+.dc-in { flex: 1; display: grid; min-height: 330px; transform-style: preserve-3d; }
+.dcard.flipped .dc-in { transform: rotateY(180deg); }
+.dc-face {
+  grid-area: 1 / 1; position: relative; display: flex; flex-direction: column; align-items: center; justify-content: center; gap: 10px;
+  padding: 42px 18px 22px; text-align: center; border: 1px solid var(--line); border-radius: 24px;
   background-color: var(--surface);
   background-image: linear-gradient(var(--grid) 1px, transparent 1px), linear-gradient(90deg, var(--grid) 1px, transparent 1px);
   background-size: 28px 28px; background-position: center;
-  box-shadow: var(--shadow); touch-action: pan-y; touch-action: pan-y pinch-zoom; user-select: none; -webkit-user-select: none; backface-visibility: hidden;
+  box-shadow: var(--shadow); backface-visibility: hidden; -webkit-backface-visibility: hidden;
 }
-.card.dragging { cursor: grabbing; transition: none; }
+.dc-face.back { transform: rotateY(180deg); }
+.dcard.end .dc-face { border: 2px dashed var(--line); box-shadow: none; background-image: none; color: var(--ink-2); gap: 6px; }
+.dcard.end .end-mark { font-size: 2rem; line-height: 1; }
+.word.sm { font-size: 2rem; }
 .card-meta { position: absolute; top: 12px; left: 16px; right: 16px; display: flex; justify-content: space-between; font-size: 12px; color: var(--muted); }
-.stamp { position: absolute; top: 40px; z-index: 1; padding: 2px 12px; border: 3px solid var(--ink); border-radius: 12px; background: var(--surface); color: var(--ink); font-weight: 700; font-size: 1.125rem; pointer-events: none; transition: opacity 0.15s ease; }
+.card-meta b { color: var(--ink); }
+.stamp { position: absolute; top: 40px; z-index: 1; padding: 2px 12px; border: 3px solid var(--ink); border-radius: 12px; background: var(--surface); color: var(--ink); font-weight: 700; font-size: 1.125rem; pointer-events: none; opacity: 0; }
 .stamp.know { right: 16px; transform: rotate(8deg); opacity: var(--know, 0); }
 .stamp.dont { left: 16px; transform: rotate(-8deg); opacity: var(--dont, 0); border-style: dashed; }
-.card.dragging .stamp { transition: none; }
+.card-actions { display: flex; flex-direction: column; gap: 10px; }
 .word { font-family: var(--f-jp); font-weight: 600; font-size: 3rem; line-height: 1.25; word-break: keep-all; overflow-wrap: anywhere; }
 .word.ko { font-family: var(--f-ui); font-size: 1.75rem; font-weight: 700; text-align: center; }
-.card-back { display: flex; flex-direction: column; gap: 8px; align-items: center; }
 .reading { font-size: 1.375rem; }
 .meaning { font-size: 1.25rem; font-weight: 700; }
 .example { background: var(--surface); border-top: 1px dashed var(--line); padding-top: 8px; display: flex; flex-direction: column; gap: 2px; }
@@ -436,8 +447,8 @@ details.tr summary { cursor: pointer; font-size: 13px; font-weight: 700; color: 
   #view.a-fade { animation: vFade 0.22s ease-out; }
   #view.a-next { animation: vNext 0.24s cubic-bezier(0.2, 0.8, 0.2, 1); }
   #view.a-prev { animation: vPrev 0.24s cubic-bezier(0.2, 0.8, 0.2, 1); }
-  .card.card-in { animation: cardIn 0.3s cubic-bezier(0.2, 0.8, 0.2, 1); }
-  .card.flip-in { animation: flipIn 0.32s cubic-bezier(0.2, 0.8, 0.2, 1); }
+  .dc-in { transition: transform 0.5s cubic-bezier(0.3, 0.7, 0.15, 1); }
+  .stamp { transition: opacity 0.12s ease; }
   .opt.pop { animation: pop 0.34s ease-out; }
   .opt.shake { animation: shake 0.38s ease-in-out; }
   .dialog { animation: dlgIn 0.34s cubic-bezier(0.2, 0.9, 0.3, 1.2); }
@@ -459,8 +470,6 @@ details.tr summary { cursor: pointer; font-size: 13px; font-weight: 700; color: 
 @keyframes vFade { from { opacity: 0; transform: translateY(8px); } to { opacity: 1; transform: none; } }
 @keyframes vNext { from { opacity: 0; transform: translateX(32px); } to { opacity: 1; transform: none; } }
 @keyframes vPrev { from { opacity: 0; transform: translateX(-32px); } to { opacity: 1; transform: none; } }
-@keyframes cardIn { from { opacity: 0; transform: translateY(14px) scale(0.95); } to { opacity: 1; transform: none; } }
-@keyframes flipIn { from { transform: rotateY(-90deg); } to { transform: rotateY(0deg); } }
 @keyframes pop { 0% { transform: scale(1); } 45% { transform: scale(1.035); } 100% { transform: scale(1); } }
 @keyframes shake { 0%, 100% { transform: translateX(0); } 20% { transform: translateX(-7px); } 40% { transform: translateX(6px); } 60% { transform: translateX(-4px); } 80% { transform: translateX(3px); } }
 @keyframes dlgIn { from { opacity: 0; transform: translateY(16px) scale(0.92); } to { opacity: 1; transform: none; } }
@@ -5182,7 +5191,7 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
       </section>
       <section class="panel">
         <h2>카드 학습</h2>
-        <p class="muted small">10장씩 넘겨요. 틀렸던 단어, 오늘 복습할 단어, 새 단어 순서로 나와요. 카드를 왼쪽으로 밀면 "알아요", 오른쪽으로 밀면 "모름"이에요. "알아요"로 넘긴 단어는 1·3·7·14·30일 간격으로 다시 나와요.</p>
+        <p class="muted small">10장씩 넘겨요. 틀렸던 단어, 오늘 복습할 단어, 새 단어 순서로 나와요. 책장처럼 왼쪽으로 밀면 "알아요"로 다음 카드가 나오고, 오른쪽으로 밀면 방금 본 카드를 다시 봐요. 모르는 단어는 카드를 눌러 뜻을 본 뒤 "모름"을 눌러요. "알아요"로 넘긴 단어는 1·3·7·14·30일 간격으로 다시 나와요.</p>
         <button class="btn primary wide" data-act="start-cards">카드 10장 시작</button>
       </section>
       <section class="panel">
@@ -5224,33 +5233,38 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
       ${dictTopic !== 'all' ? `<button class="btn primary wide" data-act="start-topic" data-t="${dictTopic}">${A.TOPIC_NAME[dictTopic]} 카드 10장</button>` : ''}
       <section class="panel"><ul class="notes dict" id="dict-list">${dictRows()}</ul></section>`;
   }
+  /* ---------- 카드 학습: 책장 넘기듯 왼쪽으로 밀면 다음 카드(○ 알아요), 오른쪽으로 밀면 방금 본 카드 ----------
+     X.g[k]는 k번째 카드에 매긴 답('k' 알아요 · 'u' 모름). 기록은 한 번만 남기므로 되돌아간 카드는 보기만 한다. */
+  const GRADE = { k: '○ 알아요', u: '× 모름' };
+  function cardSlot(k) {
+    if (k < 0) return '<div class="dslot" aria-hidden="true"></div>';
+    if (k >= X.ids.length) {
+      return `<div class="dslot" aria-hidden="true"><div class="dcard end"><div class="dc-in"><div class="dc-face front"><span class="end-mark" aria-hidden="true">✓</span><b>마지막 카드였어요</b><span class="small">놓으면 결과를 보여 드려요</span></div></div></div></div>`;
+    }
+    const id = X.ids[k]; const w = A.WMAP.get(id); const p = A.S.words[id];
+    const cur = k === X.i; const g = X.g[k]; const flipped = cur && X.flip;
+    const meta = `<div class="card-meta"><span>${A.POS[w.p]}</span>${g ? `<b>${GRADE[g]}</b>` : `<span>${p ? `${p.b}단계` : '새 단어'}</span>`}</div>`;
+    const front = `<div class="dc-face front"${flipped ? ' aria-hidden="true"' : ''}>${meta}<div class="word jp">${esc(w.w)}</div><div class="hint">${cur ? '눌러서 뜻 보기' : '&nbsp;'}</div></div>`;
+    const back = `<div class="dc-face back"${flipped ? '' : ' aria-hidden="true"'}>${meta}<div class="word sm jp">${esc(w.w)}</div>
+        ${w.r !== w.w ? `<div class="reading jp">${esc(w.r)}</div>` : ''}<div class="meaning">${esc(w.m)}</div>
+        <div class="example"><div class="jp">${esc(w.ex)}</div><div class="muted">${esc(w.exk)}</div></div>${w.note ? `<div class="note">${esc(w.note)}</div>` : ''}</div>`;
+    const attrs = cur ? ` role="button" tabindex="0" data-act="flip" aria-label="${flipped ? '카드 앞면 보기' : '카드 뒤집어 뜻 보기'}"` : ' aria-hidden="true" inert';
+    const stamps = cur && !g ? '<span class="stamp know" aria-hidden="true">○ 알아요</span><span class="stamp dont" aria-hidden="true">× 모름</span>' : '';
+    return `<div class="dslot"><div class="dcard${cur ? ' cur' : ''}${flipped ? ' flipped' : ''}"${attrs}><div class="dc-in">${front}${back}</div>${stamps}</div></div>`;
+  }
+  function cardActions() {
+    const w = A.WMAP.get(X.ids[X.i]); const g = X.g[X.i];
+    const say = `<div class="say-row">${sayBtn(w.r, '단어')}${canSpeak && jaReady() ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.ex)}" aria-label="예문 발음 듣기">▶ 예문</button>` : ''}</div>`;
+    if (g) return `<p class="muted small center">이미 <b>${g === 'k' ? '○ 알아요로' : '× 모름으로'}</b> 넘긴 카드예요.</p><button class="btn wide" data-act="card-fwd">다음 카드 ›</button>${say}`;
+    if (X.shown) return `<div class="row2"><button class="btn" data-act="card-no">× 모름</button><button class="btn primary" data-act="card-yes">○ 알아요</button></div>${say}`;
+    return '<button class="btn wide" data-act="flip">뜻 보기</button>';
+  }
   function vCards() {
-    const id = X.ids[X.i]; const w = A.WMAP.get(id); const p = A.S.words[id];
-    const stage = p ? `${p.b}단계` : '새 단어';
-    const anim = X.anim; X.anim = null;
-    const back = X.flip ? `
-          <div class="card-back">
-            ${w.r !== w.w ? `<div class="reading jp">${esc(w.r)}</div>` : ''}
-            <div class="meaning">${esc(w.m)}</div>
-            <div class="example"><div class="jp">${esc(w.ex)}</div><div class="muted">${esc(w.exk)}</div></div>
-            ${w.note ? `<div class="note">${esc(w.note)}</div>` : ''}
-          </div>` : '<div class="hint">눌러서 뜻 보기</div>';
-    const actions = X.flip
-      ? `<div class="row2"><button class="btn primary" data-act="card-yes">○ 알아요</button><button class="btn" data-act="card-no">× 모름</button></div>
-         <div class="say-row">${sayBtn(w.r, '단어')}${canSpeak && jaReady() ? `<button type="button" class="say" data-act="speak" data-say="${esc(w.ex)}" aria-label="예문 발음 듣기">▶ 예문</button>` : ''}</div>`
-      : `<button class="btn wide" data-act="flip">뜻 보기</button>`;
+    const g = X.g[X.i];
     return `${progress(X.i, X.ids.length, X.topic ? `카드 · ${A.TOPIC_NAME[X.topic]}` : '카드 학습')}
-      <div class="card-stage${X.i + 1 < X.ids.length ? ' has-next' : ''}">
-        <div class="card${anim ? ' ' + anim : ''}" role="button" tabindex="0" data-act="flip" data-swipe aria-label="카드 뒤집기">
-          <span class="stamp know" aria-hidden="true">○ 알아요</span>
-          <span class="stamp dont" aria-hidden="true">× 모름</span>
-          <div class="card-meta"><span>${A.POS[w.p]}</span><span>${stage}</span></div>
-          <div class="word jp">${esc(w.w)}</div>
-          ${back}
-        </div>
-      </div>
-      <p class="swipe-hint" aria-hidden="true"><b>← ○ 알아요</b><span>밀어서 넘기기</span><b>× 모름 →</b></p>
-      ${actions}`;
+      <div class="deck"><div class="deck-track">${cardSlot(X.i - 1)}${cardSlot(X.i)}${cardSlot(X.i + 1)}</div></div>
+      <p class="swipe-hint" aria-hidden="true"><b>← 밀면 ${g ? '다음 카드' : '○ 알아요'}</b><span>${X.i > 0 ? '밀면 이전 카드 →' : ''}</span></p>
+      <div class="card-actions" id="card-actions">${cardActions()}</div>`;
   }
   function vCardsDone() {
     return `<section class="panel center">
@@ -5974,7 +5988,7 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
   function startCards(topic) {
     const ids = A.buildCards(10, topic || null);
     if (!ids.length) { toast('넘길 카드가 없어요.'); return; }
-    X = { kind: 'cards', ids, i: 0, flip: false, k: 0, u: 0, xp: 0, topic: topic || null, from: 'words', anim: 'card-in' }; go('cards');
+    X = { kind: 'cards', ids, i: 0, flip: false, shown: false, g: [], k: 0, u: 0, xp: 0, topic: topic || null, from: 'words' }; go('cards');
   }
   function startTest(ids, retry) {
     const list = ids && ids.length ? ids : A.buildTestIds(10);
@@ -6001,40 +6015,43 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
     buzz(ok ? 12 : [10, 60, 10]);
   }
 
-  /* ---------- 카드 넘기기: 왼쪽 = 알아요, 오른쪽 = 모름 ---------- */
-  function flyCard(known) {
-    if (busy || !X || X.kind !== 'cards') return;
+  /* ---------- 카드 넘기기: 이전·지금·다음 카드가 한 줄로 붙어 있고, 줄 전체가 손가락을 따라 움직인다 ---------- */
+  const deckAt = (px) => `translateX(calc(-100% - 16px + ${px}px))`;
+  /* dir 1: 다음 카드(아직 답하지 않은 카드면 known으로 기록), -1: 방금 본 카드로 */
+  function deckMove(dir, known) {
+    if (busy || !X || X.kind !== 'cards' || view !== 'cards') return;
     const sess = X;
-    sess.xp += A.gradeCard(sess.ids[sess.i], known);
-    if (known) sess.k++; else sess.u++;
-    sfx('card');
-    buzz(8);
-    commit();
-    const next = () => {
+    if (dir < 0 && sess.i === 0) return;
+    const el = $view.querySelector('.dcard.cur');
+    if (dir > 0 && !sess.g[sess.i]) {
+      const ok = known !== false;
+      sess.xp += A.gradeCard(sess.ids[sess.i], ok);
+      sess.g[sess.i] = ok ? 'k' : 'u';
+      if (ok) sess.k++; else sess.u++;
+      if (el) { el.style.setProperty('--know', ok ? '1' : '0'); el.style.setProperty('--dont', ok ? '0' : '1'); }
+      sfx('card');
+      buzz(8);
+      commit();
+    }
+    const done = () => {
       busy = false;
       if (X !== sess || view !== 'cards') return;
-      if (sess.i + 1 < sess.ids.length) { sess.i++; sess.flip = false; sess.anim = 'card-in'; render(); } else go('cardsDone');
+      if (dir > 0 && sess.i + 1 >= sess.ids.length) { go('cardsDone'); return; }
+      sess.i += dir; sess.flip = false; sess.shown = false;
+      render(true);
     };
-    const el = $view.querySelector('.card');
-    if (!el || reduced()) { next(); return; }
+    const track = $view.querySelector('.deck-track');
+    if (!track || reduced()) { done(); return; }
     busy = true;
-    const dir = known ? -1 : 1; const w = el.offsetWidth || 320;
-    el.classList.remove('card-in', 'flip-in', 'dragging');
-    el.style.setProperty('--know', known ? '1' : '0');
-    el.style.setProperty('--dont', known ? '0' : '1');
-    void el.offsetWidth;
-    el.style.transition = 'transform 0.26s cubic-bezier(0.4, 0, 0.8, 0.6), opacity 0.26s ease-in';
-    el.style.transform = `translateX(${dir * (w + 80)}px) rotate(${dir * 14}deg)`;
-    el.style.opacity = '0';
-    setTimeout(next, 240);
+    const W = track.offsetWidth || 320;
+    track.style.transition = 'transform 0.3s cubic-bezier(0.2, 0.75, 0.25, 1)';
+    track.style.transform = deckAt(dir > 0 ? -(W + 16) : W + 16);
+    setTimeout(done, 300);
   }
-  function springBack(el) {
-    el.classList.remove('dragging');
-    el.style.transition = 'transform 0.28s cubic-bezier(0.2, 0.9, 0.3, 1.25)';
-    el.style.transform = '';
-    el.style.setProperty('--know', '0');
-    el.style.setProperty('--dont', '0');
-    setTimeout(() => { el.style.transition = ''; }, 300);
+  function deckSpring(d) {
+    d.track.style.transition = 'transform 0.34s cubic-bezier(0.2, 0.9, 0.3, 1.15)';
+    d.track.style.transform = '';
+    const el = d.track.querySelector('.dcard.cur'); if (el) el.style.setProperty('--know', '0');
   }
 
   /* ---------- 문항 화면 밀기: 왼쪽 = 다음, 오른쪽 = 이전(모의고사) ---------- */
@@ -6060,12 +6077,14 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
     if (!e.isPrimary || (e.pointerType === 'mouse' && e.button !== 0) || busy || !$overlay.hidden) return;
     const base = { id: e.pointerId, x0: e.clientX, y0: e.clientY, t0: e.timeStamp, dx: 0, on: false };
     /* 왼쪽 가장자리에서 시작한 손가락 밀기는 카드·문항 넘기기보다 먼저 뒤로 가기로 본다(아이폰과 같음) */
-    if (e.pointerType !== 'mouse' && canEdgeSwipe() && $stage.contains(e.target) && e.clientX - $stage.getBoundingClientRect().left <= EDGE) {
+    /* 단, 단어 카드 위에서 시작하면 카드 넘기기로 본다 */
+    if (e.pointerType !== 'mouse' && canEdgeSwipe() && $stage.contains(e.target) && !e.target.closest('.dcard') && e.clientX - $stage.getBoundingClientRect().left <= EDGE) {
       drag = Object.assign(base, { kind: 'back', vx: 0, lx: e.clientX, lt: e.timeStamp });
       return;
     }
-    const card = view === 'cards' && X && X.kind === 'cards' ? e.target.closest('.card[data-swipe]') : null;
-    if (card) { drag = Object.assign(base, { kind: 'card', el: card }); return; }
+    const deck = view === 'cards' && X && X.kind === 'cards' ? e.target.closest('.deck') : null;
+    const track = deck && deck.querySelector('.deck-track');
+    if (track) { drag = Object.assign(base, { kind: 'deck', el: deck, track, vx: 0, lx: e.clientX, lt: e.timeStamp }); return; }
     if (!$main.contains(e.target) || e.target.closest('input, select, textarea')) return;
     const allow = pageAllow();
     if (allow.left || allow.right) drag = Object.assign(base, { kind: 'page', allow });
@@ -6078,19 +6097,21 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
       if (Math.abs(dy) >= Math.abs(dx)) { drag = null; return; } /* 세로 스크롤은 브라우저에 맡긴다 */
       if (drag.kind === 'back') { if (dx < 0) { drag = null; return; } startBack(drag); }
       drag.on = true;
-      if (drag.kind === 'card') {
-        drag.el.classList.remove('card-in', 'flip-in');
-        drag.el.classList.add('dragging');
+      if (drag.kind === 'deck') {
+        drag.W = drag.track.offsetWidth || 320;
+        drag.track.style.transition = 'none';
         try { drag.el.setPointerCapture(e.pointerId); } catch (err) { /* 캡처를 못 쓰는 브라우저 */ }
       }
     }
     drag.dx = dx;
     if (drag.kind === 'back') { moveBack(drag, e); return; }
-    if (drag.kind === 'card') {
-      const w = drag.el.offsetWidth || 320; const p = Math.max(-1, Math.min(1, dx / (w * 0.3)));
-      drag.el.style.transform = `translateX(${dx}px) rotate(${dx / 20}deg)`;
-      drag.el.style.setProperty('--know', String(Math.max(0, -p)));
-      drag.el.style.setProperty('--dont', String(Math.max(0, p)));
+    if (drag.kind === 'deck') {
+      const dt = e.timeStamp - drag.lt;
+      if (dt > 0) { drag.vx = 0.6 * ((e.clientX - drag.lx) / dt) + 0.4 * drag.vx; drag.lx = e.clientX; drag.lt = e.timeStamp; }
+      const x = dx > 0 && X.i === 0 ? dx * 0.25 : dx; /* 첫 카드에서 오른쪽은 고무줄처럼 조금만 끌린다 */
+      drag.track.style.transform = deckAt(x);
+      const el = drag.track.querySelector('.dcard.cur');
+      if (el && !X.g[X.i]) el.style.setProperty('--know', String(Math.max(0, Math.min(1, -x / (drag.W * 0.3)))));
     } else {
       const ok = dx < 0 ? drag.allow.left : drag.allow.right;
       $view.style.transform = `translateX(${dx * (ok ? 0.3 : 0.06)}px)`;
@@ -6102,12 +6123,16 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
     if (!d.on) return;
     swallowClick = true; /* 끌기 직후 따라오는 click은 버린다 */
     if (d.kind === 'back') { endBack(d, e, cancelled); return; }
-    const fast =Math.abs(d.dx) > 40 && Math.abs(d.dx) / Math.max(1, e.timeStamp - d.t0) > 0.5;
-    if (d.kind === 'card') {
-      const w = d.el.offsetWidth || 320;
-      if (!cancelled && (Math.abs(d.dx) > w * 0.28 || fast)) flyCard(d.dx < 0); else springBack(d.el);
+    if (d.kind === 'deck') {
+      /* 4분의 1 넘게 밀었거나, 놓는 순간 그쪽으로 튕기고 있으면 넘긴다 */
+      if (e.timeStamp - d.lt > 90) d.vx = 0;
+      const pass = (s) => !cancelled && s * d.dx > 20 && (s * d.dx > d.W * 0.25 || s * d.vx > 0.35) && s * d.vx > -0.2;
+      if (pass(-1)) deckMove(1, true);
+      else if (pass(1) && X && X.i > 0) deckMove(-1);
+      else deckSpring(d);
       return;
     }
+    const fast = Math.abs(d.dx) > 40 && Math.abs(d.dx) / Math.max(1, e.timeStamp - d.t0) > 0.5;
     const dir = d.dx < 0 ? 'left' : 'right';
     if (!cancelled && d.allow[dir] && (Math.abs(d.dx) > 60 || fast)) { buzz(6); pageSwipe(dir); return; }
     $view.style.transition = 'transform 0.2s ease-out';
@@ -6134,9 +6159,20 @@ window.JLPT_DATA.N5.mockBase = {"m01":{"kr":["kr01","kr02","kr03","kr04","kr05",
     'go-notes': () => { X = null; go('notes'); },
     'go-guide': () => { X = null; go('guide'); },
     'go-mock': () => { X = null; go(A.S.mocks.length && !A.S.run ? 'mockres' : 'quiz'); },
-    flip: () => { if (X && X.kind === 'cards' && !X.flip && !busy) { X.flip = true; X.anim = 'flip-in'; render(true); } },
-    'card-yes': () => flyCard(true),
-    'card-no': () => flyCard(false),
+    /* 카드를 누르면 실제로 뒤집힌다(다시 누르면 앞면). 화면을 다시 그리지 않고 클래스만 바꿔야 뒤집기 움직임이 보인다 */
+    flip: () => {
+      if (!X || X.kind !== 'cards' || busy) return;
+      X.flip = !X.flip; X.shown = true;
+      const el = $view.querySelector('.dcard.cur');
+      if (!el) { render(true); return; }
+      el.classList.toggle('flipped', X.flip);
+      el.setAttribute('aria-label', X.flip ? '카드 앞면 보기' : '카드 뒤집어 뜻 보기');
+      el.querySelectorAll('.dc-face').forEach((f) => f.setAttribute('aria-hidden', String(f.classList.contains('back') !== X.flip)));
+      const act = document.getElementById('card-actions'); if (act) act.innerHTML = cardActions();
+    },
+    'card-yes': () => deckMove(1, true),
+    'card-no': () => deckMove(1, false),
+    'card-fwd': () => deckMove(1),
     'test-pick': (el) => {
       const it = X.items[X.i]; if (it.picked !== null) return;
       it.picked = Number(el.dataset.k);

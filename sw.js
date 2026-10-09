@@ -2,7 +2,7 @@
    앱 화면(index.html)은 인터넷이 되면 새로 받고(3초 안에 안 오면 저장본), 안 되면 저장본을 연다.
    아이콘·설정 파일은 저장본을 먼저 쓰고, 글꼴(Google Fonts)은 한 번 받으면 저장해 둔다.
    앱을 고쳐 올릴 때 VERSION을 올리면 예전 저장본을 지운다. */
-const VERSION = 'n5-969965e289';
+const VERSION = 'n5-fffd1aba09';
 const SHELL = ['./', './index.html', './manifest.webmanifest', './icons/icon-192.png', './icons/icon-512.png', './icons/apple-touch-icon.png', './icons/favicon-32.png'];
 const FONT_CACHE = 'n5-fonts';
 

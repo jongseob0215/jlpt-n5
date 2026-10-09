@@ -3017,6 +3017,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
       <section class="panel">
         <h2>화면</h2>
         <div class="seg" role="group" aria-label="화면 밝기">${THEMES.map(([k, l]) => `<button type="button" class="chip-btn${themePref === k ? ' on' : ''}" data-act="theme" data-t="${k}" aria-pressed="${themePref === k}">${themePref === k ? '● ' : ''}${l}</button>`).join('')}</div>
+        <div class="seg two" role="group" aria-label="발음 속도">${[['slow', '발음 천천히'], ['normal', '발음 보통']].map(([k, l]) => { const on = (k === 'slow') === voiceSlow; return `<button type="button" class="chip-btn${on ? ' on' : ''}" data-act="voice-rate" data-v="${k}" aria-pressed="${on}">${on ? '● ' : ''}${l}</button>`; }).join('')}</div>
         <div class="seg two" role="group" aria-label="효과음">${[['on', '효과음 켜기'], ['off', '효과음 끄기']].map(([k, l]) => { const on = (k === 'on') === soundOn; return `<button type="button" class="chip-btn${on ? ' on' : ''}" data-act="sound" data-v="${k}" aria-pressed="${on}">${on ? '● ' : ''}${l}</button>`; }).join('')}</div>
         <p class="muted small">"기기 설정"은 휴대폰의 다크 모드 설정을 따라가요. 위쪽 달·해 버튼으로도 바로 바꿀 수 있고, 이 설정은 이 기기에만 저장돼요.</p>
       </section>
@@ -3344,19 +3345,29 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     },
     'theme-toggle': () => { setTheme(effectiveTheme() === 'dark' ? 'light' : 'dark'); if (view === 'stats') render(true); },
     theme: (el) => { setTheme(el.dataset.t); render(true); },
+    'voice-rate': (el) => { setVoiceSlow(el.dataset.v === 'slow'); render(true); speak('あ'); },
     sound: (el) => { setSound(el.dataset.v === 'on'); if (soundOn) sfx('ok'); render(true); },
     speak: (el) => speak(el.dataset.say || ''),
     'close-overlay': closeOverlay
   };
   A.speak = (text) => speak(text);
   A.feedback = (ok) => { sfx(ok ? 'ok' : 'bad'); buzz(ok ? 12 : [10, 60, 10]); };
+  /* 발음 속도: 기본은 천천히. 이 기기에만 저장한다 */
+  const VOICE_KEY = 'jlpt-n5-voice-rate';
+  let voiceSlow = true;
+  try { voiceSlow = localStorage.getItem(VOICE_KEY) !== 'normal'; } catch (e) { /* 저장소를 못 쓰는 환경 */ }
+  function setVoiceSlow(on) { voiceSlow = !!on; try { localStorage.setItem(VOICE_KEY, voiceSlow ? 'slow' : 'normal'); } catch (e) { /* 이번 접속에서만 적용 */ } }
+  /* 한 박자짜리 가나(あ, か, きゃ 등)는 너무 짧게 끝나므로 아주 천천히, 쉬었다가 두 번 읽는다 */
+  const isMora = (t) => /^[\u3041-\u3096\u30a1-\u30fa][ぁぃぅぇぉゃゅょァィゥェォャュョ]?$/.test(t);
   function speak(text) {
     if (!canSpeak || !text) return;
     if (!jaReady()) { toast('이 기기에는 일본어 음성이 없어서 소리를 낼 수 없어요.'); return; }
     try {
       window.speechSynthesis.cancel();
-      const u = new window.SpeechSynthesisUtterance(text);
-      u.lang = 'ja-JP'; u.rate = 0.9;
+      const mora = isMora(text);
+      const u = new window.SpeechSynthesisUtterance(mora ? `${text}。　${text}。` : text);
+      u.lang = 'ja-JP';
+      u.rate = mora ? (voiceSlow ? 0.5 : 0.65) : (voiceSlow ? 0.75 : 0.9);
       const v = window.speechSynthesis.getVoices().find((x) => /^ja/i.test(x.lang));
       if (v) u.voice = v;
       window.speechSynthesis.speak(u);
@@ -3568,7 +3579,7 @@ window.JLPT_DATA.N5 = window.JLPT_DATA.N5 || {};
     panel.innerHTML = `
       <div class="sheet-head"><h2 id="kana-title">가나 표</h2><button type="button" class="icon-btn" data-kana="close" aria-label="가나 표 닫기">×</button></div>
       <div class="seg two" role="group" aria-label="문자 종류">${tabs}</div>
-      ${quiz ? vQuiz() : `<div class="seg four" role="group" aria-label="표 종류">${sets}</div><p class="muted small">글자를 누르면 발음을 들을 수 있어요.</p>${vTable()}`}`;
+      ${quiz ? vQuiz() : `<div class="seg four" role="group" aria-label="표 종류">${sets}</div><p class="muted small">글자를 누르면 천천히 두 번 읽어 줘요. 속도는 기록 탭에서 바꿀 수 있어요.</p>${vTable()}`}`;
   }
 
   function open() {
